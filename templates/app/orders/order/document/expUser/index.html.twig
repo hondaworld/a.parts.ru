@@ -1,0 +1,33 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Клиент</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.expUser', {'id': user.id}) }}"
+               title="Изменить клиента"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Клиент: </strong>
+        {% if (expenseDocument.expUser|default(false)) %}
+            {{ expenseDocument.expUser.nameWithPhoneMobile }}
+        {% else %}
+            <span class="text-danger font-italic">не задан (необходимо заполнить)</span>
+        {% endif %}
+    </p>
+    {% if (expenseDocument.expUser|default(false)) %}
+        <p><strong>Адрес: </strong>
+        {% if (expenseDocument.expUserContact|default(false)) %}
+            {{ expenseDocument.expUserContact.fullAddress }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+        <p><strong>Реквизит: </strong>
+        {% if (expenseDocument.expUserBeznal|default(false)) %}
+            {{ expenseDocument.expUserBeznal.fullRequisite }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    {% endif %}
+{% endblock %}

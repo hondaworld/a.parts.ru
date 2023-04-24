@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление новости{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('news-admin', {'page': app.session.get('page/newsAdmin')|default(1)}) }}">Новости</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.type) }}
+            {{ form_row(form.description) }}
+
+            <button type="submit" class="btn btn-primary">Добавить</button>
+            <a class="ml-3 btn btn-secondary" href="{{ path('news-admin', {'page': app.session.get('page/newsAdmin')|default(1)}) }}">Отменить</a>
+            {{ form_end(form) }}
+
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

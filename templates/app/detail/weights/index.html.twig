@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Веса{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Weight') %}
+                <li class="nav-item">
+                    <a href="{{ path('weights.create') }}" class="nav-link">
+                        <i class="fas fa-plus" title="Добавить вес"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('weights.upload') }}" class="nav-link">
+                        <i class="fas fa-upload" title="Загрузить веса"></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('delete', 'Weight') %}
+                <li class="nav-item">
+                    <a href="{{ path('weights.deleteSelected') }}" class="nav-link text-danger" data-toggle="modal"
+                       data-target="#modalConfirm" title="Удалить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить выделенные веса?')">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('weights', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Производитель', 'creater') : 'Производитель' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Номер', 'number') : 'Номер' }}</th>
+            <th>Вес</th>
+            <th>Проверен</th>
+            {% if is_granted('edit', 'Weight') or is_granted('delete', 'Weight') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            <th></th>
+            {% if is_granted('edit', 'Weight') or is_granted('delete', 'Weight') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Задайте фильтр</td>
+                </tr>
+            {% elseif pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for weight in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': weight.weightID} only %}
+                    {% endif %}
+                    <td>{{ weight.creater }}</td>
+                    <td>{{ weight.number }}</td>
+                    <td>{{ weight.weight }}</td>
+                    <td class="text-center">{{ boolean_status(weight.weightIsReal) }}</td>
+                    {% if is_granted('edit', 'Weight') or is_granted('delete', 'Weight') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'Weight') %}
+                                <a href="{{ path('weights.edit', {'id': weight.weightID}) }}"
+                                   title="Изменить вес">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Weight') %}
+                                    <a href="{{ path('weights.delete', {'id': weight.weightID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить вес?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить вес">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {% if pagination is not null %}
+                {{ parent() }}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

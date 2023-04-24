@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение операции {{ action.name }}{% endblock %}
+{% block header %}{{ action.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('menu.groups') }}">Группы меню</a></li>
+    <li class="breadcrumb-item">
+        <a href="{{ path('menu.sections', {'groupID': section.group.id, 'parentID': 0}) }}">{{ section.group.name }}</a>
+    </li>
+    {% for breadCrumb in arBreadCrumb %}
+        {% if (not breadCrumb.url|default(false)) %}
+        {% else %}
+            <li class="breadcrumb-item">
+                <a href="{{ path('menu.sections', {'groupID': section.group.id, 'parentID': breadCrumb.data.id}) }}">{{ breadCrumb.name }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+    <li class="breadcrumb-item"><a href="{{ path('menu.actions', {'sectionID': section.id}) }}">{{ section.name }} - операции</a></li>
+    <li class="breadcrumb-item">{{ action.name }}</li>
+
+{% endblock %}
+
+
+{% block body %}
+    {{ include('app/menu/actions/_form_edit.html.twig') }}
+{% endblock %}

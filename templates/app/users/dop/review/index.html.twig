@@ -1,0 +1,15 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Отзывы</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.review', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Уведомление отправлено: </strong>{{ boolean_status(user.review.isReviewSend) }}</p>
+    <p><strong>Отзыв размещен: </strong>{{ boolean_status(user.review.isReview) }}</p>
+    <p><strong>Адрес с отзывом: </strong>{{ check_empty(user.review.reviewUrl) }}</p>
+{% endblock %}

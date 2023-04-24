@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Курсы валюты {{ currency.nameShort }}{% endblock %}
+{% block header %}Курсы валюты {{ currency.nameShort }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('currency') }}">Валюта</a></li>
+    <li class="breadcrumb-item">{{ currency.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% set reset_path = path('currency.rates', {'currencyID': currency.id, 'reset' : 1}) %}
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('currency.rates.create', {'currencyID': currency.id}) }}" class="nav-link" title="Добавить курс"><i class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Валюта</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>Курс</th>
+            <th>Единиц</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for rate in pagination %}
+                <tr>
+                    <td>{{ rate.currency_from }}</td>
+                    <td>{{ rate.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ rate.rate }}</td>
+                    <td>{{ rate.numbers }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('currency.rates.edit', {'currencyID': currency.id, 'id': rate.currencyRateID}) }}"
+                               title="Изменить курс">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('currency.rates.delete', {'id': rate.currencyRateID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить курс валюты?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить курс валюты">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+
+{% endblock %}

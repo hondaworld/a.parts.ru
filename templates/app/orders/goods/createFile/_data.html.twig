@@ -1,0 +1,82 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    <form method="post" action="{{ path('order.goods.insertFile', {
+        'id': user.id,
+        'zapSkladID': (zapSklad is not null ? zapSklad.id : 0),
+        'providerPriceID': (providerPrice is not null ? providerPrice.id : 0)
+    }) }}">
+        {% embed 'tables/table_simple.html.twig' %}
+            {% block header_buttons %}{% endblock %}
+            {% block settings %}{% endblock %}
+
+            {% block table_header %}
+                <th>#</th>
+                <th>Номер</th>
+                <th>Бренд</th>
+                <th>Количество</th>
+                <th>На складах</th>
+                {% if providerPrice is not null %}
+                    <th>{{ providerPrice.description }}</th>
+                {% else %}
+                    {% for skladID, skladName in sklads %}
+                        <th>{{ skladName }}</th>
+                    {% endfor %}
+                {% endif %}
+                <th>Цена прайса</th>
+                <th>Цена склада</th>
+                <th></th>
+            {% endblock %}
+
+            {% block table_body %}
+                {% if data is empty %}
+                    <tr>
+                        <td colspan="50" class="text-center">Записей нет</td>
+                    </tr>
+                {% endif %}
+                {% for index, item in data %}
+                    <tr class="{{ not item.isAdd ? 'text-muted' : '' }}">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ item.number }}</td>
+                        <td>{{ item.creater_name }}</td>
+                        <td class="text-right">{{ item.quantity }}</td>
+                        <td class="text-right">{{ item.quantityInWarehouse }}</td>
+                        {% if providerPrice is not null %}
+                            <td class="text-right">{{ item.quantityInWarehouse }}</td>
+                        {% else %}
+                            {% for skladID, skladName in sklads %}
+                                <td class="text-right">{{ item.arrQuantityInWarehouse[skladID]|default(0) }}</td>
+                            {% endfor %}
+                        {% endif %}
+                        <td class="text-right">{{ item.price|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right">{{ item.price1|number_format(2, ',', ' ') }}</td>
+                        <td>
+                            {% if item.isAdd %}
+                                {% if providerPrice is not null %}
+                                    <input
+                                            type="text"
+                                            class="form-control form-control-sm form-control-alt text-center"
+                                            style="min-width: 70px; max-width: 70px;"
+                                            name="provider_{{ item.createrID }}_{{ item.number }}"
+                                            value="{{ item.quantity }}"
+                                    >
+                                {% else %}
+                                    <input
+                                            type="text"
+                                            class="form-control form-control-sm form-control-alt text-center"
+                                            style="min-width: 70px; max-width: 70px;"
+                                            name="sklad_{{ item.zapCardID }}"
+                                            value="{{ item.quantity > item.quantityInWarehouse ? item.quantityInWarehouse : item.quantity }}"
+                                    >
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        {% endembed %}
+        <button type="submit" class="btn btn-primary">Добавить</button>
+        <a class="ml-3 btn btn-secondary" href="{{ path('order.goods', {'id': user.id}) }}">Отменить</a>
+    </form>
+
+{% endblock %}

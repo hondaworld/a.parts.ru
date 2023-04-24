@@ -1,0 +1,38 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('creaters.edit', {'id': creater.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <p><strong>Наименование: </strong> {{ creater.name }}</p>
+    <p><strong>Наименование русское: </strong> {{ creater.nameRus }}</p>
+    <p><strong>Оригинал: </strong> {{ boolean_status(creater.isOriginal) }}</p>
+    <p><strong>Таблица: </strong> {{ creater.tableName|default('shopPriceN') }}</p>
+    <p><strong>Альтернативный производитель: </strong> {{ creater.createrWeight is not null ? check_empty(creater.createrWeight.name, 'не задан') : '' }}</p>
+    {% if (creater.description is not empty) %}
+        <div class="mt-3"><strong>Описание </strong></div>
+        <div class="border rounded p-2">
+            {{ creater.description|nl2br }}
+        </div>
+    {% endif %}
+    {% if (creater.catalogs is not empty) %}
+        <div class="mt-3"><strong>Каталоги </strong></div>
+        <div class="border rounded p-2">
+            {{ creater.catalogs|nl2br }}
+        </div>
+    {% endif %}
+    {% if (creater.altNames is not empty) %}
+        <div class="mt-3"><strong>Альтернативные наименования </strong></div>
+        <div class="border rounded p-2">
+            {{ creater.altNames|nl2br }}
+        </div>
+    {% endif %}
+
+{% endblock %}

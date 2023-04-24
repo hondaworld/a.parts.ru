@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Чеки клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Чеки клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">Чеки</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    {% embed 'tables/table_pagination.html.twig' %}
+
+        {% block header %}{% endblock %}
+
+        {% block table_header %}
+            <th>Накладная</th>
+            <th>Вид платежа</th>
+            <th>Сумма на момент:<br>создания<br>оплаты</th>
+            <th>Кассир</th>
+            <th>Операция</th>
+            <th>Сумма чека:<br>факт<br>полная</th>
+            <th>Состояние</th>
+            {% if is_granted('balance_change', user) or is_granted('balance_change_finance_type', user) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for balance in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': balance.expenseDocumentID} only %}
+                    {% endif %}
+                    <td>
+                        <div>#{{ balance.document_num }}</div>
+                        <div>{{ balance.dateofadded|date('d.m.Y H:i') }}</div>
+                    </td>
+                    <td>{{ balance.finance_type }}</td>
+                    <td class="text-right">
+                        <div>{{ balance.summReal|number_format(2, ',', ' ') }}</div>
+                        <div>{{ balance.summ|number_format(2, ',', ' ') }}</div>
+                    </td>
+                    <td>{{ balance.manager_name }}</td>
+                    <td>
+                        <div>{{ balance.kassa_id ? '#' ~ balance.kassa_id : '' }}</div>
+                        <div>{{ balance.checkdate ? balance.checkdate|date('d.m.Y H:i') : '' }}</div>
+                    </td>
+                    <td class="text-right">
+                        <div>{{ balance.check_summ|number_format(2, ',', ' ') }}</div>
+                        <div>{{ balance.fiscal_summ|number_format(2, ',', ' ') }}</div>
+                    </td>
+                    <td>{{ balance.state }}</td>
+                    {% if is_granted('order_check', 'Order') or is_granted('order_check_delete', 'Order') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('order_check', 'Order') %}
+                                    {% if balance.kassa_id == 0 %}
+                                        <a href="" data-toggle="modal" data-target="#modalForm"
+                                           data-url="{{ path('order.check.pay', {'id': balance.expenseDocumentID}) }}"
+                                           data-title="Распечатать чек на накладную"
+                                           class="ajax-modal-html">
+                                            <i class="fas fa-cash-register" title="Распечатать чек на накладную"></i>
+                                        </a>
+                                    {% elseif is_granted('order_check_delete', 'Order') %}
+                                        <a href="{{ path('order.checks.delete', {'id': balance.check_id}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить чек?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Удалить чек">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

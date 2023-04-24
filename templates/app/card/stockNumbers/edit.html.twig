@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение запчасти {{ stockNumber.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.stocks') }}">Акции</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('card.stocks.numbers', {'stockID': stock.id}) }}">{{ stock.name }}</a></li>
+    <li class="breadcrumb-item">{{ stockNumber.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/card/stockNumbers/_form.html.twig') }}
+{% endblock %}

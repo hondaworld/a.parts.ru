@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Заказы{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Заказы</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter, {'attr': {'id': 'ordersListForm'}}) }}
+    {{ form_widget(filter.param) }}
+    <div class="bg-white p-3 push">
+        {% include('app/orders/_tabs.html.twig') %}
+        <div class="py-2">
+            <ul class="nav-main nav-main-horizontal nav-main-hover">
+                <li class="nav-main-item pr-2 font-weight-bold">Фильтр</li>
+                <li class="nav-main-item">{{ form_widget(filter.number) }}</li>
+                <li class="nav-main-item">{{ form_widget(filter.createrID) }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="bg-white p-3 push">
+        <div>
+            <ul class="nav-main nav-main-horizontal nav-main-hover">
+                {% if is_granted('create', 'Order') %}
+                    <li class="nav-main-item">
+                        <a href="" data-toggle="modal" data-target="#modalForm"
+                           data-url="{{ path('orders.create') }}"
+                           data-title="Добавить заказ"
+                           class="nav-main-link text-primary ajax-modal-html">
+                            Добавить заказ
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="nav-main-item"><div class="py-1">{{ form_widget(filter.user) }}</div></li>
+                <li class="nav-main-item"><div class="py-1">{{ form_widget(filter.orderID) }}</div></li>
+                <li class="nav-main-item"><div class="py-1">
+                    <button class="btn btn-primary btn-sm" type="submit"
+                            onclick="document.getElementById('form_param').value = ''"
+                    >Искать клиентов
+                    </button></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {{ form_end(filter) }}
+
+    {% if orders is not null %}
+        {% if (param == 'newByUser' or param == 'newByManager' or param == 'newByCron') %}
+            {{ include('app/orders/tables/new.html.twig') }}
+        {% elseif (param == 'not_sent') %}
+            {{ include('app/orders/tables/not_sent.html.twig') }}
+        {% elseif (param == 'in_work') %}
+            {{ include('app/orders/tables/in_work.html.twig') }}
+        {% elseif (param == 'not_paid') %}
+            {{ include('app/orders/tables/not_paid.html.twig') }}
+        {% elseif (param == 'picking' or param == 'picked') %}
+            {{ include('app/orders/tables/pick.html.twig') }}
+        {% elseif (param == 'expired') %}
+            {{ include('app/orders/tables/expired.html.twig') }}
+        {% elseif (param == 'findByUser') %}
+            {{ include('app/orders/tables/user.html.twig') }}
+        {% elseif (param == 'findByOrder') %}
+            {{ include('app/orders/tables/order.html.twig') }}
+        {% elseif (param == 'service') %}
+            {{ include('app/orders/tables/service.html.twig') }}
+        {% elseif (param == 'delivery') %}
+            {{ include('app/orders/tables/delivery.html.twig') }}
+        {% elseif (param == 'paid_credit_card') %}
+            {{ include('app/orders/tables/paid_credit_card.html.twig') }}
+        {% elseif (param == 'not_ordered') %}
+            {{ include('app/orders/tables/not_ordered.html.twig') }}
+        {% elseif (param == 'reseller') %}
+            {{ include('app/orders/tables/with_reseller.html.twig') }}
+        {% elseif ('alert' in param) %}
+            {{ include('app/orders/tables/alert.html.twig') }}
+        {% else %}
+            {{ include('app/orders/tables/default.html.twig') }}
+        {% endif %}
+    {% else %}
+        <div class="text-center">Выберите фильтр</div>
+    {% endif %}
+
+{% endblock %}

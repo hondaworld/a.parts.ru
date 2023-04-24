@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение избранного меню {{ favouriteMenu.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('favouriteMenu') }}">Избранное меню</a></li>
+    <li class="breadcrumb-item">{{ favouriteMenu.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/managers/favouriteMenu/_form.html.twig') }}
+{% endblock %}

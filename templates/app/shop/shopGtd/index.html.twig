@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ГТД{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ShopGtd') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.gtd.create') }}" class="nav-link">
+                        <i class="fas fa-plus" title="Добавить ГТД"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('shop.gtd', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            {% if is_granted('edit', 'ShopGtd') or is_granted('delete', 'ShopGtd') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.name) }}</th>
+            {% if is_granted('edit', 'ShopGtd') or is_granted('delete', 'ShopGtd') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for shopGtd in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': shopGtd.shop_gtdID} only %}
+                    {% endif %}
+                    <td>{{ shopGtd.name }}</td>
+                    {% if is_granted('edit', 'ShopGtd') or is_granted('delete', 'ShopGtd') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'ShopGtd') %}
+                                    <a href="{{ path('shop.gtd.edit', {'id': shopGtd.shop_gtdID}) }}"
+                                       title="Изменить ГТД">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'ShopGtd') %}
+                                    <a href="{{ path('shop.gtd.delete', {'id': shopGtd.shop_gtdID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить ГТД?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить ГТД">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

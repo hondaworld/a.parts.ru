@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Корректировочные счета фактуры{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Счета</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'SchetFakKor') %}
+                <li class="nav-item">
+                    <a href="{{ path('schetFakKor.create') }}" class="nav-link"
+                       title="Добавить корректировочный счет фактуру"><i class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('schetFakKor', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, '#', 'document_num') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'От кого', 'firm_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Кому', 'user_name') }}</th>
+            <th>Сумма</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.document_num) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.firmID) }}</th>
+            <th>{{ form_widget(filter.user_name) }}</th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for schetFakKor in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': schetFakKor.schet_fak_korID} only %}
+                    {% endif %}
+                    <td>{{ schetFakKor.document_num }}</td>
+                    <td>{{ schetFakKor.dateofadded|date('d.m.Y') }}</td>
+                    <td>
+                        {% if is_granted('edit', 'Firm') %}
+                            <a href="{{ path('firms.edit', {'id': schetFakKor.firmID}) }}">{{ schetFakKor.firm_name }}</a>
+                        {% else %}
+                            {{ schetFakKor.firm_name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': schetFakKor.userID}) }}">{{ schetFakKor.user_name }}</a>
+                        {% else %}
+                            {{ schetFakKor.user_name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ schetFakKor.sum|number_format(2, ',', ' ') }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            {% if is_granted('show', 'SchetFakKor') %}
+                                <a href="{{ path('schetFakKor.show', {'id': schetFakKor.schet_fak_korID}) }}"
+                                   title="Изменение корректировочного счета фактуры">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            {% endif %}
+                            <a href="{{ path('schet_fak_kor.php', {'id': schetFakKor.schet_fak_korID}) }}"
+                               title="Печать корректировочного счета фактуры" target="_blank">
+                                <i class="fas fa-print"></i>
+                            </a>
+                            <a href="{{ path('schet_fak_kor_excel.php', {'id': schetFakKor.schet_fak_korID}) }}"
+                               title="Печать корректировочного счета фактуры в Excel" target="_blank">
+                                <i class="far fa-file-excel"></i>
+                            </a>
+                            {% if schetFakKor.edo %}
+                                <a href="{{ path('schet_fak_kor_xml.php', {'id': schetFakKor.schet_fak_korID}) }}" download="{{ schetFakKor.user_name }}_корсчетфактура.xml"
+                                   title="Печать корректировочного счета фактуры в XML" target="_blank">
+                                    <i class="far fa-file-code"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

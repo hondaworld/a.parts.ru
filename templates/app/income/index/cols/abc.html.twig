@@ -1,0 +1,9 @@
+{% if 'abc' not in hideCols %}
+    <td>
+        {% if abcs[income.zapCardID]|default(null) %}
+            {% for sklad, abc in abcs[income.zapCardID] %}
+                <div>{{ sklad }}-{{ abc }}</div>
+            {% endfor %}
+        {% endif %}
+    </td>
+{% endif %}

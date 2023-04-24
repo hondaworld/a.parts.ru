@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Валюта{% endblock %}
+{% block header %}Валюта{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Валюта</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Currency') %}
+                <li class="nav-item">
+                    <a href="{{ path('currency.create') }}" class="nav-link" title="Добавить валюту"><i class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'Currency') %}
+                <li class="nav-item">
+                    <a href="{{ path('currency.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенную вылюту?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'Currency') %}
+                <li class="nav-item">
+                    <a href="{{ path('currency.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенную вылюту?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Код</th>
+            <th>Кратко</th>
+            <th>Наименование</th>
+            <th>Курс</th>
+            <th>Дата курса</th>
+            <th>Фиксированный курс</th>
+            <th>Использовать фикс.</th>
+            <th>Национальная</th>
+            {% if is_granted('edit', 'Currency') or is_granted('delete', 'Currency') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if currencies is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for currency in currencies %}
+                <tr class="{{ currency.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': currency.currencyID} only %}
+                    {% endif %}
+                    <td>{{ currency.code }}</td>
+                    <td>{{ currency.name_short }}</td>
+                    <td>{{ currency.name }}</td>
+                    <td>{{ currency.last_rate }}</td>
+                    <td>{{ currency.last_date|date('d.m.Y') }}</td>
+                    <td>{{ currency.fix_rate }}</td>
+                    <td class="text-center">{{ boolean_status(currency.is_fix_rate) }}</td>
+                    <td class="text-center">{{ boolean_status(currency.isNational) }}</td>
+                    {% if is_granted('edit', 'Currency') or is_granted('delete', 'Currency') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('currency.rates', {'currencyID': currency.currencyID}) }}"
+                                   title="Курсы валют">
+                                    <i class="fas fa-ruble-sign"></i>
+                                </a>
+                                {% if is_granted('edit', 'Currency') %}
+                                    <a href="{{ path('currency.edit', {'id': currency.currencyID}) }}"
+                                       title="Изменить валюту">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Currency') and not currency.noneDelete %}
+                                    <a href="{{ path('currency.delete', {'id': currency.currencyID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить валюту?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить валюту">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

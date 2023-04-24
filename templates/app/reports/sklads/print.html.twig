@@ -1,0 +1,31 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Марка</th>
+            {% for skladID, skladName in sklads %}
+                <th>{{ skladName }} из приходов</th>
+                <th>{{ skladName }} из закупки</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% for createrID, createrName in creaters %}
+                {% if profits[createrID]|default(null) %}
+                    <tr>
+                        <td>{{ createrName }}</td>
+                        {% for skladID, skladName in sklads %}
+                            <td class="text-right">
+                                {{ profits[createrID][skladID]|default(null) ?  profits[createrID][skladID]['sum_income']|number_format(2, ',', ' ') : 0 }}
+                            </td>
+                            <td class="text-right">{{ profits[createrID][skladID]|default(null) ?  profits[createrID][skladID]['sum_card']|number_format(2, ',', ' ') : 0 }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

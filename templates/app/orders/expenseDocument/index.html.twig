@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Создание расходной накладной клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Создание расходной накладной клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">Расходная накладная</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/orders/expenseDocument/data/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/orders/expenseDocument/balance/index.html.twig') }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/orders/expenseDocument/check/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/orders/expenseDocument/torg12/index.html.twig') }}
+        </div>
+    </div>
+
+
+    <script>
+        function createExpenseDocument(doc_typeID) {
+            let isShipping = 0;
+            let isService = 0;
+            if (document.getElementById('isShipping' + doc_typeID)) {
+                isShipping = +document.getElementById('isShipping' + doc_typeID).checked;
+            }
+            if (document.getElementById('isService' + doc_typeID)) {
+                isService = document.getElementById('isService' + doc_typeID).value;
+            }
+            let url = '{{ path('order.expenseDocument.create', {'id': user.id, 'doc_typeID': '*doc_typeID*', 'isShipping': '*isShipping*', 'isService': '*isService*'}) }}';
+            url = url
+                .replace('*doc_typeID*', doc_typeID)
+                .replace('*isShipping*', isShipping)
+                .replace('*isService*', isService)
+                .replaceAll('&amp;', '&');
+            window.location = url;
+        }
+    </script>
+
+{% endblock %}

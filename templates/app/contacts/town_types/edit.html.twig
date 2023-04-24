@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение типа населенных пунктов {{ type.name }}{% endblock %}
+{% block header %}{{ type.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('townTypes') }}">Типы населенных пунктов</a></li>
+    <li class="breadcrumb-item">{{ type.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/contacts/town_types/_form.html.twig') }}
+{% endblock %}

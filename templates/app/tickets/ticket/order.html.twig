@@ -1,0 +1,10 @@
+{% if ticket.ticketOrder and ticket.user %}
+    <p>
+        <strong>Заказ: </strong>
+        {% if is_granted('show', 'Order') %}
+            <a href="{{ path('order.goods', {'id': ticket.user.id, 'form': {'isShowAllGoods': 1, 'orderID': ticket.ticketOrder.id}}) }}">№{{ ticket.ticketOrder.id }}</a>
+        {% else %}
+            №{{ ticket.ticketOrder.id }}
+        {% endif %}
+    </p>
+{% endif %}

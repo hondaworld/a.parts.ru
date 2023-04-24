@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Департаменты{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Департаменты</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ClientTicketGroup') %}
+                <li class="nav-item">
+                    <a href="{{ path('client-tickets.groups.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                             title="Добавить департамент"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'ClientTicketGroup') %}
+                <li class="nav-item">
+                    <a href="{{ path('client-tickets.groups.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные департаменты?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'ClientTicketGroup') %}
+                <li class="nav-item">
+                    <a href="{{ path('client-tickets.groups.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные департаменты?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Менеджеры</th>
+            <th>Скрытый</th>
+            <th>Закрытый</th>
+            {% if is_granted('edit', 'ClientTicketGroup') or is_granted('delete', 'ClientTicketGroup') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for group in all %}
+                <tr class="{{ group.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': group.id} only %}
+                    {% endif %}
+                    <td>{{ group.name }}</td>
+                    <td>
+                        {% for manager in group.managers %}
+                            <div>{{ manager.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td class="text-center">{{ boolean_status(group.isHideUser) }}</td>
+                    <td class="text-center">{{ boolean_status(group.isClose) }}</td>
+                    {% if is_granted('edit', 'ClientTicketGroup') or is_granted('delete', 'ClientTicketGroup') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'ClientTicketGroup') %}
+                                    <a href="{{ path('client-tickets.groups.edit', {'id': group.id}) }}"
+                                       title="Изменить департамент">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'ClientTicketGroup') %}
+                                    <a href="{{ path('client-tickets.groups.delete', {'id': group.id}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить департамент?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить департамент">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

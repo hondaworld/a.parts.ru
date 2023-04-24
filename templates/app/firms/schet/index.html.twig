@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Счета{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Счета</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('schets', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.isShowCanceled) }}</li>
+            <li class="nav-item pl-1">Дата:</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            <li class="nav-item pl-1">Оплата:</li>
+            <li class="nav-item">{{ form_widget(filter.dateofpaid) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, '#', 'schet_num') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Тип', 'finance_type') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Оплата', 'dateofpaid') }}</th>
+            <th>Статус</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Счета на', 'user_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Счета от', 'firm_name') }}</th>
+            <th>Факт</th>
+            <th>По товарам</th>
+            <th>Комментарий</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.schet_num) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.finance_typeID) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.status) }}</th>
+            <th>{{ form_widget(filter.user_name) }}</th>
+            <th>{{ form_widget(filter.firmID) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for schet in pagination %}
+                <tr class="{{ schet.status == 1 ? 'table-warning' : (schet.status == 2 ? 'table-success' : (schet.status == 3 ? 'table-danger' : '')) }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': schet.schetID} only %}
+                    {% endif %}
+                    <td>{{ schet.schet_num }}</td>
+                    <td>{{ schet.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ schet.finance_type }}</td>
+                    <td>{{ schet.dateofpaid ? schet.dateofpaid|date('d.m.Y') : '' }}</td>
+                    <td>{{ statuses[schet.status] }}</td>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': schet.userID}) }}">{{ schet.user_name }}</a>
+                        {% else %}
+                            {{ schet.user_name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if is_granted('edit', 'Firm') %}
+                            <a href="{{ path('firms.edit', {'id': schet.firmID}) }}">{{ schet.firm_name }}</a>
+                        {% else %}
+                            {{ schet.firm_name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ schet.summ|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ schet.sum_goods|number_format(2, ',', ' ') }}</td>
+                    <td>{{ schet.comment }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            {% if is_granted('show', 'Schet') %}
+                                <a href="{{ path('schets.show', {'id': schet.schetID}) }}"
+                                   title="Просмотр счета">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </a>
+                            {% endif %}
+                            {% if schet.finance_typeID != 5 %}
+                                <a href="{{ path('schet.php', {'id': schet.schetID}) }}"
+                                   title="Печать счета" target="_blank">
+                                    <i class="fas fa-print"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

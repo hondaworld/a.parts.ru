@@ -1,0 +1,31 @@
+{% if 'weight' not in hideCols %}
+    <td
+            class="{{ income.weight|default(null) and income.weight.weightIsReal ? ' text-success' : '' }}"
+            {% if is_granted('edit', 'ZapCard') %}
+                title="Изменить вес"
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#modalWeight"
+                data-incomeid="{{ income.incomeID }}"
+                data-number="{{ income.number }}"
+                data-createrid="{{ income.createrID }}"
+                data-weight="{{ income.weight|default(null) ? income.weight.weight : '' }}"
+                data-weightisreal="{{ income.weight.weightIsReal|default(false) }}"
+                data-ident="weight"
+                onclick="modalWeightChange(this)"
+            {% endif %}
+    >
+        {{ income.weight|default(null) ? income.weight.weight : '' }}
+        {# <input #}
+        {# type="text" #}
+        {# class="form-control form-control-sm form-control-alt{{ income.weight|default(null) and income.weight.weightIsReal ? ' text-success' : '' }} table-col-input" #}
+        {# data-old="{{ income.weight|default(null) ? income.weight.weight : '' }}" #}
+        {# data-id="{{ income.incomeID }}" #}
+        {# data-number="{{ income.number }}" #}
+        {# data-createrid="{{ income.createrID }}" #}
+        {# data-ident="weight" #}
+        {# data-url-submit="{{ path('income.weight', {'id': income.incomeID}) }}" #}
+        {# value="{{ income.weight|default(null) ? income.weight.weight : '' }}" #}
+        {# > #}
+    </td>
+{% endif %}

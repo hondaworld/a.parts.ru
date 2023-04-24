@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Загрузка деталей из файла клиента {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.goods', {'id' : user.id}) }}">Товары</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/orders/goods/createFile/_form.html.twig') }}
+    {{ include('app/orders/goods/createFile/_data.html.twig') }}
+
+{% endblock %}

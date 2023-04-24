@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Скидки</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.discount', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Срок оплаты: </strong>{{ user.schetDays }} дней</p>
+    <p><strong>Скидка в магазине: </strong>{{ user.discountParts }}%</p>
+    <p><strong>Скидка в сервисе: </strong>{{ user.discountService }}%</p>
+    <p><strong>Запрещено менять скидку при формировании накладных: </strong>{{ boolean_status(user.isNotUpdateDiscount) }}</p>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Автомобиль {{ autoMarka.name }} {{ autoModel.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.model', {'auto_markaID': autoMarka.id}) }}">{{ autoMarka.name }}</a></li>
+    <li class="breadcrumb-item">{{ autoModel.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-xl-6">
+             {{ include('app/auto/model/name/index.html.twig') }}
+             {{ include('app/auto/generation/index.html.twig') }}
+             {{ include('app/auto/kit/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+             {{ include('app/auto/model/description/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">
+            Загрузка списка товаров в виде прайса</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.price', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>E-mail: </strong> {{ check_empty(user.price.email) }}</p>
+    <p><strong>E-mail для ответа: </strong> {{ check_empty(user.price.emailSend) }}</p>
+    <p><strong>Наименование файла: </strong> {{ check_empty(user.price.filename) }}</p>
+    <p><strong>Не учитывать первую строчку: </strong> {{ boolean_status(user.price.firstLine) }}</p>
+    <p><strong>Поле начала: </strong> {{ check_empty(user.price.line) }}</p>
+    <p><strong>Поле с номером заказа: </strong> {{ check_empty(user.price.orderNum) }}</p>
+    <p><strong>Поле с номером: </strong> {{ check_empty(user.price.numberNum) }}</p>
+    <p><strong>Поле с производителем: </strong> {{ check_empty(user.price.createrNum) }}</p>
+    <p><strong>Производитель: </strong>
+        {% if (user.priceCreater != null) %}
+            {{ user.priceCreater.name }}
+        {% else %}
+            {{ check_empty('') }}
+        {% endif %}
+    </p>
+    <p><strong>Поле с количеством: </strong> {{ check_empty(user.price.quantityNum) }}</p>
+    <p><strong>Поле с ценой: </strong> {{ check_empty(user.price.priceNum) }}</p>
+    <p><strong>Приоритетный склад отгрузки: </strong>
+        {% if (user.priceSklad != null) %}
+            {{ user.priceSklad.name }}
+        {% else %}
+            {{ check_empty('') }}
+        {% endif %}
+    </p>
+{% endblock %}

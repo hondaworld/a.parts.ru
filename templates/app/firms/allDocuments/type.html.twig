@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Бухгалтерские документы "{{ documentType.name }}"{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/firms/allDocuments/_search_form.html.twig') }}
+
+    {{ form_start(filter) }}
+    {% embed 'tables/table_full.html.twig' %}
+
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('allDocuments.documentType', {'id': documentType.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, '#', 'document_num') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'От кого', 'from_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Кому', 'to_name') }}</th>
+            <th>Сумма</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.document_num) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.from_name) }}</th>
+            <th>{{ form_widget(filter.to_name) }}</th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% if template %}
+                {% for doc in pagination %}
+                    {{ include('app/firms/allDocuments/tables/' ~ template ~ '.html.twig') }}
+                {% endfor %}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% if is_granted('order_good_expense', 'Order') %}
+    {% if not user.isDebt and not expenseDocument.isPick %}
+        <li class="nav-item">
+            <a href="{{ path('order.goods.expense.delete', {'id': expenseDocument.id}) }}"
+               class="nav-link" data-toggle="modal"
+               data-target="#modalConfirm"
+               title="Удалить из отгрузки"
+               onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите удалить из отгрузки выделенные записи?', 1)">
+                <i class="fas fa-pallet text-danger"></i>
+            </a>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <div class="nav-link"><i class="fas fa-pallet text-muted"></i></div>
+        </li>
+    {% endif %}
+{% endif %}
+            {% if is_granted('order_pick', 'Order') and expenses is not empty %}
+                {% if not expenseDocument.isPick %}
+                    <li class="nav-item">
+                        <a href="{{ path('order.goods.picking', {'id': user.id}) }}"
+                           class="nav-link" data-toggle="modal"
+                           data-target="#modalConfirm"
+                           title="Собрать отгрузку"
+                           onclick="confirmModal(this, 'Вы уверены, что хотите собрать отгрузку?')">
+                            <i class="fas fa-clipboard-list"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <div class="nav-link"><i class="fas fa-clipboard-list text-muted"></i></div>
+                    </li>
+                {% endif %}
+                {% if expenseDocument.isPicking %}
+                    <li class="nav-item">
+                        <a href="{{ path('order.goods.picked', {'id': user.id}) }}"
+                           class="nav-link" data-toggle="modal"
+                           data-target="#modalConfirm"
+                           title="Заказ собран"
+                           onclick="confirmModal(this, 'Вы уверены, что заказ собран?')">
+                            <i class="fas fa-clipboard-check text-success"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <div class="nav-link"><i class="fas fa-clipboard-check text-muted"></i></div>
+                    </li>
+                {% endif %}
+                {% if expenseDocument.isPick %}
+                    <li class="nav-item">
+                        <a href="{{ path('order.goods.pickDel', {'id': user.id}) }}"
+                           class="nav-link" data-toggle="modal"
+                           data-target="#modalConfirm"
+                           title="Отменить сборку"
+                           onclick="confirmModal(this, 'Вы уверены, что хотите отменить сборку?')">
+                            <i class="far fa-times-circle text-danger"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <div class="nav-link"><i class="far fa-times-circle text-muted"></i></div>
+                    </li>
+                {% endif %}
+                {% if expenseDocument.isPicking %}
+                    <li class="nav-item">
+                        <a href="{{ path('order.print.shippingLabel', {'id': user.id}) }}"
+                           class="nav-link"
+                           title="Наклейка на сборку" target="_blank">
+                            <i class="fas fa-tag"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('order.print.shippingSizes') }}"
+                           class="nav-link"
+                           title="Размеры" target="_blank">
+                            <i class="fas fa-boxes"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <div class="nav-link"><i class="fas fa-tag text-muted"></i></div>
+                    </li>
+                {% endif %}
+            {% endif %}
+<li class="nav-item">
+    <a href="{{ path('order.print.check', {'id': user.id}) }}"
+       class="nav-link"
+       title="Распечатать чек" target="_blank">
+        <i class="fas fa-receipt"></i>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ path('order.print.check', {'id': user.id, 'isDelivery': 1}) }}"
+       class="nav-link"
+       title="Распечатать чек с доставкой" target="_blank">
+        <i class="fas fa-receipt text-success"></i>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ path('order.print.locations', {'id': user.id}) }}"
+       class="nav-link"
+       title="Адреса хранения" target="_blank">
+        <i class="fas fa-map-marker"></i>
+    </a>
+</li>
+{% if is_granted('order_good_labels', 'Order') %}
+    <li class="nav-item">
+        <a href="{{ path('order.print.labels', {'id': user.id}) }}"
+           class="nav-link">
+            <i class="fas fa-tags" title="Наклейки"></i>
+        </a>
+    </li>
+{% endif %}

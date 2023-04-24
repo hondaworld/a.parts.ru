@@ -1,0 +1,32 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Данные юридического лица'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.isUr) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.organization) }}
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.inn) }}</div>
+        <div class="col-md-6">{{ form_row(form.kpp) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.okpo) }}</div>
+        <div class="col-md-6">{{ form_row(form.ogrn) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.dogovor_num) }}</div>
+        <div class="col-md-6">{{ form_row(form.dogovor_date) }}</div>
+    </div>
+    {{ form_row(form.isNDS) }}
+
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('users.show', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

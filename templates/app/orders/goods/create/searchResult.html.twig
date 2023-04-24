@@ -1,0 +1,58 @@
+<div class="table-responsive">
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr class="table-primary">
+            <th>Бренд</th>
+            <th>Поставщик</th>
+            <th>Цена, руб.</th>
+            <th>Наценка, %</th>
+            <th>Срок</th>
+            <th>Кол.</th>
+            <th>% поставки</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if prices is not empty %}
+            {% for price in prices %}
+                {% if price.zapSkladID|default(null) %}
+                    <tr class="font-weight-bold">
+                        <td>{{ price.createrName }}</td>
+                        {# <td>{{ is_granted('zap_card_show_provider_price_description', 'ZapCard') ? price.postavka : price.postavkaName }}</td> #}
+                        <td>{{ price.postavka ~ ' ' ~ price.postavkaName }}</td>
+                        <td class="text-right">{{ price.price1|number_format(0, '', ' ') }}</td>
+                        <td class="text-center">{{ price.profit }}</td>
+                        <td>{{ price.srok }}</td>
+                        <td class="text-center">{{ price.quantity }}</td>
+                        <td class="text-center"></td>
+                        <td class="text-center">
+                            <button class="btn btn-primary" type="submit" title="Добавить"
+                                    onclick="addNumber({{ price.createrID }}, {{ price.zapSkladID }}, null)">
+                                <i class="fas fa-angle-right"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>{{ price.createrName }}</td>
+                        {# <td>{{ is_granted('zap_card_show_provider_price_description', 'ZapCard') ? price.postavka : price.postavkaName }}</td> #}
+                        <td>{{ price.postavka ~ ' ' ~ price.postavkaName }}</td>
+                        <td class="text-right">{{ price.price1|number_format(0, '', ' ') }}</td>
+                        <td class="text-center">{{ price.profit }}</td>
+                        <td>{{ price.srok }}</td>
+                        <td class="text-center">{{ price.quantity == 0 ? 'заказ' : price.quantity }}</td>
+                        <td class="text-center">{{ price.percentIncome }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-primary" type="submit" title="Добавить"
+                                    onclick="addNumber({{ price.createrID }}, null, {{ price.providerPriceID }})">
+                                <i class="fas fa-angle-right"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+

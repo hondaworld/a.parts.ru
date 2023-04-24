@@ -1,0 +1,11 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'ajaxFormSubmit(event, this)'}, 'action': path('order.goods.delete.action', {'id': orderGood.id}) }) }}
+
+{{ form_row(form.deleteReason) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Удалить</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

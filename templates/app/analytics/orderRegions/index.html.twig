@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регионы заказов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Регионы заказов</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('analytics.orderRegions') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.userID) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            {% if pagination is not null %}
+                <th>{{ knp_pagination_sortable(pagination, 'Регион', 'provider_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Доход', 'income') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Прибыль', 'profit') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Кол. деталей', 'quantity') }}</th>
+                <th>Процент</th>
+            {% else %}
+                <th>Регион</th>
+                <th>Доход</th>
+                <th>Прибыль</th>
+                <th>Кол. деталей</th>
+                <th>Процент</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период и клиента</td>
+                </tr>
+            {% endif %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for item in pagination %}
+                <tr>
+                    <td>{{ item.provider_name }}</td>
+                    <td class="text-right">{{ item.income|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ item.profit|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">
+                        <a
+                                href="#"
+                                class="ajax-modal-html"
+                                data-toggle="modal"
+                                data-target="#modalForm"
+                                data-url="{{ path('analytics.orderRegions.numbers', {
+                                    'id': item.providerID,
+                                    'form': {
+                                        'dateofreport': {
+                                            'date_from': filter.dateofreport.vars.data.date_from,
+                                            'date_till': filter.dateofreport.vars.data.date_till
+                                        },
+                                        'userID': filter.userID.vars.data
+                                    }
+                                }) }}"
+                                data-title="{{ item.provider_name }}"
+                                style="cursor: pointer;"
+                                title="Список деталей"
+                        >
+                            {{ item.quantity }}
+                        </a>
+                    </td>
+                    <td class="text-right">{{ (item.income / sumIncome * 100)|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+{% endblock %}

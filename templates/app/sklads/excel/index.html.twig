@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прайс-листы Excel{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Прайс-листы Excel</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>МСК + СПБ</th>
+            <th>МСК + СПБ</th>
+            <th>МСК</th>
+            <th>МСК</th>
+            <th>СПБ</th>
+            <th>СПБ</th>
+            <th>СПБ2</th>
+            <th>СПБ2</th>
+            <th>Все склады</th>
+            <th>Все склады</th>
+{#            <th>Склейка</th>#}
+{#            <th>Склейка</th>#}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if opts is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for opt in opts %}
+                <tr>
+                    <td>{{ opt.name }}</td>
+                    <td class="text-center">
+                        <a href="{{ path('price.list.excel.excel', {'optID': opt.optID, 'isSimple': 1}) }}"><i class="far fa-file-excel"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_sklad.xls']|default(null) ? fileDir ~ 'price_PartsRu_' ~ (opt.number - 1) ~ '_sklad.xls' : null }}" target="_blank">
+                            {{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_sklad.xls']|default(null) ? files['price_PartsRu_' ~ (opt.number - 1) ~ '_sklad.xls']|date('d.m.Y H:i') : null }}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ path('price.list.excel.excel', {'optID': opt.optID, 'zapSkladID': 1}) }}"><i class="far fa-file-excel"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_1.xls']|default(null) ? fileDir ~ 'price_PartsRu_' ~ (opt.number - 1) ~ '_1.xls' : null }}" target="_blank">
+                            {{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_1.xls']|default(null) ? files['price_PartsRu_' ~ (opt.number - 1) ~ '_1.xls']|date('d.m.Y H:i') : null }}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ path('price.list.excel.excel', {'optID': opt.optID, 'zapSkladID': 5}) }}"><i class="far fa-file-excel"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_5.xls']|default(null) ? fileDir ~ 'price_PartsRu_' ~ (opt.number - 1) ~ '_5.xls' : null }}" target="_blank">
+                            {{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_5.xls']|default(null) ? files['price_PartsRu_' ~ (opt.number - 1) ~ '_5.xls']|date('d.m.Y H:i') : null }}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ path('price.list.excel.excel', {'optID': opt.optID, 'zapSkladID': 6}) }}"><i class="far fa-file-excel"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_6.xls']|default(null) ? fileDir ~ 'price_PartsRu_' ~ (opt.number - 1) ~ '_6.xls' : null }}" target="_blank">
+                            {{ files['price_PartsRu_' ~ (opt.number - 1) ~ '_6.xls']|default(null) ? files['price_PartsRu_' ~ (opt.number - 1) ~ '_6.xls']|date('d.m.Y H:i') : null }}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ path('price.list.excel.excel', {'optID': opt.optID}) }}"><i class="far fa-file-excel"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ files['price_PartsRu_' ~ (opt.number - 1) ~ '.xls']|default(null) ? fileDir ~ 'price_PartsRu_' ~ (opt.number - 1) ~ '.xls' : null }}" target="_blank">
+                            {{ files['price_PartsRu_' ~ (opt.number - 1) ~ '.xls']|default(null) ? files['price_PartsRu_' ~ (opt.number - 1) ~ '.xls']|date('d.m.Y H:i') : null }}
+                        </a>
+                    </td>
+{#                    <td class="text-center">#}
+{#                        <a href="{{ path('price.list.excel.summary', {'optID': opt.optID}) }}"><i class="far fa-file-excel"></i></a>#}
+{#                    </td>#}
+{#                    <td class="text-center">#}
+{#                        <a href="{{ files['PartsRu_summary_' ~ (opt.number - 1) ~ '.xls']|default(null) ? fileDir ~ 'PartsRu_summary_' ~ (opt.number - 1) ~ '.xls' : null }}" target="_blank">#}
+{#                            {{ files['PartsRu_summary_' ~ (opt.number - 1) ~ '.xls']|default(null) ? files['PartsRu_summary_' ~ (opt.number - 1) ~ '.xls']|date('d.m.Y H:i') : null }}#}
+{#                        </a>#}
+{#                    </td>#}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

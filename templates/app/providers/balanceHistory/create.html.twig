@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление баланса поставщика {{ provider.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('providers') }}">Поставщики</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('providers.balance.history', {'providerID': provider.id}) }}">Взаиморасчеты
+            поставщика</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {{ form_row(form.firmID) }}
+            {{ form_row(form.balance) }}
+            {{ form_row(form.balance_nds) }}
+            {{ form_row(form.description) }}
+            <button type="submit" class="btn btn-primary">Добавить</button>
+            <a class="ml-3 btn btn-secondary"
+               href="{{ path('providers.balance.history', {'providerID': provider.id}) }}">Отменить</a>
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

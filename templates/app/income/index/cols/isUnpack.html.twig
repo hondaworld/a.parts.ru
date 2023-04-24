@@ -1,0 +1,4 @@
+{% if 'isUnpack' not in hideCols %}
+    <td class="text-center">{% if income.isUnpack|default(false) %}<i
+                class="fas fa-check text-success"></i>{% endif %}</td>
+{% endif %}

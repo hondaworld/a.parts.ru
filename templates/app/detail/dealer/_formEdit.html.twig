@@ -1,0 +1,15 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <p><strong>Номер: </strong>{{ dealer.number.value }}</p>
+    <p><strong>Производитель: </strong>{{ dealer.creater.name }}</p>
+
+    {{ form_row(form.price) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('dealer.prices', {'page' : app.session.get('page/shopPriceDealer')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base_simple.html.twig' %}
+
+{% block title %}Наклейка на сборку{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block body %}
+
+    <style>
+        td, th {
+            font-size : 24px;
+        }
+    </style>
+
+    <table class="table table-bordered w-auto">
+        <tr>
+            <td valign="top"><strong>Отправитель</strong></td>
+            <td valign="top"><strong>Город</strong></td>
+            <td valign="top"><strong>Телефон</strong></td>
+        </tr>
+        <tr>
+            <td valign="top">{{ arr['firm']['name'] }}</td>
+            <td valign="top">{{ arr['firm']['town'] }}</td>
+            <td valign="top">{{ arr['firm']['phone'] }}</td>
+        </tr>
+        <tr>
+            <td valign="top"><strong>Получатель</strong></td>
+            <td valign="top"><strong>Город</strong></td>
+            <td valign="top"><strong>Телефон</strong></td>
+        </tr>
+        <tr>
+            <td valign="top">{{ arr['user']['name'] }}</td>
+            <td valign="top">{{ arr['user']['town'] }}</td>
+            <td valign="top">{{ arr['user']['phone'] }}</td>
+        </tr>
+        <tr>
+            <td valign="top" colspan="3" align="center">Место __________________ из __________________</td>
+        </tr>
+    </table>
+
+
+{% endblock %}

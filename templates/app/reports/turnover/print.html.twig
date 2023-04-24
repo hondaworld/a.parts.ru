@@ -1,0 +1,25 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Клиент</th>
+            <th>Доход</th>
+            <th>Прибыль</th>
+            <th>Лимит</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for profit in profits %}
+                <tr>
+                    <td>{{ profit.name }}</td>
+                    <td class="text-right">{{ profit.income|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profit.profit|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profit.balanceLimit|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

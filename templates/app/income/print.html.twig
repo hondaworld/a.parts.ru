@@ -1,0 +1,144 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            {% if 'abc' not in hideCols %}
+                <th>ABC</th>
+            {% endif %}
+            {% if 'manager' not in hideCols %}
+                <th>Менеджер</th>
+            {% endif %}
+            {% if 'dateofadded' not in hideCols %}
+                <th>Дата</th>
+            {% endif %}
+            {% if 'creater' not in hideCols %}
+                <th>Бренд</th>
+            {% endif %}
+            {% if 'name' not in hideCols %}
+                <th>Наименование</th>
+            {% endif %}
+            {% if 'number' not in hideCols %}
+                <th>Номер</th>
+            {% endif %}
+            {% if 'location' not in hideCols %}
+                <th>Ячейка</th>
+            {% endif %}
+            {% if 'providerPrice' not in hideCols %}
+                <th>Регион</th>
+            {% endif %}
+            {% if 'country' not in hideCols %}
+                <th>Страна</th>
+            {% endif %}
+            {% if 'gtd' not in hideCols %}
+                <th>ГТД</th>
+            {% endif %}
+            {% if 'order' not in hideCols %}
+                <th>Заказ</th>
+            {% endif %}
+            {% if 'weight' not in hideCols %}
+                <th>Вес</th>
+            {% endif %}
+            {% if 'priceZak' not in hideCols %}
+                <th class="text-center"><i class="fas fa-dollar-sign" title="Закупка, у.е."></i></th>
+            {% endif %}
+            {% if 'priceDost' not in hideCols %}
+                <th class="text-center"><i class="fas fa-truck" title="Доставка, у.е."></i></th>
+            {% endif %}
+            {% if 'price' not in hideCols %}
+                <th class="text-center"><i class="fas fa-ruble-sign" title="Цена, руб."></i></th>
+            {% endif %}
+            {% if 'discountPrice' not in hideCols %}
+                <th class="text-center"><i class="far fa-money-bill-alt" title="Розница, руб."></i></th>
+            {% endif %}
+            {% if 'status' not in hideCols %}
+                <th>Статус</th>
+            {% endif %}
+            {% if 'quantity' not in hideCols %}
+                <th class="text-center"><i class="fas fa-warehouse" title="Склад"></i></th>
+                <th class="text-center"><i class="fas fa-boxes" title="Всего"></i></th>
+                <th class="text-center"><i class="fas fa-pallet" title="В наличии"></i></th>
+                <th class="text-center"><i class="fas fa-shipping-fast" title="В пути"></i></th>
+                <th class="text-center"><i class="fas fa-dolly-flatbed" title="В резерве"></i></th>
+                <th class="text-center"><i class="fas fa-trash" title="Возвращено/Списано"></i></th>
+                <th class="text-center"><i class="fas fa-clipboard-check" title="Заказано"></i></th>
+            {% endif %}
+            {% if 'dateofzakaz' not in hideCols %}
+                <th>Заказано</th>
+            {% endif %}
+            {% if 'dateofin' not in hideCols %}
+                <th>Приход</th>
+            {% endif %}
+            {% if 'dateofinplan' not in hideCols %}
+                <th>План</th>
+            {% endif %}
+            {% if 'incomeID' not in hideCols %}
+                <th>#</th>
+            {% endif %}
+            {% if 'incomeOrder' not in hideCols %}
+                <th>Заказ</th>
+            {% endif %}
+            {% if 'isUnpack' not in hideCols %}
+                <th>Посч.</th>
+            {% endif %}
+            {% if 'incomeDocument' not in hideCols %}
+                <th>ПН</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% for income in pagination %}
+                {% set isDisabled = income.status in [4,5,10,8] ? true : false %}
+                <tr>
+                    {{ include('app/income/index/cols/abc.html.twig') }}
+                    {{ include('app/income/index/cols/manager.html.twig') }}
+                    {{ include('app/income/index/cols/dateofadded.html.twig') }}
+                    {{ include('app/income/index/cols/creater.html.twig') }}
+                    {% if 'name' not in hideCols %}
+                        <td>{{ income.detail_name }}</td>
+                    {% endif %}
+                    {% if 'number' not in hideCols %}
+                        <td>{{ income.number }}</td>
+                    {% endif %}
+                    {{ include('app/income/index/cols/location.html.twig') }}
+                    {{ include('app/income/index/cols/providerPrice.html.twig') }}
+                    {% if 'country' not in hideCols %}
+                        <td>{{ income.country_name|default('') }}</td>
+                    {% endif %}
+                    {% if 'gtd' not in hideCols %}
+                        <td>{{ income.gtd }}</td>
+                    {% endif %}
+                    {{ include('app/income/index/cols/order.html.twig') }}
+                    {{ include('app/income/index/cols/weight.html.twig') }}
+                    {% if 'priceZak' not in hideCols %}
+                        <td class="text-right text-nowrap">{{ income.priceZak|number_format(2, ',', ' ') }}</td>
+                    {% endif %}
+                    {{ include('app/income/index/cols/priceDost.html.twig') }}
+                    {{ include('app/income/index/cols/price.html.twig') }}
+                    {{ include('app/income/index/cols/discountPrice.html.twig') }}
+                    {% if 'status' not in hideCols %}
+                        <td>{{ income.status_name }}</td>
+                    {% endif %}
+                    {{ include('app/income/index/cols/quantity.html.twig') }}
+                    {% if 'dateofzakaz' not in hideCols %}
+                        <td>{{ income.dateofzakaz ? income.dateofzakaz|date('d.m.Y') : '' }}</td>
+                    {% endif %}
+                    {% if 'dateofin' not in hideCols %}
+                        <td>{{ income.dateofin ? income.dateofin|date('d.m.Y') : '' }}</td>
+                    {% endif %}
+                    {% if 'dateofinplan' not in hideCols %}
+                        <td>{{ income.dateofinplan ? income.dateofinplan|date('d.m.Y') : '' }}</td>
+                    {% endif %}
+                    {% if 'incomeID' not in hideCols %}
+                        <td>{{ income.incomeID }}</td>
+                    {% endif %}
+                    {{ include('app/income/index/cols/incomeOrder.html.twig') }}
+                    {{ include('app/income/index/cols/isUnpack.html.twig') }}
+                    {{ include('app/income/index/cols/incomeDocument.html.twig') }}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

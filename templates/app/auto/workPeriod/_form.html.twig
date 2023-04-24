@@ -1,0 +1,29 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.norma) }}
+
+    {% if workPeriod|default(null) %}
+        <div class="d-flex">
+            <div style="width: 40px;">
+                <div class="pb-1">осн</div>
+                {{ form_row(form.groups) }}
+            </div>
+            <div style="width: 40px;">
+                <div class="pb-1">рек</div>
+                {{ form_row(form.groups_rec) }}
+            </div>
+            <div>
+                <div class="pb-1">доп</div>
+                {{ form_row(form.groups_dop) }}
+            </div>
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary"
+       href="{{ path('auto.work.period', {'auto_modificationID': autoModification.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

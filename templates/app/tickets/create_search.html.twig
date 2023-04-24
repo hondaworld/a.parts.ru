@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление тикета{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('client-tickets.tickets', {'page' : app.session.get('page/clientTicket')|default(1)}) }}">Тикеты</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {% embed 'blocks/block_container.html.twig' %}
+
+        {% block header %}
+            {{ include ('blocks/block_header_default.html.twig', {'header': 'Создание тикета для ' ~ user.name}) }}
+        {% endblock %}
+
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {{ form_row(form.groupID) }}
+            {{ form_row(form.user_subject) }}
+            {{ form_row(form.text) }}
+            {{ form_row(form.attach) }}
+
+            <button type="submit" class="btn btn-primary">Добавить</button>
+            <a class="ml-3 btn btn-secondary" href="{{ path('client-tickets.tickets.create') }}">Отменить</a>
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

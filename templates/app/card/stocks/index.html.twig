@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Акции{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ZapCardStock') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.stocks.create') }}" class="nav-link"
+                       title="Добавить акцию"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'ZapCardStock') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.stocks.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные акции?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'ZapCardStock') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.stocks.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить акции?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            {% if is_granted('edit', 'ZapCardStock') or is_granted('delete', 'ZapCardStock') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for stock in pagination %}
+                <tr class="{{ stock.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': stock.stockID} only %}
+                    {% endif %}
+                    <td>{{ stock.name }}</td>
+                    <td>{{ stock.dateofadded|date('d.m.Y') }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('card.stocks.numbers', {'stockID': stock.stockID}) }}"
+                               title="Запчасти по акции">
+                                <i class="fas fa-cogs"></i>
+                            </a>
+                            {% if is_granted('edit', 'ZapCardStock') or is_granted('delete', 'ZapCardStock') %}
+                                {% if is_granted('edit', 'ZapCardStock') %}
+                                    <a href="{{ path('card.stocks.edit', {'id': stock.stockID}) }}"
+                                       title="Изменить акцию">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if (is_granted('delete', 'ZapCardStock')) %}
+                                    <a href="{{ path('card.stocks.delete', {'id': stock.stockID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить акцию?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить акцию">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

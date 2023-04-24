@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение баланса клиента {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users') }}">Клиенты</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.balance.history', {'userID': user.id}) }}">Баланс клиента</a></li>
+    <li class="breadcrumb-item">Изменение</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/users/balanceHistory/_form.html.twig') }}
+{% endblock %}

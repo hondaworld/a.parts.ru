@@ -1,0 +1,84 @@
+{% extends 'base_simple.html.twig' %}
+
+{% block title %}Наклейки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block body %}
+
+    <table style="width: 100%">
+        {% if expenses is null %}
+            <tr>
+                <td colspan="50" class="text-center">Задайте фильтр</td>
+            </tr>
+        {% elseif expenses is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Записей нет</td>
+            </tr>
+        {% endif %}
+        <tr>
+            {% set i = 1 %}
+            {% set inRow = 4 %}
+            {% for expense in expenses %}
+            {% set quantity = goods[expense.goodID]['quantity']|default(0) %}
+            {% if quantity > 0 %}
+            {% for j in (goods[expense.goodID]['isCheck']|default(false) ? 1..quantity : quantity..quantity) %}
+
+            <td valign="top" width=25% align="center">
+                <table cellspacing=0 cellpadding="3" width=189>
+                    <tr>
+                        <td nowrap valign="top" style="font-size: 9px;" width=45
+                            height=14>{{ "now"|date('d.m.Y') }}</td>
+                        <td nowrap valign="top" style="font-size: 9px;" width=99>&nbsp;</td>
+                        <td nowrap valign="top" style="font-size: 10px;" width=45>
+                            <strong>{{ expense.creater_name }}</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td nowrap valign="top" style="font-size: 9px;" rowspan=3><img src="/images/rostest.gif"
+                                                                                       width="39" height="35" alt="">
+                        </td>
+                        <td nowrap valign="top" style="font-size: 12px;" colspan=2 height=16>
+                            <strong>{{ expense.number }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" style="font-size: 8px;" colspan=2 height=40>
+                            <div style="height: 40px; overflow: hidden;">
+                                {% if expense.zapCard and expense.zapCard.detailName %}
+                                    {{ expense.zapCard.detailName }}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top" style="font-size: 12px;" colspan=2 height=16>
+                            <strong>
+                                {% if expense.zapSkladID %}
+                                    {{ expense.skladLocation }}
+                                {% else %}
+                                    {{ expense.orderID }}
+                                {% endif %}
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 9px;" height=14>&nbsp;</td>
+                        <td nowrap valign="top" style="font-size: 9px;">www.parts.ru</td>
+                        <td nowrap valign="top"
+                            style="font-size: 9px;">{{ goods[expense.goodID]['isCheck']|default(false) ? 1 : j }}</td>
+                    </tr>
+                </table>
+            </td>
+            {% if i == inRow %}
+            {% set i = 1 %}
+        </tr>
+        <tr>
+            {% else %}
+                {% set i = i +1 %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+
+{% endblock %}

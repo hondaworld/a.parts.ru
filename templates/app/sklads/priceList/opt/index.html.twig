@@ -1,0 +1,30 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Коэффициенты колонок прайсов</h3>
+        <div class="block-options">
+            {% if is_granted('opt_change', priceList) %}
+                <a type="button" class="btn btn-sm btn-alt-primary"
+                   href="{{ path('price.list.price.lists.opt', {'id': priceList.id}) }}"
+                   title="Изменить"><i class="fas fa-edit"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+        <table class="table table-striped">
+            <tr>
+                <th></th>
+                {% for optID, opt in opts %}
+                    <th>{{ opt }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>{{ priceList.name }}</th>
+                {% for optID, opt in opts %}
+                    <td>{{ profits[optID].profit|default('') }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+{% endblock %}

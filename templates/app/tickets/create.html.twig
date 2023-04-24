@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление тикета{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('client-tickets.tickets', {'page' : app.session.get('page/clientTicket')|default(1)}) }}">Тикеты</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {% embed 'blocks/block_container.html.twig' %}
+
+        {% block header %}
+            {{ include ('blocks/block_header_default.html.twig', {'header': 'Поиск клиента по мобильному телефону'}) }}
+        {% endblock %}
+
+        {% block content %}
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'name': 'formAddOrder', 'action': path('client-tickets.tickets.create.search') }) }}
+
+            <div class="row form-group">
+                <div class="col-auto">{{ form_row(form.phonemob, {'id': 'form_add_order_phonemob'}) }}</div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

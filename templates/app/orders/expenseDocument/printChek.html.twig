@@ -1,0 +1,264 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Товарный чек №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-family: Arial, serif;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .border2 {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .border2-top {
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border2-bottom {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border, .border-bottom {
+            border-color: #000000 !important;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .font-size-9 {
+            font-size: 9px;
+        }
+
+        .font-size-13, .font-size-13 strong {
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.table-goods {
+            border: 2px solid #000000;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+            font-size : 13px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+        h2 {
+            margin: 0;
+            font-weight : bold;
+            font-size : 18px;
+        }
+    </style>
+    <table>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td style="padding: 5px;"><img src="/images/logo_pa.png" width="150" height="32"
+                                                                   alt="" border="0"></td>
+                                    <td style="padding: 5px;"><img src="/images/logo_hw.gif" width="114" height="30"
+                                                                   alt="" border="0"></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="100%" align="right" valign="top">
+                            <strong>+7 (495) 660-3630</strong><br>
+                            <strong>+7 (812) 407-2835</strong>
+
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <hr class="border2-bottom">
+                <hr class="border2-bottom">
+            </td>
+        </tr>
+        <tr>
+            <td><br><br></td>
+        </tr>
+        <tr>
+            <td align="center"><h2>Расходная накладная №{{ document_num }} от {{ document_date|date('d.m.Y') }}</h2>
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <hr class="border2-bottom">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td class="pb-3">Поставщик:&nbsp;</td>
+                        <td class="pb-3" width="100%"><strong>{{ expenseDocumentPrint.from.check }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="pb-3">Покупатель:&nbsp;</td>
+                        <td class="pb-3"><strong>{{ expenseDocumentPrint.to.check }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="pb-3">Адрес:&nbsp;</td>
+                        <td class="pb-3"><strong>{{ expenseDocument.user.mainContact.fullAddress }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <table class="table-goods">
+            <tr>
+                <th width="5%">№</th>
+                <th>Товар</th>
+                <th width="15%">Номер</th>
+                <th width="10%">Производитель</th>
+                <th width="5%">Кол-во</th>
+                <th width="5%">Ед.</th>
+                <th width="10%">Цена</th>
+                {% if sum.isDiscount %}
+                    <th width="5%">Скидка</th>
+                    <th width="10%">Цена со скидкой</th>
+                {% endif %}
+                <th width="10%">Сумма</th>
+            </tr>
+            {% for index, orderGood in orderGoods %}
+                <tr>
+                    <td valign=top align="center">{{ index + 1 }}</td>
+                    <td valign=top>{{ orderGood.detail_name }}</td>
+                    <td valign=top nowrap>{{ orderGood.number }}</td>
+                    <td valign=top nowrap>{{ orderGood.creater_name }}</td>
+                    <td valign=top align="center">{{ orderGood.quantity }}</td>
+                    <td valign=top align="center">шт</td>
+                    <td valign=top align="right"
+                        nowrap>{{ orderGood.price|number_format(2, ',', ' ') }}</td>
+                    {% if sum.isDiscount %}
+                        <td valign=top align="center">{{ orderGood.discount|number_format(0, '', '') }}%</td>
+                        <td valign=top align="right"
+                            nowrap>{{ orderGood.discountPrice|number_format(2, ',', ' ') }}</td>
+                    {% endif %}
+                    <td valign=top align="right" nowrap>{{ orderGood.sum|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <table>
+        <tr>
+            <td>
+                <table cellpadding="3" cellspacing="1" width="100%">
+                    {% if sum.isDiscount %}
+                        <tr>
+                            <td align="right"><strong>Скидка:</strong></td>
+                            <td align="right">
+                                <strong>{{ (sum.sumWithoutDiscount - sum.sum)|number_format(2, ',', ' ') }}</strong>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td width="90%" align="right"><strong>Итого:</strong></td>
+                        <td width="10%" align="right"><strong>{{ sum.sum|number_format(2, ',', ' ') }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        {% if expenseDocument.user.retail %}
+            <tr>
+                <td style="padding-bottom: 10px; font-size: 12px;">
+                    {% if nextDiscountPercent is null %}
+                        Поздравляем, Ваша скидка <strong>{{ expenseDocument.user.discountParts }}%</strong>. Вы достигли
+                        максимального
+                        размера скидки.
+                    {% else %}
+                        Ваша текущая скидка <strong>{{ expenseDocument.user.discountParts }}
+                        %</strong>. Для получения скидки в
+                        <strong>{{ nextDiscountPercent }}%</strong> Вам необходимо приобрести товаров на сумму
+                        <strong>{{ nextDiscountSum|number_format(2, ',', ' ') }} руб</strong>.
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td><font style="font-size: 12px;">
+                    1. Претензии по браку, выявленному в процессе эксплуатации, принимаются только при наличии копии
+                    наряда на выполнение работ по установке запчастей и акте об обнаруженном дефекте.<br>
+                    Стоимость установки и демонтажа бракованной запчасти не возмещается.</font>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    2. Обмен или возврат товара (деталей) принимается в течении 14 дней (ст. 25 Закона о защите прав
+                    потребителей), если указанный товар не был в употреблении, сохранен его товарный вид, упаковка, а
+                    также товарный или кассовый чек.</font>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    3. Претензий к внешнему виду, комплектации и качеству товара не имею.</font>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    4. Детали поставляемые "под заказ" возврату не подлежат.</font>
+            </td>
+        </tr>
+        <tr>
+            <td width="100%"><br>
+                <hr class="border2-bottom">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="3" cellspacing="1" width="100%">
+                    <tr>
+                        <td width="15%"><strong>Отпустил</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td>______________</td>
+                        <td width="35%"></td>
+                        <td width="15%"><strong>Принял</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td>______________</td>
+                        <td width="35%"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td align="center"><sup>подпись</sup></td>
+                        <td></td>
+                        <td></td>
+                        <td align="center"><sup>подпись</sup></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td height="100%" valign="bottom" style="padding: 10px;"><em><font
+                            style="font-size: 12px;">При возникновении вопросов по заказу, его комплектности и качеству
+                        просим сразу при получении связаться с нами любым удобным для Вас способом: звонок, WhatsApp,
+                        Viber на номер +7 (495) 660-3630 или напишите нам на parts@parts.ru</font></em></td>
+        </tr>
+    </table>
+
+{% endblock %}

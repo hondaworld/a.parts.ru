@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление Авито объявления{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('resellers.avito.notices') }}">Авито объявления</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/reseller/avito/notices/_form.html.twig', {'buttonName': 'Добавить'}) }}
+
+    {% if zapCards %}
+        {% embed 'blocks/block_container.html.twig' %}
+            {% block content %}
+                <table class="table table-sm table-striped w-auto">
+                    <thead>
+                    <tr class="table-primary">
+                        <th>Производитель</th>
+                        <th>Номер</th>
+                        <th>Операции</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for zapCard in zapCards %}
+                        <tr>
+                            <td>{{ zapCard.creater.name }}</td>
+                            <td>{{ zapCard.number.value }}</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-primary" onclick="go({{ zapCard.id }})"><i
+                                                class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <script>
+                    function go(id) {
+                        document.getElementById('form_zapCardID').value = id;
+                        document.forms['form'].submit();
+                    }
+                </script>
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+{% endblock %}

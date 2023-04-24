@@ -1,0 +1,452 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Корректировочный счет фактура №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-size: 10px;
+            font-family: Arial, serif;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .border2 {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .border2-top {
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border2-bottom {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border, .border-bottom, .border-top {
+            border-color: #000000 !important;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .font-size-9 {
+            font-size: 9px;
+        }
+
+        .font-size-13, .font-size-13 strong {
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+    <table>
+        <tr>
+            <td colspan="13" class="text-right font-size-9">"Приложение N 2<br>к постановлению Правительства РФ от
+                26.12.2011 N 1137<br>(в редакции постановления Правительства РФ от 24.10.2013 N 952)"<br>(в ред.
+                Постановления Правительства РФ от 02.04.2021 № 534)
+            </td>
+        </tr>
+        <tr>
+            <td width="20%" nowrap><h2>КОРРЕКТИРОВОЧНЫЙ СЧЕТ-ФАКТУРА </h2></td>
+            <td width="80%" colspan="11" class="border-bottom" width="80%"><h2>
+                    №{{ document_num }} от {{ document_date|date("d.m.Y") }}</h2></td>
+            <td nowrap valign="bottom">(1)</td>
+
+        </tr>
+        <tr>
+            <td nowrap><strong>ИСПРАВЛЕНИЕ КОРРЕКТИРОВОЧНОГО СЧЕТА-ФАКТУРЫ </strong></td>
+            <td colspan="11" style="">№________________ от ______________________</td>
+            <td valign="bottom" nowrap>(1а)</td>
+        </tr>
+        {% for index, schetFak in schetFakKor.schetFaks %}
+            <tr>
+                <td>{% if index == 0 %}<strong>к СЧЕТУ-ФАКТУРЕ (СЧЕТАМ-ФАКТУРАМ) </strong>{% endif %}</td>
+                <td colspan="11" style="">№{{ schetFak.document.documentNum }}
+                    от {{ schetFak.dateofadded|date("d.m.Y") }}{% if index == schetFakKor.schetFaks|length - 1 %}, с учетом исправления №________________ от ______________________{% endif %}</td>
+                {% if index == schetFakKor.schetFaks|length - 1 %}
+                    <td nowrap>(1б)</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+        <tr>
+            <td>Продавец</td>
+            <td colspan="11" class="border-bottom">
+                <strong>{{ schetFakPrint.from.name }}</strong></td>
+            <td nowrap>(2)</td>
+        </tr>
+        <tr>
+            <td>Адрес</td>
+            <td colspan="11" class="border-bottom">{{ schetFakPrint.from.address }}</td>
+            <td nowrap>(2а)</td>
+        </tr>
+        <tr>
+            <td>ИНН / КПП продавца</td>
+            <td colspan="11"
+                class="border-bottom">{{ 'ИНН ' ~ schetFakPrint.from.inn ~ ' КПП ' ~ schetFakPrint.from.kpp }}</td>
+            <td nowrap>(2б)</td>
+        </tr>
+        <tr>
+            <td>Покупатель</td>
+            <td colspan="11" class="border-bottom"><strong>{{ schetFakPrint.toCash.cashName }}</strong></td>
+            <td nowrap>(3)</td>
+        </tr>
+        <tr>
+            <td>Адрес</td>
+            <td colspan="11" class="border-bottom">{{ schetFakPrint.toCash.addressCash }}</td>
+            <td nowrap>(3а)</td>
+        </tr>
+        <tr>
+            <td>ИНН / КПП покупателя</td>
+            <td colspan="11" class="border-bottom">
+                {{ schetFakPrint.toCash.innCash ? 'ИНН ' ~ schetFakPrint.toCash.innCash : '' }}
+                {{ schetFakPrint.toCash.kppCash ? ' / КПП ' ~ schetFakPrint.toCash.kppCash : '' }}
+            </td>
+            <td nowrap>(3б)</td>
+        </tr>
+        <tr>
+            <td>Валюта: наименование, код</td>
+            <td colspan="11" class="border-bottom">643, Российский рубль</td>
+            <td nowrap>(4)</td>
+        </tr>
+        <tr>
+            <td>Идентификатор государственного контракта, договора (соглашения) (при наличии)</td>
+            <td colspan="11" class="border-bottom">-</td>
+            <td nowrap>(5)</td>
+        </tr>
+        <tr>
+            <td colspan="13"><br><br></td>
+        </tr>
+    </table>
+    <table class="table-goods">
+        <tr>
+            <th rowspan="2" width="25%">Наименование товара (описание выполненных работ, оказанных услуг),
+                имущественного
+                права
+            </th>
+            <th rowspan="2" width="20%">Показатели в связи с изменением стоимости отгруженных товаров (выполненных
+                работ,
+                оказанных услуг), переданных имущественных прав
+            </th>
+            <th colspan="2" width="8%">Единица измерения</th>
+            <th rowspan="2" width="5%">Количество<br>(объем)</th>
+            <th rowspan="2" width="8%">Цена (тариф) за единицу измерения</th>
+            <th rowspan="2" width="8%">Стоимость товаров (работ, услуг), имущественных прав, без налога - всего</th>
+            <th rowspan="2" width="5%">В том числе сумма акциза</th>
+            <th rowspan="2" width="5%">Налого-<br>вая ставка</th>
+            <th rowspan="2" width="8%">Сумма налога</th>
+            <th rowspan="2" width="8%">Стоимость товаров (работ, услуг), имущественных прав, с налогом - всего</th>
+            <th colspan="2">Страна происхождения товара</th>
+            <th rowspan="2">Регистрационный номер декларации на товары или регистрационный номер партии товара,
+                подлежащего
+                прослеживаемости
+            </th>
+            <th colspan="2">Количественная единица измерения товара, используемая в целях осуществления прослеживаемости
+            </th>
+            <th rowspan="2">Количество товара, подлежащего прослеживаемости, в количественной единице измерения товара,
+                используемой в целях осуществления прослеживаемости
+            </th>
+        </tr>
+        <tr>
+            <th>Код</th>
+            <th>Условное<br>обозначение<br>(национальное)</th>
+            <th>цифровой код</th>
+            <th>краткое наименование</th>
+            <th>код</th>
+            <th>условное обозначение</th>
+        </tr>
+        <tr>
+            <th>1</th>
+            <th>1a</th>
+            <th>2</th>
+            <th>2а</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+            <th>9</th>
+            <th>10</th>
+            <th>10a</th>
+            <th>11</th>
+            <th>12</th>
+            <th>12a</th>
+            <th>13</th>
+        </tr>
+
+
+        {% for index, good in goods %}
+            <tr>
+                <td
+                        rowspan="12">{{ good.detailName }} ({{ good.number }})
+                </td>
+                <td rowspan="3">А (до изменения)</td>
+                <td rowspan="3" class="text-center">{{ good.okei }}</td>
+                <td rowspan="3" class="text-center">{{ good.ed_izm }}</td>
+                <td rowspan="3" class="text-center">{{ good.quantityBefore }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.priceWithoutNds|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.sumWithoutNdsBefore|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-center">без акциза</td>
+                <td rowspan="3"
+                    class="text-center">{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') ~ '%' }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.ndsSumBefore|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.sumBefore|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3">{{ good.country_code }}</td>
+                <td rowspan="3">{{ good.country_name }}</td>
+                <td><br></td>
+                <td><br></td>
+                <td><br></td>
+                <td class="text-center">{{ good.quantityBefore }}</td>
+            </tr>
+            <tr>
+                <td><?= $gtd ?></td>
+                <td class="text-center">{{ good.okei }}</td>
+                <td class="text-center">{{ good.ed_izm }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><br></td>
+                <td><br></td>
+                <td><br></td>
+                <td><br></td>
+            </tr>
+            <tr>
+                <td rowspan="3">Б (после изменения)</td>
+                <td rowspan="3" class="text-center">{{ good.okei }}</td>
+                <td rowspan="3" class="text-center">{{ good.ed_izm }}</td>
+                <td rowspan="3" class="text-center">{{ good.quantityAfter }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.priceWithoutNds|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.sumWithoutNdsAfter|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-center">без акциза</td>
+                <td rowspan="3"
+                    class="text-center">{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') ~ '%' }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.ndsSumAfter|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-right" nowrap>{{ good.sumAfter|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3">{{ good.country_code }}</td>
+                <td rowspan="3">{{ good.country_name }}</td>
+                <td><br></td>
+                <td><br></td>
+                <td><br></td>
+                <td class="text-center">{{ good.quantityAfter }}</td>
+            </tr>
+            <tr>
+                <td><?= $gtd ?></td>
+                <td class="text-center">{{ good.okei }}</td>
+                <td class="text-center">{{ good.ed_izm }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><br></td>
+                <td><br></td>
+                <td><br></td>
+                <td><br></td>
+            </tr>
+            <tr>
+                <td rowspan="3">В (увеличение)</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-right" nowrap></td>
+                <td rowspan="3" class="text-center">&nbsp;</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-right" nowrap></td>
+                <td rowspan="3" class="text-right" nowrap>&nbsp;</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td rowspan="3">Г (уменьшение)</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-right"
+                    nowrap>{{ (good.sumWithoutNdsBefore - good.sumWithoutNdsAfter)|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-center">-</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-right"
+                    nowrap>{{ (good.ndsSumBefore - good.ndsSumAfter)|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-right"
+                    nowrap>{{ (good.sumBefore - good.sumAfter)|number_format(2, ',', ' ') }}</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td rowspan="3" class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td class="text-center">X</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="6">Всего увеличение (сумма строк В)</td>
+            <td valign=top align="right" nowrap>&nbsp;</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="right" nowrap>&nbsp;</td>
+            <td valign=top align="right" nowrap>&nbsp;</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center"></td>
+        </tr>
+        <tr>
+            <td colspan="6">Всего уменьшение (сумма строк Г)</td>
+            <td valign=top align="right" nowrap>
+                <strong>{{ (sum.sumWithoutNdsBefore - sum.sumWithoutNdsAfter)|number_format(2, ',', ' ') }}</strong>
+            </td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="right" nowrap>
+                <strong><strong>{{ (sum.ndsSumBefore - sum.ndsSumAfter)|number_format(2, ',', ' ') }}</strong></td>
+            <td valign=top align="right" nowrap>
+                <strong>{{ (sum.sumBefore - sum.sumAfter)|number_format(2, ',', ' ') }}</strong></td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">X</td>
+            <td valign=top align="center">{{ sum.quantity }}</td>
+        </tr>
+    </table>
+    </td>
+    </tr>
+    <tr>
+        <td colspan="3"><br><br><br></td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <table cellpadding="3" cellspacing="0" width="100%">
+                <tr>
+                    <td valign="top" width="50%">
+                        <table cellpadding="0" cellspacing="2" width="100%">
+                            <tr>
+                                <td width="45%" nowrap>Руководитель организации</td>
+                                <td style="border-bottom: 1px solid #000000;" width="30%">&nbsp;</td>
+                                <td style="border-bottom: 1px solid #000000;" width="25%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>или иное уполномоченное лицо</td>
+                                <td align="center" valign="top">(подпись)</td>
+                                <td align="center" valign="top">(ф.и.о.)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><br></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td valign="top" width="50%">
+                        <table cellpadding="0" cellspacing="2" width="100%">
+                            <tr>
+                                <td width="45%" nowrap>Главный бухгалтер</td>
+                                <td style="border-bottom: 1px solid #000000;" width="30%">&nbsp;</td>
+                                <td style="border-bottom: 1px solid #000000;" width="25%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>или иное уполномоченное лицо</td>
+                                <td align="center" valign="top">(подпись)</td>
+                                <td align="center" valign="top">(ф.и.о.)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><br></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign="top" width="50%">
+                        <table cellpadding="0" cellspacing="2" width="100%">
+                            <tr>
+                                <td width="45%" nowrap>Индивидуальный предприниматель</td>
+                                <td style="border-bottom: 1px solid #000000;" width="30%">&nbsp;</td>
+                                <td style="border-bottom: 1px solid #000000;" width="25%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td align="center" valign="top">(подпись)</td>
+                                <td align="center" valign="top">(ф.и.о.)</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td valign="top" width="50%">
+                        <table cellpadding="0" cellspacing="2" width="100%">
+                            <tr>
+                                <td style="border-bottom: 1px solid #000000;" colspan="3">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top" colspan="3">(реквизиты свидетельства о государственной
+                                    регистрации индивидуального предпринимателя)
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </table>
+
+{% endblock %}

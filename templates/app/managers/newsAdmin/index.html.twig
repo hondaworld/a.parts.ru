@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Новости{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+
+    {% embed 'tables/table_pagination.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'NewsAdmin') %}
+                <li class="nav-item">
+                    <a href="{{ path('news-admin.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                             title="Добавить новость"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'NewsAdmin') %}
+                <li class="nav-item">
+                    <a href="{{ path('news-admin.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные новости?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'NewsAdmin') %}
+                <li class="nav-item">
+                    <a href="{{ path('news-admin.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные новости?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>Тип</th>
+            {% if is_granted('edit', 'NewsAdmin') or is_granted('delete', 'NewsAdmin') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for news in pagination %}
+                <tr class="{{ news.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': news.newsID} only %}
+                    {% endif %}
+                    <td>{{ news.name }}</td>
+                    <td>{{ news.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ news.type == 1 ? 'Объявление' : 'Новость' }}</td>
+                    {% if is_granted('edit', 'NewsAdmin') or is_granted('delete', 'NewsAdmin') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'NewsAdmin') %}
+                                    <a href="{{ path('news-admin.edit', {'id': news.newsID}) }}"
+                                       title="Изменить новость">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'NewsAdmin') %}
+                                    <a href="{{ path('news-admin.delete', {'id': news.newsID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить новость?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить новость">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

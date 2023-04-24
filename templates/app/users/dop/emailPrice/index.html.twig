@@ -1,0 +1,25 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Рассылка прайс-листов</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.emailPrice', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>E-mail для рассылки: </strong>{{ check_empty(user.emailPrice.value) }}</p>
+    <p>
+        <strong>Количество со складов: </strong>
+        {{ constant('App\\Model\\User\\Entity\\User\\User::EMAIL_SEND_SKLADS')[user.emailPrice.zapSkladID] }}
+    </p>
+    <p>
+        <strong>Рассылать прайс по e-mail: </strong>{{ boolean_status(user.emailPrice.price) }}
+        <div class="text-muted font-italic">Рассылка прайс-листов для ОПТ4 и ОПТ5. Прайс-листы формируются в xls формате 2 раза в день (8-40, 17-40 часов). Если в "Количество со складов" указан конкретный склад, отсылается прайс-лист этого склада, иначе - со всех складов. Если указан "Новый прайс", отсылает он вместо обычного.</div>
+    </p>
+    <p>
+        <strong>Рассылать склейку прайсов по e-mail: </strong>{{ boolean_status(user.emailPrice.priceSummary) }}
+    <div class="text-muted font-italic">Рассылка прайс-листов склейки для ОПТ4 и ОПТ5. Прайс-листы формируются в csv формате 1 раз в день (10 часов).</div>
+    </p>
+{% endblock %}

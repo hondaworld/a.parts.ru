@@ -1,0 +1,23 @@
+<table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th>Дата изменения</th>
+        <th>Статус</th>
+        <th>Менеджер</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if all is empty %}
+        <tr>
+            <td colspan="50" class="text-center">Записей нет</td>
+        </tr>
+    {% endif %}
+    {% for history in all %}
+        <tr>
+            <td>{{ history.dateofadded|date('d.m.Y H:i') }}</td>
+            <td>{{ history.status_name }}</td>
+            <td>{{ history.manager }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

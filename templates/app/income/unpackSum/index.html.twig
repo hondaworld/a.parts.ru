@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Проверка суммы накладной поставщика {{ provider.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('income', {'page' : app.session.get('page/income')|default(1)}) }}">Приходы</a></li>
+    <li class="breadcrumb-item">Проверка суммы поставщика {{ provider.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/income/unpackSum/_form.html.twig') }}
+{% endblock %}

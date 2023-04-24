@@ -1,0 +1,15 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Задолженность</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.debt', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Максимальная задолженность: </strong>{{ user.balanceLimit }} руб.</p>
+    <p><strong>Максимальное количество дней: </strong>{{ user.debt.debtsDays }}</p>
+    <p><strong>Количество дней по договору: </strong>{{ user.debt.debtInDays }}</p>
+{% endblock %}

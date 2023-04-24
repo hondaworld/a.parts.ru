@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение шаблона {{ clientTicketTemplate.name }}{% endblock %}
+{% block header %}{{ clientTicketTemplate.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('client-tickets.templates') }}">Шаблоны</a></li>
+    <li class="breadcrumb-item">{{ clientTicketTemplate.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/tickets/clientTicketTemplates/_form.html.twig') }}
+
+{% endblock %}

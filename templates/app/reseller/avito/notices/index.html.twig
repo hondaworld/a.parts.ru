@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Авито объявления{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'AvitoNotice') %}
+                <li class="nav-item">
+                    <a href="{{ path('resellers.avito.notices.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                      title="Добавить объявление"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('resellers.avito.notices', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>AvitoId</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Бренд', 'brand') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'oem') }}</th>
+            <th>Заголовок</th>
+            <th>Цена</th>
+            <th>Тип</th>
+            <th>Авто</th>
+            {% if is_granted('edit', 'AvitoNotice') or is_granted('delete', 'AvitoNotice') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th></th>
+            <th>{{ form_widget(filter.brand) }}</th>
+            <th>{{ form_widget(filter.oem) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            {% if is_granted('edit', 'AvitoNotice') or is_granted('delete', 'AvitoNotice') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for notice in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': notice.id} only %}
+                    {% endif %}
+                    <td>{{ notice.avito_id }}</td>
+                    <td>{{ notice.brand }}</td>
+                    <td><a href="{{ path('card.parts.show', {'id': notice.zapCardID}) }}" title="В карточку детали" target="_blank">{{ notice.oem }}</a></td>
+                    <td>{{ notice.title }}</td>
+                    <td class="text-right"><a href="{{ path('card.parts.prices', {'id': notice.zapCardID}) }}" title="В карточку детали - в цены" target="_blank">{{ notice.price|number_format(0, '', ' ') }}</a></td>
+                    <td>{{ types[notice.type_id]|default('') }}</td>
+                    <td>{{ notice.auto }}</td>
+                    {% if is_granted('edit', 'AvitoNotice') or is_granted('delete', 'AvitoNotice') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'AvitoNotice') %}
+                                    <a href="{{ path('resellers.avito.notices.edit', {'id': notice.id}) }}"
+                                       title="Изменить объявление">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'AvitoNotice') %}
+                                    <a href="{{ path('resellers.avito.notices.delete', {'id': notice.id}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить объявление?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить объявление">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

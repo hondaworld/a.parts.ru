@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение реквизита клиента {{ user.name }}{% endblock %}
+{% block header %}Изменение реквизита клиента {{ user.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users') }}">Сотрудники</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.beznals', {'userID': user.id}) }}">Реквизиты</a></li>
+    <li class="breadcrumb-item">Изменение</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/users/_tabs.html.twig') %}
+
+    {{ include('app/beznals/users/_form.html.twig') }}
+{% endblock %}

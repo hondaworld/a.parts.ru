@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ТО {{ workPeriod.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('parts.price.to') }}">Модели автомобилей</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('parts.price.to.model', {'id' : workPeriod.autoModification.autoGeneration.model.id}) }}">{{ workPeriod.autoModification.autoGeneration.model.marka.name ~ ' ' ~ workPeriod.autoModification.autoGeneration.model.name }}</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('parts.price.to.modification', {'id' : workPeriod.autoModification.id}) }}">{{ workPeriod.autoModification.nameWithGeneration }}</a>
+    </li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, {'name': 'work', 'attr': {'novalidate': 'novalidate', 'onsubmit': 'kitOrderAdd(this, event)'}}) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% block header_form %}{% endblock %}
+
+        {% block table_header %}
+            <th class="text-center" style="width: 50px;">
+                <div class="custom-control custom-checkbox d-inline-block">
+                    <input type="checkbox" class="custom-control-input" id="check-all" name="check-all">
+                    <label class="custom-control-label" for="check-all"></label>
+                </div>
+            </th>
+            <th>Наименование</th>
+            <th>Бренд</th>
+            <th>Номер</th>
+            <th>Поставщик</th>
+            <th>Срок</th>
+            <th>Цена</th>
+        {% endblock %}
+
+        {% block table_filter %}
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>
+                <select id="form_zapSkladID" name="zapSkladID"
+                        class="custom-select custom-select-sm form-control-alt ml-1 form-control">
+                    <option value="">Склад</option>
+                    {% for id, sklad in sklads %}
+                        <option value="{{ id }}">{{ sklad }}</option>
+                    {% endfor %}
+                </select>
+            </th>
+            <th><input class="btn btn-primary btn-sm" onclick="skladChange()" type="button" value="Пересчитать"></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            <tr>
+                <td colspan="50" class="table-primary">Основные работы</td>
+            </tr>
+            {% for group in groups.main %}
+                <tr>
+                    <td colspan="50" class="table-secondary">{{ group.name }}</td>
+                </tr>
+                {% for item in group.parts %}
+                    {% if item.parts|length > 0 %}
+                        {{ include('app/detail/kits/kit/index.html.twig', {'workGroupID': group.id, 'group': item}) }}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            <tr>
+                <td colspan="50" class="table-primary">Рекомендуемые работы</td>
+            </tr>
+            {% for group in groups.rec %}
+                <tr>
+                    <td colspan="50" class="table-secondary">{{ group.name }}</td>
+                </tr>
+                {% for item in group.parts %}
+                    {% if item.parts|length > 0 %}
+                        {{ include('app/detail/kits/kit/index.html.twig', {'workGroupID': group.id, 'group': item, 'isNotChecked': true}) }}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+            <tr>
+                <td colspan="50" class="table-primary">Дополнительные работы</td>
+            </tr>
+            {% for group in groups.dop %}
+                <tr>
+                    <td colspan="50" class="table-secondary">{{ group.name }}</td>
+                </tr>
+                {% for item in group.parts %}
+                    {% if item.parts|length > 0 %}
+                        {{ include('app/detail/kits/kit/index.html.twig', {'workGroupID': group.id, 'group': item, 'isNotChecked': true}) }}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}
+            <div class="text-right font-weight-bold">
+                Итого: <span class="text-danger"><span id="workSum"></span> р.</span>
+            </div>
+        {% endblock %}
+    {% endembed %}
+
+
+    {% embed 'blocks/block_container_full.html.twig' %}
+        {% block content %}
+
+            <div>
+                <div>
+                    {{ form_row(form.user) }}
+                </div>
+                <div>
+                    <input type="submit" class="btn btn-primary" value="Оформить заказ">
+                </div>
+            </div>
+
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(form) }}
+
+    {{ include('app/detail/kits/kit/script.html.twig') }}
+
+{% endblock %}

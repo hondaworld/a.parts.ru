@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Товары в обороте{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Товары в обороте</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('reports.incomeGoods') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.sklad) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(profits, 'Поставщик', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(profits, 'Сумма', 'sum') }}</th>
+            {% for status, statusName in statuses %}
+                <th>{{ statusName }}</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for provider in profits %}
+                <tr{{ provider.isIncomeOrder ? ' class="text-success"' : null }}>
+                    <td>{{ provider.name }}</td>
+                    <td class="text-right">{{ provider.sum|number_format(2, ',', ' ') }}</td>
+                    {% for status, statusName in statuses %}
+                        <td class="text-right">
+                            <a target="_blank" href="{{ path('income', {
+                                'form': {
+                                    'providerPriceID': profitsStatuses[provider.providerID]['providerPrices'],
+                                    'status': status,
+                                    'orderID': (filter_sklad == 'zakaz' ? 'Заказ' : (filter_sklad == 'sklad' ? 'Склад' : ''))
+                                }
+                            }) }}">{{ profitsStatuses[provider.providerID]['statuses'][status]|default(null) is not null ? profitsStatuses[provider.providerID]['statuses'][status]|number_format(2, ',', ' ') : '' }}</a>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block table_footer %}
+            <th></th>
+            <th class="text-right">{{ sum|number_format(2, ',', ' ') }}</th>
+            {% for status, statusName in statuses %}
+                <th class="text-right">{{ sumStatuses[status]|default(0)|number_format(2, ',', ' ') }}</th>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <script>
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.incomeGoods.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.incomeGoods.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+
+{% endblock %}

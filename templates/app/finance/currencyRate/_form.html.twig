@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.rate) }}
+    {{ form_row(form.dateofadded) }}
+    {{ form_row(form.numbers) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('currency.rates', {'currencyID': currency.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регионы страны {{ country.name }}{% endblock %}
+{% block header %}Регионы страны {{ country.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('countries') }}">Страны</a></li>
+    <li class="breadcrumb-item">Регионы</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_pagination.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('townRegions.create', {'countryID': country.id}) }}" class="nav-link"
+                   title="Добавить регион"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('townRegions.hide', {'countryID': country.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные регионы?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('townRegions.unHide', {'countryID': country.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные регионы?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Дней от Москвы</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for region in pagination %}
+                <tr class="{{ region.isHide ? ' text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': region.regionID} only %}
+                    {% endif %}
+                    <td>{{ region.name }}</td>
+                    <td>{{ region.daysFromMoscow }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('towns', {'countryID': region.countryID, 'form': {'regionID': region.regionID}}) }}"
+                               title="Города">
+                                <i class="fas fa-building"></i>
+                            </a>
+                            <a href="{{ path('townRegions.edit', {'countryID': country.id, 'id': region.regionID}) }}"
+                               title="Изменить регион">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('townRegions.delete', {'countryID': country.id, 'id': region.regionID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить регион?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить регион">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

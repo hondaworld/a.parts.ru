@@ -1,0 +1,19 @@
+{% if ticket.auto %}
+    <p>
+        <strong>Модель: </strong>
+        {% if is_granted('edit', 'Auto') %}
+            <a href="{{ path('userAuto.edit', {'id': ticket.auto.id}) }}">{{ ticket.auto.model.marka.name ~ ' ' ~ ticket.auto.model.name }}</a>
+        {% else %}
+            {{ ticket.auto.model.marka.name ~ ' ' ~ ticket.auto.model.name }}
+        {% endif %}
+    </p>
+    <p>
+        <strong>VIN:</strong> {{ ticket.auto.vin.value }}
+    </p>
+    <p>
+        <strong>Регистрационный номер:</strong> {{ ticket.auto.number.value }}
+    </p>
+    <p>
+        <strong>Год выпуска:</strong> {{ ticket.auto.year }}
+    </p>
+{% endif %}

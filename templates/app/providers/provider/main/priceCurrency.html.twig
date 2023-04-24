@@ -1,0 +1,21 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение коэффициентов прайс-листов'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="row">
+        <div class="col-md-4">{{ form_row(form.currencyID) }}</div>
+        <div class="col-md-4">{{ form_row(form.koef) }}</div>
+        <div class="col-md-4">{{ form_row(form.currencyOwn) }}</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.show', {'id': provider.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

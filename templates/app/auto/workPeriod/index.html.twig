@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ТО модификации {{ autoModification.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.model', {'auto_markaID': autoModification.autoGeneration.model.marka.id}) }}">{{ autoModification.autoGeneration.model.marka.name }}</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.model.show', {'auto_markaID': autoModification.autoGeneration.model.marka.id, 'id': autoModification.autoGeneration.model.id}) }}">{{ autoModification.autoGeneration.model.name }}</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.generation.show', {'auto_modelID': autoModification.autoGeneration.model.id, 'id': autoModification.autoGeneration.id}) }}">{{ autoModification.autoGeneration.name }}</a>
+    </li>
+    <li class="breadcrumb-item">ТО</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('auto.work.period.create', {'auto_modificationID': autoModification.id}) }}"
+                   class="nav-link" title="Добавить ТО"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.work.period.copy', {'auto_modificationID': autoModification.id}) }}"
+                   class="nav-link" title="Копировать ТО"><i
+                            class="fas fa-copy"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.work.period.hide', {'auto_modificationID': autoModification.id}) }}"
+                   class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные ТО?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.work.period.unHide', {'auto_modificationID': autoModification.id}) }}"
+                   class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить ТО?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Нормо-час</th>
+            <th>Сортировка</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if periods is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for period in periods %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ period.workPeriodID : '') }}
+                        class="{{ period.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': period.workPeriodID} only %}
+                    {% endif %}
+                    <td>{{ period.name }}</td>
+                    <td class="text-right">{{ period.norma|number_format(2, ',', ' ') }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('auto.work.period.sort', {'id': period.workPeriodID}) }}"
+                        data-direction="asc">{{ period.number }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('auto.work.period.edit', {'auto_modificationID': autoModification.id, 'id': period.workPeriodID}) }}"
+                               title="Изменить ТО">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('auto.work.period.delete', {'auto_modificationID': autoModification.id, 'id': period.workPeriodID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить ТО?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить ТО">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

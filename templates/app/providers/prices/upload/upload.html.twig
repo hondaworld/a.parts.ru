@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Загрузка прайс-листа{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('providers.prices.upload') }}">Загрузка прайс-листов</a></li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/providers/prices/upload/_form.html.twig') }}
+
+{% endblock %}

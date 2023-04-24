@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Дебеторская задолженность{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Дебеторская задолженность</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(profits, 'Клиент', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(profits, 'Задолженность', 'balance') }}</th>
+            <th>{{ knp_pagination_sortable(profits, 'Дата образования задолженности', 'debts_date') }}</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for profit in profits %}
+                <tr>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': profit.userID}) }}">{{ profit.name }}</a>
+                        {% else %}
+                            {{ profit.name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ profit.balance|number_format(2, ',', ' ') }}</td>
+                    <td>{{ profit.debts_date|date('d.m.Y') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    <script>
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.receivables.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.receivables.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+{% endblock %}

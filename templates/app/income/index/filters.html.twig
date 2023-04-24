@@ -1,0 +1,89 @@
+{% if 'abc' not in hideCols %}
+    <th>{{ form_widget(filter.abc) }}</th>
+{% endif %}
+{% if 'manager' not in hideCols %}
+    <th>{{ form_widget(filter.managerID) }}</th>
+{% endif %}
+{% if 'dateofadded' not in hideCols %}
+    <th>{{ form_widget(filter.dateofadded) }}</th>
+{% endif %}
+{% if 'creater' not in hideCols %}
+    <th>{{ form_widget(filter.createrID) }}</th>
+{% endif %}
+{% if 'name' not in hideCols %}
+    <th></th>{% endif %}
+{% if 'number' not in hideCols %}
+    <th>{{ form_widget(filter.number) }}</th>
+{% endif %}
+{% if 'location' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'providerPrice' not in hideCols %}
+    <th
+            data-toggle="modal"
+            data-target="#modalProviderPriceFilter"
+            style="cursor: pointer;"
+            class="{{ filter.providerPriceID.vars.data ? 'text-success' : 'text-dark' }}"
+    >{{ filter.providerPriceID.vars.data ? 'Фильтр задан' : 'Задать фильтр' }}
+    </th>
+{% endif %}
+{% if 'country' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'gtd' not in hideCols %}
+    <th>{{ form_widget(filter.gtd) }}</th>
+{% endif %}
+{% if 'order' not in hideCols %}
+    <th>{{ form_widget(filter.orderID) }}</th>
+{% endif %}
+{% if 'weight' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'priceZak' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'priceDost' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'price' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'discountPrice' not in hideCols %}
+    <th></th>
+{% endif %}
+{% if 'status' not in hideCols %}
+    <th>{{ form_widget(filter.status) }}</th>
+{% endif %}
+{% if 'quantity' not in hideCols %}
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+{% endif %}
+{% if 'dateofzakaz' not in hideCols %}
+    <th>{{ form_widget(filter.dateofzakaz) }}</th>
+{% endif %}
+{% if 'dateofin' not in hideCols %}
+    <th>{{ form_widget(filter.dateofin) }}</th>
+{% endif %}
+{% if 'dateofinplan' not in hideCols %}
+    <th>{{ form_widget(filter.dateofinplan) }}</th>
+{% endif %}
+{% if 'incomeID' not in hideCols %}
+    <th>{{ form_widget(filter.incomeID) }}</th>
+{% endif %}
+{% if 'incomeOrder' not in hideCols %}
+    <th>{{ form_widget(filter.incomeOrder) }}</th>
+{% endif %}
+{% if 'isUnpack' not in hideCols %}
+    <th>{{ form_widget(filter.isUnpack) }}</th>
+{% endif %}
+{% if 'incomeDocument' not in hideCols %}
+    <th>{{ form_widget(filter.incomeDocument) }}</th>
+{% endif %}
+{% if is_granted('delete', 'Income') %}
+    <th></th>
+{% endif %}

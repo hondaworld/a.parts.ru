@@ -1,0 +1,78 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Места</h3>
+    </div>
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('edit', 'Shipping') %}
+                <li class="nav-item">
+                    <a href="{{ path('shippings.places.create', {'id': shipping.id}) }}"
+                       class="nav-link" title="Добавить поколение"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Место</th>
+            <th>Длина, см</th>
+            <th>Ширина, см</th>
+            <th>Высота, см</th>
+            <th>Вес, кг</th>
+            <th>Объем, куб.см</th>
+            <th>Фото 1</th>
+            <th>Фото 2</th>
+            {% if is_granted('edit', 'Shipping') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+        {% block table_body %}
+            {% for place in shipping.places %}
+                <tr>
+                    <td class="text-center">{{ place.number }}</td>
+                    <td class="text-right">{{ place.length|number_format(0, '', ' ') }}</td>
+                    <td class="text-right">{{ place.width|number_format(0, '', ' ') }}</td>
+                    <td class="text-right">{{ place.height|number_format(0, '', ' ') }}</td>
+                    <td class="text-right">{{ place.weight|number_format(4, ',', ' ') }}</td>
+                    <td class="text-right">{{ (place.length * place.width * place.height)|number_format(0, '', ' ') }}</td>
+                    <td class="text-center">
+                        {% if (place.photo1 is not empty) %}
+                            <a href="{{ user_shipping_attach_folder ~ place.photo1 }}" target="_blank"><i
+                                        class="fas fa-paperclip"></i></a>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if (place.photo2 is not empty) %}
+                            <a href="{{ user_shipping_attach_folder ~ place.photo2 }}" target="_blank"><i
+                                        class="fas fa-paperclip"></i></a>
+                        {% endif %}
+                    </td>
+                    {% if is_granted('edit', 'Shipping') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('shippings.places.edit', {'shippingID': shipping.id, 'id': place.id}) }}"
+                                   title="Изменить место">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('shippings.places.delete', {'id': place.id}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить место?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить место">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,32 @@
+<table class="table table-sm table-bordered table-striped table-hover">
+    <thead>
+    <tr class="table-primary">
+        <th>Номер</th>
+        <th>Дата</th>
+        <th>От кого</th>
+        <th>Сумма</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if all is empty %}
+        <tr>
+            <td colspan="50" class="text-center">Записей нет</td>
+        </tr>
+    {% endif %}
+    {% for schet in all %}
+        <tr>
+            <td>{{ schet.schet_num }}</td>
+            <td>{{ schet.dateofadded|date('d.m.Y') }}</td>
+            <td>{{ schet.firm_name }}</td>
+            <td>{{ schet.sum }}</td>
+            <td class="text-center">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-primary" data-dismiss="modal" onclick="formFromSchet('{{ schet.schet_num }}', '{{ schet.dateofadded|date('d.m.Y') }}', {{ schet.schetID }}, '{{ schet.sum }}', '{{ schet.firm_name }}')"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

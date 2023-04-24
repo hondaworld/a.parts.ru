@@ -1,0 +1,181 @@
+<?xml version = "1.0" encoding = "WINDOWS-1251"?>
+<Файл ВерсПрог="СБиС3" ВерсФорм="5.01" ИдФайл="{{ filename }}">
+    <СвУчДокОбор ИдПол="{{ expenseDocument.expUser.edo }}" ИдОтпр="{{ expenseDocument.expFirm.edo }}">
+        <СвОЭДОтпр ИдЭДО="{{ expenseDocument.expFirm.edo|slice(0, 3) }}"
+                   ИННЮЛ="{{ expenseDocument.expFirm.inn }}"
+                   НаимОрг="{{ expenseDocument.expFirm.name }}"/>
+    </СвУчДокОбор>
+    <Документ НаимЭконСубСост="{{ expenseDocument.expFirm.name }}"
+              ВремИнфПр="{{ 'now'|date('H.i.s') }}" ДатаИнфПр="{{ 'now'|date('d.m.Y') }}"
+            {% if expenseDocument.osn.name is empty and expenseDocument.expUser.ur.dogovorNum is not empty and expenseDocument.expUser.ur.dogovorDate %}
+                ОснДоверОргСост="{{ expenseDocument.expUser.ur.dogovorNum }}"
+            {% else %}
+                ОснДоверОргСост="{{ nakladnayaOsn }}"
+            {% endif %}
+              Функция="КСЧФ" КНД="1115133">
+        <СвКСчФ КодОКВ="643" ДатаКСчФ="{{ document_date|date('d.m.Y') }}"
+                  НомерКСчФ="{{ document_num }}">
+
+            {% for index, schetFak in schetFakKor.schetFaks %}
+                <СчФ НомерСчФ="{{ schetFak.document.documentNum }}"
+                     ДатаСчФ="{{ schetFak.dateofadded|date("d.m.Y") }}"/>
+            {% endfor %}
+            <СвПрод>
+                <ИдСв>
+                    <СвЮЛУч ИННЮЛ="{{ expenseDocument.expFirm.inn }}"
+                            НаимОрг="{{ expenseDocument.expFirm.name }}"
+                            КПП="{{ expenseDocument.expFirm.kpp }}"/>
+                </ИдСв>
+                <Адрес>
+                    <АдрРФ
+                            КодРегион="77"
+                            Город="{{ expenseDocument.expFirmContact.town.name }}"
+                            {% if expenseDocument.expFirmContact.town.id not in [598, 822] %}
+                                Район="{{ expenseDocument.expFirmContact.town.region.name }}"
+                            {% endif %}
+                            {% if expenseDocument.expFirmContact.address.street %}
+                                Улица="{{ expenseDocument.expFirmContact.address.street }}"
+                            {% endif %}
+                            {% if expenseDocument.expFirmContact.address.str %}
+                                Корпус="{{ expenseDocument.expFirmContact.address.str }}"
+                            {% endif %}
+                            {% if expenseDocument.expFirmContact.address.house %}
+                                Дом="{{ expenseDocument.expFirmContact.address.house }}"
+                            {% endif %}
+                            {% if expenseDocument.expFirmContact.address.kv %}
+                                Кварт="{{ expenseDocument.expFirmContact.address.kv }}"
+                            {% endif %}
+                            {% if expenseDocument.expFirmContact.address.zip %}
+                                Индекс="{{ expenseDocument.expFirmContact.address.zip }}"
+                            {% endif %}
+                    />
+                </Адрес>
+            </СвПрод>
+            <СвПокуп>
+                <ИдСв>
+                    <СвЮЛУч НаимОрг="{{ expenseDocument.cashUserForDocument.passportNameOrOrganization(true) }}"
+                            ИННЮЛ="{{ expenseDocument.cashUserForDocument.ur.inn }}"
+                            КПП="{{ expenseDocument.cashUserForDocument.ur.kpp }}"/>
+                </ИдСв>
+                <Адрес>
+                    <АдрРФ
+                            КодРегион="77"
+                            Город="{{ expenseDocument.cashUserContactForDocument.town.name }}"
+                            {% if expenseDocument.cashUserContactForDocument.town.id not in [598, 822] %}
+                                Район="{{ expenseDocument.cashUserContactForDocument.town.region.name }}"
+                            {% endif %}
+                            {% if expenseDocument.cashUserContactForDocument.address.street %}
+                                Улица="{{ expenseDocument.cashUserContactForDocument.address.street }}"
+                            {% endif %}
+                            {% if expenseDocument.cashUserContactForDocument.address.str %}
+                                Корпус="{{ expenseDocument.cashUserContactForDocument.address.str }}"
+                            {% endif %}
+                            {% if expenseDocument.cashUserContactForDocument.address.house %}
+                                Дом="{{ expenseDocument.cashUserContactForDocument.address.house }}"
+                            {% endif %}
+                            {% if expenseDocument.cashUserContactForDocument.address.kv %}
+                                Кварт="{{ expenseDocument.cashUserContactForDocument.address.kv }}"
+                            {% endif %}
+                            {% if expenseDocument.cashUserContactForDocument.address.zip %}
+                                Индекс="{{ expenseDocument.cashUserContactForDocument.address.zip }}"
+                            {% endif %}
+                    />
+                </Адрес>
+            </СвПокуп>
+            <ДопСвФХЖ1 НаимОКВ="Российский рубль"/>
+            <ИнфПолФХЖ1/>
+        </СвКСчФ>
+        <ТаблКСчФ>
+            {% for index, good in goods %}
+                <СведТов
+                        ЦенаТовПосле="{{ good.priceWithoutNds|number_format(2, '.', '') }}"
+                        ЦенаТовДо="{{ good.priceWithoutNds|number_format(2, '.', '') }}"
+                        ОКЕИ_ТовПосле="{{ good.okei }}"
+                        ОКЕИ_ТовДо="{{ good.okei }}"
+                        НомСтр="{{ index + 1 }}"
+                        НалСтПосле="{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') ~ '%' }}"
+                        НалСтДо="{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') ~ '%' }}"
+                        НаимТов="{{ good.detailName }} ({{ good.number }})"
+                        КолТовДо="{{ good.quantityBefore }}"
+                        КолТовПосле="{{ good.quantityAfter }}"
+                >
+                    <СтТовБезНДС
+                            СтоимДоИзм="{{ good.sumWithoutNdsBefore|number_format(2, '.', '') }}"
+                            СтоимПослеИзм="{{ good.sumWithoutNdsAfter|number_format(2, '.', '') }}"
+                            {% if good.sumWithoutNdsBefore > good.sumWithoutNdsAfter %}
+                                СтоимУм="{{ (good.sumWithoutNdsBefore - good.sumWithoutNdsAfter)|number_format(2, '.', '') }}"
+                            {% else %}
+                                СтоимУвел="{{ (good.sumWithoutNdsAfter - good.sumWithoutNdsBefore)|number_format(2, '.', '') }}"
+                            {% endif %}
+                    />
+                    <АкцизДо>
+                        <БезАкциз>без акциза</БезАкциз>
+                    </АкцизДо>
+                    <АкцизПосле>
+                        <БезАкциз>без акциза</БезАкциз>
+                    </АкцизПосле>
+                    <АкцизРазн>
+                        {% if good.ndsSumBefore > good.ndsSumAfter %}
+                            <СумУм>{{ (good.ndsSumBefore - good.ndsSumAfter)|number_format(2, '.', '') }}</СумУм>
+                        {% else %}
+                            <СумУвел>{{ (good.ndsSumAfter > good.ndsSumBefore)|number_format(2, '.', '') }}</СумУвел>
+                        {% endif %}
+                    </АкцизРазн>
+                    <СумНалДо>
+                        <СумНДС>{{ good.ndsSumBefore|number_format(2, '.', '') }}</СумНДС>
+                    </СумНалДо>
+                    <СумНалПосле>
+                        <СумНДС>{{ good.ndsSumAfter|number_format(2, '.', '') }}</СумНДС>
+                    </СумНалПосле>
+                    <СумНалРазн>
+                        {% if good.ndsSumBefore > good.ndsSumAfter %}
+                            <СумУм>{{ (good.ndsSumBefore - good.ndsSumAfter)|number_format(2, '.', '') }}</СумУм>
+                        {% else %}
+                            <СумУвел>{{ (good.ndsSumAfter > good.ndsSumBefore)|number_format(2, '.', '') }}</СумУвел>
+                        {% endif %}
+                    </СумНалРазн>
+                    <СтТовУчНал СтоимПослеИзм="{{ good.sumAfter }}" СтоимДоИзм="{{ good.sumBefore }}"
+                    {% if good.sumBefore > good.sumAfter %}
+                        СтоимУм="{{ good.sumBefore - good.sumAfter }}"
+                    {% else %}
+                        СтоимУвел="{{ good.sumAfter > good.sumBefore }}"
+                    {% endif %}
+                    />
+                    <ДопСведТов
+                            НаимЕдИзмДо="{{ good.ed_izm }}"
+                            НаимЕдИзмПосле="{{ good.ed_izm }}"
+                    />
+                </СведТов>
+            {% endfor %}
+            {% if sum.ndsSumBefore > sum.ndsSumAfter %}
+                <ВсегоУм СтТовУчНалВсего="{{ sum.sumBefore - sum.sumAfter }}"
+                         СтТовБезНДСВсего="{{ sum.sumWithoutNdsBefore - sum.sumWithoutNdsAfter }}">
+                    <СумНал>
+                        <СумНДС>{{ sum.ndsSumBefore - sum.ndsSumAfter }}</СумНДС>
+                    </СумНал>
+                </ВсегоУм>
+            {% else %}
+                <ВсегоУвел СтТовУчНалВсего="{{ sum.sumAfter - sum.sumBefore }}"
+                           СтТовБезНДСВсего="{{ sum.sumWithoutNdsAfter - sum.sumWithoutNdsBefore }}">
+                    <СумНал>
+                        <СумНДС>{{ sum.ndsSumAfter - sum.ndsSumBefore }}</СумНДС>
+                    </СумНал>
+                </ВсегоУвел>
+            {% endif %}
+        </ТаблКСчФ>
+        <СодФХЖ3 СодОпер="Предлагаю изменить количество">
+            <ПередатДокум ДатаОсн="{{ expenseDocument.dateofadded|date('d.m.Y') }}" НаимОсн="Реализация"
+                          НомОсн="{{ expenseDocument.document.documentNum }}"/>
+            <ДокумОснКор ДатаОсн="{{ expenseDocument.dateofadded|date('d.m.Y') }}" НаимОсн="Реализация"
+                         НомОсн="{{ expenseDocument.document.documentNum }}"/>
+        </СодФХЖ3>
+        <Подписант ОснПолн="Должностные обязанности" Статус="1" ОблПолн="0">
+            <ЮЛ ИННЮЛ="{{ expenseDocument.expFirm.inn }}" НаимОрг="{{ expenseDocument.expFirm.name }}"
+                Должн="Ген. директор">
+                <ФИО Отчество="{{ expenseDocument.expFirm.director.managerName.middlename }}"
+                     Имя="{{ expenseDocument.expFirm.director.managerName.firstname }}"
+                     Фамилия="{{ expenseDocument.expFirm.director.managerName.lastname }}"/>
+            </ЮЛ>
+        </Подписант>
+    </Документ>
+</Файл>

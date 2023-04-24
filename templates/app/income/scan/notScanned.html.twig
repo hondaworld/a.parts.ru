@@ -1,0 +1,20 @@
+<table class="table table-striped border">
+    <tr>
+        <th>Фото</th>
+        <th>Производитель</th>
+        <th>Номер</th>
+        <th colspan="2">Кол</th>
+    </tr>
+
+    {% for income in incomes %}
+        {% if (income.quantity != income.quantityUnPack) %}
+        <tr>
+            <td>{% if (income.zapCard.photos|length > 0) %}<i class="fas fa-check text-success"></i>{% endif %}</td>
+            <td>{{ income.zapCard.creater.name }}</td>
+            <td>{{ income.zapCard.number.value }}</td>
+            <td>{{ income.quantity }}</td>
+            <td>{{ income.quantityUnPack }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>

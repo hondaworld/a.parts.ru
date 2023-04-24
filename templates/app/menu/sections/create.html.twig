@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление секции меню{% endblock %}
+{% block header %}Добавление секции меню{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('menu.groups') }}">Группы меню</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('menu.sections', {'groupID': group.id, 'parentID': 0}) }}">{{ group.name }}</a></li>
+    {% for breadCrumb in arBreadCrumb %}
+        {% if (not breadCrumb.url|default(false)) %}
+            <li class="breadcrumb-item">{{ breadCrumb.name }}</li>
+        {% else %}
+            <li class="breadcrumb-item">
+                <a href="{{ path('menu.sections', {'groupID': group.id, 'parentID': breadCrumb.data.id}) }}">{{ breadCrumb.name }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block body %}
+    {{ include('app/menu/sections/_form.html.twig') }}
+{% endblock %}

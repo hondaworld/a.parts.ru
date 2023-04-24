@@ -1,0 +1,31 @@
+<table class="table table-striped border">
+    <tr>
+        <th>Фото</th>
+        <th>Производитель</th>
+        <th>Номер</th>
+        <th colspan="2">Кол</th>
+        <th></th>
+    </tr>
+
+    {% for income in incomes %}
+        {% if (income.quantityUnPack > 0) %}
+        <tr>
+            <td>{% if (income.zapCard.photos|length > 0) %}<i class="fas fa-check text-success"></i>{% endif %}</td>
+            <td>{{ income.zapCard.creater.name }}</td>
+            <td>{{ income.zapCard.number.value }}</td>
+            <td>{{ income.quantity }}</td>
+            <td>{{ income.quantityUnPack }}</td>
+            <td>
+                <a href="{{ path('income.unpack.delete', {'id': income.id}) }}"
+                   onclick="deleteItem(this, 'Вы уверены, что хотите отменить оприходование детали?')"
+                   data-toggle="modal"
+                   data-target="#modalConfirm"
+                   class="text-danger"
+                   title="Отменить оприходование детали">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>

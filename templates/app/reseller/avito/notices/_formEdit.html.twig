@@ -1,0 +1,89 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <p>
+        <strong>Номер: </strong>{{ avitoNotice.oem }}
+    </p>
+    <p>
+        <strong>Производитель по карточке детали: </strong>{{ avitoNotice.zapCard.creater.name }}
+    </p>
+    <p>
+        <strong>Производитель: </strong>{{ avitoNotice.brand }}
+    </p>
+    {{ form_row(form.avito_id) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.description) }}
+    <p>
+        <strong>Группа: </strong><span class="cursor-pointer" title="Скопировать" onclick="copyObject(this)">{{ avitoNotice.zapCard.zapGroup.name|default(null) }}</span><br>
+        <strong>Наименование: </strong><span class="cursor-pointer" title="Скопировать" onclick="copyObject(this)">{{ avitoNotice.zapCard.name }}</span><br>
+        <strong>Описание: </strong><span class="cursor-pointer" title="Скопировать" onclick="copyObject(this)">{{ avitoNotice.zapCard.description }}</span><br>
+        <strong>Номер: </strong><span class="cursor-pointer" title="Скопировать" onclick="copyObject(this)">{{ avitoNotice.oem }}</span><br>
+        <strong>Производитель: </strong><span class="cursor-pointer" title="Скопировать" onclick="copyObject(this)">{{ avitoNotice.brand }}</span><br>
+        <strong>Наличие: </strong>
+        {% for skladID, sklad_name in sklads %}
+            {% if quantity[skladID]|default(0) > 0 %}
+                <strong>{{ sklad_name }} - </strong><span class="cursor-pointer" title="Скопировать" onclick="copyObject(this)">{{ quantity[skladID] }}</span>
+            {% endif %}
+        {% endfor %}
+    </p>
+    {{ form_row(form.type_id) }}
+    <p>
+        <strong>Цена: </strong>{{ price|number_format(0, '', ' ') }} р.
+    </p>
+    {{ form_row(form.image_urls, {'attr' : {'onchange' : 'showImages()'}}) }}
+    <div class="d-flex pb-2" id="image_urls">
+{#        {% for image_src in avitoNotice.imageUrls|split(' | ') %}#}
+{#            <div class="mx-1" style="width: 160px; height: 120px; background-size: cover; background-repeat: no-repeat; background-position: center; background-image: url({{ image_src }})">#}
+{#            </div>#}
+{#        {% endfor %}#}
+    </div>
+    {{ form_row(form.contact_phone) }}
+    {{ form_row(form.address) }}
+    {{ form_row(form.make, {'id': 'avito_makes', 'attr': {'onchange': "onChangeMake(this)"}}) }}
+    {{ form_row(form.model, {'id': 'avito_models', 'attr': {'onchange': "onChangeModel(this)"}}) }}
+    {{ form_row(form.generation, {'id': 'avito_generations', 'attr': {'onchange': "onChangeGeneration(this)"}}) }}
+    {{ form_row(form.modification, {'id': 'avito_modifications'}) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('resellers.avito.notices') }}">Отменить</a>
+    {{ form_end(form) }}
+
+    <script>
+        function showImages() {
+            var images = document.getElementById('form_image_urls').value.split('\n');
+            var image_div = document.getElementById('image_urls');
+            image_div.innerHTML = '';
+            images.forEach(function(el) {
+                el = el.trim();
+                if (el !== '') {
+                    var div = '<div class="mx-1" style="width: 160px; height: 120px; background-size: cover; background-repeat: no-repeat; background-position: center; background-image: url(' + el + ')"></div>';
+                    image_div.innerHTML += div;
+                }
+            });
+        }
+        showImages();
+
+        function onChangeMake(el) {
+            document.getElementById('avito_models').value = '';
+            document.getElementById('avito_models').innerHTML = '';
+            document.getElementById('avito_generations').value = '';
+            document.getElementById('avito_generations').innerHTML = '';
+            document.getElementById('avito_modifications').value = '';
+            document.getElementById('avito_modifications').innerHTML = '';
+            onChangeParentForm(el, '{{ path('resellers.avito.notices.auto.models') }}', 'avito_models');
+        }
+
+        function onChangeModel(el) {
+            document.getElementById('avito_generations').value = '';
+            document.getElementById('avito_generations').innerHTML = '';
+            document.getElementById('avito_modifications').value = '';
+            document.getElementById('avito_modifications').innerHTML = '';
+            onChangeParentForm(el, '{{ path('resellers.avito.notices.auto.generations') }}', 'avito_generations');
+        }
+
+        function onChangeGeneration(el) {
+            document.getElementById('avito_modifications').value = '';
+            document.getElementById('avito_modifications').innerHTML = '';
+            onChangeParentForm(el, '{{ path('resellers.avito.notices.auto.modifications') }}', 'avito_modifications');
+        }
+    </script>
+{% endblock %}

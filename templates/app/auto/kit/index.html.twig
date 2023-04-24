@@ -1,0 +1,84 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Комплекты ЗЧ</h3>
+    </div>
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('card.kits.create', {'auto_modelID': autoModel.id}) }}"
+                   class="nav-link" title="Добавить комплект ЗЧ"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('card.kits.hide', {'auto_modelID': autoModel.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные комплект ЗЧ?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('card.kits.unHide', {'auto_modelID': autoModel.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить комплект ЗЧ?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Сортировка</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if kits is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for kit in kits %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ kit.id : '') }}
+                        class="{{ kit.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': kit.id} only %}
+                    {% endif %}
+                    <td>{{ kit.name }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('card.kits.sort', {'id': kit.id}) }}"
+                        data-direction="asc">{{ kit.sort }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('card.kit.numbers', {'kitID': kit.id}) }}"
+                               title="Запчасти комплекта">
+                                <i class="fas fa-cogs"></i>
+                            </a>
+                            <a href="{{ path('card.kits.copy', {'id': kit.id}) }}"
+                               title="Копировать комплект ЗЧ">
+                                <i class="fas fa-copy"></i>
+                            </a>
+                            <a href="{{ path('card.kits.edit', {'auto_modelID': autoModel.id, 'id': kit.id}) }}"
+                               title="Изменить комплект ЗЧ">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('card.kits.delete', {'auto_modelID': autoModel.id, 'id': kit.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить комплект ЗЧ?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить комплект ЗЧ">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

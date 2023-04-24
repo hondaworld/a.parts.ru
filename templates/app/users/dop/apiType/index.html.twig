@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Api</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.apiType', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p>
+        <strong>Api для клиента: </strong>
+        {{ constant('App\\Model\\User\\Entity\\User\\User::API_TYPES')[user.apiType] }}
+    </p>
+{% endblock %}

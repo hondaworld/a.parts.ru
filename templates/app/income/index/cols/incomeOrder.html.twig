@@ -1,0 +1,3 @@
+{% if 'incomeOrder' not in hideCols %}
+    <td>{{ income.incomeOrderID and incomeOrders[income.incomeOrderID]|default(null) ? incomeOrders[income.incomeOrderID]['document_num'] }}</td>
+{% endif %}

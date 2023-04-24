@@ -1,0 +1,16 @@
+{% if is_granted('show', 'Order') %}
+    <td class="text-center">
+        <div class="btn-group">
+            {% if is_granted('show', 'Order') %}
+                <a href="{{ path('orders.show', {'id': userID}) }}"
+                   title="Документ">
+                    <i class="far fa-file-alt"></i>
+                </a>
+                <a href="{{ path('order.goods', {'id': userID}) }}"
+                   title="Товары">
+                    <i class="fas fa-cogs"></i>
+                </a>
+            {% endif %}
+        </div>
+    </td>
+{% endif %}

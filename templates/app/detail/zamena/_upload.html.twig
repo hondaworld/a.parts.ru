@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Загрузка замен'}) }}
+{% endblock %}
+{% block content %}
+    <p>
+        Первая колонка номер, вторая - замененный номер
+        <a class="pl-2" href="{{ path('zamena.upload1') }}">Загрузить</a>
+    </p>
+    <p>
+        Первая колонка производитель, вторая - номер, третья - производитель замены, четвертая - номер замены
+        <a class="pl-2" href="{{ path('zamena.upload2') }}">Загрузить</a>
+    </p>
+{% endblock %}

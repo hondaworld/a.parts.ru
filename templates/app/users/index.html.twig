@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Клиенты{% endblock %}
+{% block header %}Клиенты{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Клиенты</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'User') %}
+                <li class="nav-item">
+                    <a href="{{ path('users.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                             title="Добавить клиента"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('users', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-2">{{ form_widget(filter.isShowHide) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Менеджер</th>
+            <th>Опт</th>
+            <th>Имя</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Наименование', 'name') : 'Наименование' }}</th>
+            <th>Город</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Моб. телефон', 'phonemob') : 'Моб. телефон' }}</th>
+            <th>Юр. лицо</th>
+            {% if is_granted('show', 'User') or is_granted('delete', 'User') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.ownerManagerID) }}</th>
+            <th>{{ form_widget(filter.isOpt) }}</th>
+            <th>{{ form_widget(filter.userName) }}</th>
+            <th>{{ form_widget(filter.name) }}</th>
+            <th>{{ form_widget(filter.town) }}</th>
+            <th>{{ form_widget(filter.phonemob) }}</th>
+            <th></th>
+            {% if is_granted('show', 'User') or is_granted('delete', 'User') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Задайте фильтр</td>
+                </tr>
+            {% elseif pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for user in pagination %}
+                <tr class="{{ user.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': user.userID} only %}
+                    {% endif %}
+                    <td>{{ user.manager }}</td>
+                    <td>{{ user.opt }}</td>
+                    <td>{{ user.user_name }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ town(user.town, user.region) }}</td>
+                    <td>{{ phone_mobile(user.phonemob) }}</td>
+                    <td class="text-center">{{ boolean_status(user.isUr) }}</td>
+                    {% if is_granted('show', 'User') or is_granted('delete', 'User') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'User') %}
+                                    <a href="{{ path('users.show', {'id': user.userID}) }}"
+                                       title="Просмотр клиента">
+                                        <i class="fas fa-user"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'User') %}
+                                    <a href="{{ path('users.delete', {'id': user.userID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить клиента?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить клиента">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {% if pagination is not null %}
+                {{ parent() }}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

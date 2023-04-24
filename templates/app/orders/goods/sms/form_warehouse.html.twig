@@ -1,0 +1,17 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('order.goods.sms.warehouse', {'id': user.id}) }) }}
+
+    {% if not user.isSms %}
+        <p>Пользователь запретил отсылать SMS</p>
+    {% endif %}
+
+{{ form_row(form.templateID) }}
+
+<div class="text-right">
+    {% if user.isSms %}
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    {% endif %}
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

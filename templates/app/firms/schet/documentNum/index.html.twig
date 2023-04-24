@@ -1,0 +1,32 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Документ</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('schets.documentNum', {'id': schet.id}) }}"
+               title="Изменить данные"><i class="fas fa-edit"></i></a>
+            {% if not schet.isPayUrlNeed %}
+                <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('schet.php', {'id': schet.id}) }}"
+                   title="Печать счета" target="_blank"><i class="fas fa-print"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Префикс: </strong>
+        {{ check_empty(schet.document.documentPrefix, 'не задан') }}
+    </p>
+    <p><strong>Суфикс: </strong>
+        {{ check_empty(schet.document.documentSufix, 'не задан') }}
+    </p>
+    <p><strong>Номер: </strong>
+        {{ check_empty(schet.document.schetNum, 'не задан') }}
+    </p>
+    <p><strong>Дата: </strong>
+        {{ schet.dateofadded|date('d.m.Y') }}
+    </p>
+    <p><strong>Комментарий: </strong><br>
+        {{ check_empty(schet.comment, 'не задан')|nl2br }}
+    </p>
+{% endblock %}

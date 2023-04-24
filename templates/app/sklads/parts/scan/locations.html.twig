@@ -1,0 +1,98 @@
+<div class="js-gallery">
+    <h3>Детали</h3>
+    <table class="table table-striped border">
+        <tr>
+            <th>Деталь</th>
+            <th>Ячейка</th>
+            <th>На складе</th>
+        </tr>
+        {% for zapCardID, item in arr %}
+            <tr>
+                <td>
+                    {% if is_granted('show', 'ZapCard') %}
+                        <a href="{{ path('card.parts.show', {'id': zapCardID}) }}"
+                           title="В карточку детали" target="_blank">
+                            <strong>{{ item.zapCard.creater.name }} {{ item.zapCard.number.value }}</strong>
+                        </a>
+                    {% else %}
+                        <strong>{{ item.zapCard.creater.name }} {{ item.zapCard.number.value }}</strong>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ form_start(item['form'], {'action': path('sklads.parts.locationUpdate', {'zapCardID': item.zapCard.id, 'id': zapSklad.id, 'searchNumber': searchNumber})}) }}
+                    <div class="row">
+                        <div class="col-sm">{{ form_widget(item['form'].location) }}</div>
+                        <div class="col-sm">{{ form_row(item['form'].isCreate) }}</div>
+                        <div class="col-sm-auto">
+                            <button type="submit" class="btn btn-primary">&gt;&gt;
+                            </button>
+                        </div>
+                    </div>
+                    {{ form_end(item['form']) }}
+                </td>
+                <td>
+                    {{ item.quantity }}
+                </td>
+            </tr>
+            {# {% for income in item['incomes'] %} #}
+            {# {% if income.quantity != income.quantityUnPack %} #}
+            {# <tr> #}
+            {# <td> #}
+            {# {% if income.orderGoods %} #}
+            {# {{ income.orderGoods[0].order.id }} #}
+            {# ({{ income.orderGoods[0].order.user.name }}) #}
+            {# {% else %} #}
+            {# {% if income.sklads %} #}
+            {# {{ income.zapCard.locationByZapSklad(income.sklads[0].zapSklad) ? (income.zapCard.locationByZapSklad(income.sklads[0].zapSklad).location ? income.zapCard.locationByZapSklad(income.sklads[0].zapSklad).location.nameShort ~ ' - ' : '') : '' }} #}
+            {# {{ income.sklads[0].zapSklad.nameShort }} #}
+            {# {% endif %} #}
+            {# {% endif %} #}
+            {# </td> #}
+            {# <td>{{ income.quantity - income.quantityUnPack }}</td> #}
+            {# <td> #}
+            {# {{ form_start(item['incomeForms'][income.id], {'action': path('income.unpack.quantityUnPack', {'providerID': provider.id, 'id': income.id, 'searchNumber': searchNumber})}) }} #}
+            {# <div class="row"> #}
+            {# <div class="col-2"> #}
+            {# <a href="#" #}
+            {# onclick="changeQuantityUnPack(this, 'quantityUnPack_{{ income.id }}', -1, {{ income.quantity - income.quantityUnPack }})"> #}
+            {# <i class="fas fa-minus py-2"></i> #}
+            {# </a> #}
+            {# </div> #}
+            {# <div class="col">{{ form_widget(item['incomeForms'][income.id].quantityUnPack, {'id': 'quantityUnPack_' ~ income.id, 'attr': {'oninput': "changeQuantityUnPackValue(this, '"~(income.quantity - income.quantityUnPack)~"')"}}) }}</div> #}
+            {# <div class="col-2"> #}
+            {# <a href="#" #}
+            {# onclick="changeQuantityUnPack(this, 'quantityUnPack_{{ income.id }}', 1, {{ income.quantity - income.quantityUnPack }})"> #}
+            {# <i class="fas fa-plus py-2"></i> #}
+            {# </a> #}
+            {# </div> #}
+            {# <div class="col-auto"> #}
+            {# <button type="submit" class="btn btn-primary">&gt;&gt; #}
+            {# </button> #}
+            {# </div> #}
+            {# </div> #}
+            {# {{ form_end(item['incomeForms'][income.id]) }} #}
+            {# </td> #}
+            {# </tr> #}
+            {# {% endif %} #}
+            {# {% endfor %} #}
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+    function changeQuantityUnPack(el, id, q, max) {
+        event.preventDefault();
+        var quantity = document.getElementById(id);
+
+        quantity.value = +quantity.value + q;
+
+        if (quantity.value <= 0) quantity.value = '';
+
+        if (quantity.value > max) quantity.value = max;
+    }
+
+    function changeQuantityUnPackValue(el, max) {
+        if (+el.value > max) el.value = max;
+        if (+el.value === 0) el.value = '';
+    }
+</script>

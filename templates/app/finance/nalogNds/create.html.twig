@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление НДС в налоговую схему {{ nalog.name }}{% endblock %}
+{% block header %}Добавление НДС{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('nalog') }}">Налоговые схемы</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('nalog.nds', {'nalogID': nalog.id}) }}">{{ nalog.name }}</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/finance/nalogNds/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

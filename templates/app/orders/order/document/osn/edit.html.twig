@@ -1,0 +1,29 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Основание'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.number) }}
+    {{ form_row(form.dateofadded) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="" data-toggle="modal" data-target="#modalForm"
+       data-url="{{ path('order.document.schet', {'id': user.id}) }}"
+       data-title="Выбрать счет" class="ml-3 btn btn-info ajax-modal-html">
+        Выбрать счет
+    </a>
+    <a class="ml-3 btn btn-secondary" href="{{ path('orders.show', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+    <script>
+        function formFromSchet(number, dateofadded) {
+            document.getElementById('form_number').value = number;
+            document.getElementById('form_dateofadded').value = dateofadded;
+        }
+    </script>
+{% endblock %}

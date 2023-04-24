@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Категории работ{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Категории работ</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('work.categories.create') }}" class="nav-link" title="Добавить категорию работ"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Сортировка</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if categories is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for category in categories %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ category.workCategoryID : '') }}>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': category.workCategoryID} only %}
+                    {% endif %}
+                    <td>{{ category.name }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('work.categories.sort', {'id': category.workCategoryID}) }}"
+                        data-direction="asc">{{ category.number }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('work.groups', {'workCategoryID': category.workCategoryID}) }}"
+                               title="Группы работ">
+                                <i class="fas fa-oil-can"></i>
+                            </a>
+                            <a href="{{ path('work.categories.edit', {'id': category.workCategoryID}) }}"
+                               title="Изменить категорию работ">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('work.categories.delete', {'id': category.workCategoryID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить категорию работ?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить категорию работ">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

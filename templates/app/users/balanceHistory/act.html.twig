@@ -1,0 +1,216 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Акт сверки{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-family: Arial, serif;
+            font-size: 12px;
+            line-height: 18px;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        .border, .border-bottom {
+            border-color: #000000 !important;
+        }
+
+        table.border {
+            width: auto;
+            border: 1px solid #000000;
+            border-collapse: collapse;
+        }
+
+        table.border td, table.border th {
+            border: 1px solid #000000;
+            border-collapse: collapse;
+            font-size: 12px;
+            vertical-align: top;
+            padding: 2px;
+        }
+
+        table.table-goods {
+            border: 2px solid #000000;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+
+        h2 {
+            margin: 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+    <table class="w-100">
+        <tr>
+            <td class="text-center" style="margin-top: 15px; font-weight: bold; font-size: 16px;">Акт сверки</td>
+        </tr>
+        <tr>
+            <td class="text-center">
+                взаимных расчетов за период с {{ date_from|date('d.m.Y') }} по {{ date_till|date('d.m.Y') }}<br>
+                между {{ firm.nameShort }}<br><br>
+                и {{ user.name }}<br>
+                по договору Основной договор
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>Мы, нижеподписавшиеся, _______________________ {{ firm.nameShort }}
+                __________________________________________, с одной стороны, и
+                ___________________________ {{ user.name }} _____________________________________________, с другой
+                стороны, составили настоящий акт сверки в том, что состояние взаимных расчетов по данным учета
+                следующее:
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="border w-100">
+                    <tr>
+                        <td colspan="4">По данным {{ user.name }}, руб.</td>
+                        <td colspan="4">По данным {{ firm.nameShort }}, руб.</td>
+                    </tr>
+                    <tr>
+                        <th width="9%">Дата</th>
+                        <th width="15%">Документ</th>
+                        <th width="13%">Дебет</th>
+                        <th width="13%">Кредит</th>
+                        <th width="9%">Дата</th>
+                        <th width="15%">Документ</th>
+                        <th width="13%">Дебет</th>
+                        <th width="13%">Кредит</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align: left;">Сальдо начальное</th>
+                        <th class="text-right">{{ balance.saldo_from > 0 ? balance.saldo_from|number_format(2, ',', '') : '' }}</th>
+                        <th class="text-right">{{ balance.saldo_from < 0 ? (-balance.saldo_from)|number_format(2, ',', '') : '' }}</th>
+                        <th colspan="2" style="text-align: left;">Сальдо начальное</th>
+                        <th class="text-right">{{ balance.saldo_from < 0 ? (-balance.saldo_from)|number_format(2, ',', '') : '' }}</th>
+                        <th class="text-right">{{ balance.saldo_from > 0 ? balance.saldo_from|number_format(2, ',', '') : '' }}</th>
+                    </tr>
+                    {% for item in balance.balance %}
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ item.dateofadded|date('d.m.Y') }}</td>
+                            <td>
+                                {% if item.document_num %}
+                                    Реализация товаров и услуг №{{ item.document_num }} от {{ item.document_date|date('d.m.Y') }}
+                                {% elseif item.description != '' %}
+                                    {{ item.description }}
+                                {% else %}
+                                    {{ item.finance_type }}
+                                {% endif %}
+                            </td>
+                            <td class="text-right">{{ item.balance < 0 ? item.balance|abs|number_format(2, ',', ' ') : '' }}</td>
+                            <td class="text-right">{{ item.balance > 0 ? item.balance|abs|number_format(2, ',', ' ') : '' }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <th colspan="2" style="text-align: left;">Сальдо начальное</th>
+                        <th style="text-align: right;"></th>
+                        <th style="text-align: right;"></th>
+                        <th colspan="2" style="text-align: left;">Сальдо начальное</th>
+                        <th class="text-right">{{ balance.balance_minus|abs|number_format(2, ',', ' ') }}</th>
+                        <th class="text-right">{{ balance.balance_plus|abs|number_format(2, ',', ' ') }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align: left;">Сальдо конечное</th>
+                        <th class="text-right"></th>
+                        <th class="text-right"></th>
+                        <th colspan="2" style="text-align: left;">Сальдо конечное</th>
+                        <th class="text-right">{{ balance.saldo_till < 0 ? (-balance.saldo_till)|number_format(2, ',', '') : '' }}</th>
+                        <th class="text-right">{{ balance.saldo_till > 0 ? balance.saldo_till|number_format(2, ',', '') : '' }}</th>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>
+                <table class="w-100">
+                    <tr>
+                        <td width="50%"></td>
+                        <td width="50%">По данным {{ firm.nameShort }}</td>
+                    </tr>
+                    <tr>
+                        <td width="50%"></td>
+                        <td width="50%"><strong>на {{ date_till|date('d.m.Y') }} задолженность в пользу
+                                {% if balance.saldo_till < 0 %}
+                                    {{ firm.nameShort }} {{ -balance.saldo_till }} руб.
+                                {% else %}
+                                    {{ user.name }} {{ balance.saldo_till }} руб.
+                                {% endif %}
+                            </strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br></td>
+                    </tr>
+                    <tr>
+                        <td>От {{ user.name }}</td>
+                        <td>От {{ firm.nameShort }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br></td>
+                    </tr>
+                    <tr>
+                        <td>________________</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br></td>
+                    </tr>
+                    <tr>
+                        <td>___________________________(___________________)</td>
+                        <td>___________________________(___________________)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br></td>
+                    </tr>
+                    <tr>
+                        <td>М.П.</td>
+                        <td>М.П.</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

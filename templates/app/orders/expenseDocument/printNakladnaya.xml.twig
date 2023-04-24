@@ -1,0 +1,220 @@
+<?xml version = "1.0" encoding = "WINDOWS-1251"?>
+<Файл ВерсПрог="Diadoc 1.0" ВерсФорм="5.01" ИдФайл="{{ filename }}">
+    <СвУчДокОбор ИдПол="{{ expenseDocument.expUser.edo }}" ИдОтпр="{{ expenseDocument.expFirm.edo }}">
+        <СвОЭДОтпр ИдЭДО="{{ expenseDocument.expFirm.edo|slice(0, 3) }}"
+                   ИННЮЛ="{{ expenseDocument.expFirm.inn }}"
+                   НаимОрг="{{ expenseDocument.expFirm.name }}"/>
+    </СвУчДокОбор>
+
+    <Документ ВремИнфПр="{{ 'now'|date('H.i.s') }}" ДатаИнфПр="{{ 'now'|date('d.m.Y') }}" КНД="1175010"
+              НаимЭконСубСост="{{ expenseDocument.expFirm.name }}">
+        <СвДокПТПрКроме>
+            <СвДокПТПр>
+                <НаимДок НаимДокОпр="Товарная накладная"
+                         ПоФактХЖ="Документ о передаче товара при торговых операциях"/>
+                <ИдентДок ДатаДокПТ="{{ document_date|date('d.m.Y') }}"
+                          НомДокПТ="{{ document_num }}"/>
+                <ДенИзм КодОКВ="643" НаимОКВ="Российский рубль"/>
+                <СодФХЖ1>
+                    <ГрузОтпр ОКПО="{{ expenseDocument.gruzFirmForDocument.okpo }}">
+                        <ИдСв>
+                            <СвОрг>
+                                <СвЮЛ НаимОрг="{{ expenseDocument.gruzFirmForDocument.name }}"
+                                      ИННЮЛ="{{ expenseDocument.gruzFirmForDocument.inn }}"
+                                      КПП="{{ expenseDocument.gruzFirmForDocument.kpp }}"/>
+                            </СвОрг>
+                        </ИдСв>
+                        <Адрес>
+                            <АдрРФ
+                                    КодРегион="77"
+                                    Город="{{ expenseDocument.gruzFirmContactForDocument.town.name }}"
+                                    {% if expenseDocument.gruzFirmContactForDocument.town.id not in [598, 822] %}
+                                        Район="{{ expenseDocument.gruzFirmContactForDocument.town.region.name }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzFirmContactForDocument.address.street %}
+                                        Улица="{{ expenseDocument.gruzFirmContactForDocument.address.street }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzFirmContactForDocument.address.str %}
+                                        Корпус="{{ expenseDocument.gruzFirmContactForDocument.address.str }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzFirmContactForDocument.address.house %}
+                                        Дом="{{ expenseDocument.gruzFirmContactForDocument.address.house }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzFirmContactForDocument.address.kv %}
+                                        Кварт="{{ expenseDocument.gruzFirmContactForDocument.address.kv }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzFirmContactForDocument.address.zip %}
+                                        Индекс="{{ expenseDocument.gruzFirmContactForDocument.address.zip }}"
+                                    {% endif %}
+                            />
+                        </Адрес>
+                        <Контакт Тлф="{{ expenseDocument.gruzFirmContactForDocument.phonemob }}"/>
+                        <БанкРекв НомерСчета="{{ expenseDocument.gruzFirmBeznalForDocument.rasschet }}">
+                            <СвБанк БИК="{{ expenseDocument.gruzFirmBeznalForDocument.bank.bik }}"
+                                    НаимБанк="{{ expenseDocument.gruzFirmBeznalForDocument.bank.name }}"
+                                    КорСчет="{{ expenseDocument.gruzFirmBeznalForDocument.bank.korschet }}"/>
+                        </БанкРекв>
+                    </ГрузОтпр>
+                    <ГрузПолуч
+                            {% if expenseDocument.gruzUserForDocument.ur.okpo %}
+                                ОКПО="{{ expenseDocument.gruzUserForDocument.ur.okpo }}"
+                            {% endif %}
+                    >
+                        <ИдСв>
+                            <СвОрг>
+                                <СвЮЛ НаимОрг="{{ expenseDocument.gruzUserForDocument.passportNameOrOrganization(true) }}"
+                                      ИННЮЛ="{{ expenseDocument.gruzUserForDocument.ur.inn }}"
+                                      КПП="{{ expenseDocument.gruzUserForDocument.ur.kpp }}"/>
+                            </СвОрг>
+                        </ИдСв>
+                        <Адрес>
+                            <АдрРФ
+                                    КодРегион="77"
+                                    Город="{{ expenseDocument.gruzUserContactForDocument.town.name }}"
+                                    {% if expenseDocument.gruzUserContactForDocument.town.id not in [598, 822] %}
+                                        Район="{{ expenseDocument.gruzUserContactForDocument.town.region.name }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzUserContactForDocument.address.street %}
+                                        Улица="{{ expenseDocument.gruzUserContactForDocument.address.street }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzUserContactForDocument.address.str %}
+                                        Корпус="{{ expenseDocument.gruzUserContactForDocument.address.str }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzUserContactForDocument.address.house %}
+                                        Дом="{{ expenseDocument.gruzUserContactForDocument.address.house }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzUserContactForDocument.address.kv %}
+                                        Кварт="{{ expenseDocument.gruzUserContactForDocument.address.kv }}"
+                                    {% endif %}
+                                    {% if expenseDocument.gruzUserContactForDocument.address.zip %}
+                                        Индекс="{{ expenseDocument.gruzUserContactForDocument.address.zip }}"
+                                    {% endif %}
+                            />
+                        </Адрес>
+                        <Контакт Тлф="{{ expenseDocument.gruzUserContactForDocument.phonemob }}"/>
+                        <БанкРекв НомерСчета="{{ expenseDocument.gruzUserBeznalForDocument.rasschet }}">
+                            <СвБанк БИК="{{ expenseDocument.gruzUserBeznalForDocument.bank.bik }}"
+                                    НаимБанк="{{ expenseDocument.gruzUserBeznalForDocument.bank.name }}"
+                                    КорСчет="{{ expenseDocument.gruzUserBeznalForDocument.bank.korschet }}"/>
+                        </БанкРекв>
+                    </ГрузПолуч>
+                    <Продавец ОКПО="{{ expenseDocument.expFirm.okpo }}">
+                        <ИдСв>
+                            <СвОрг>
+                                <СвЮЛ НаимОрг="{{ expenseDocument.expFirm.name }}"
+                                      ИННЮЛ="{{ expenseDocument.expFirm.inn }}"
+                                      КПП="{{ expenseDocument.expFirm.kpp }}"
+                                />
+                            </СвОрг>
+                        </ИдСв>
+                        <Адрес>
+                            <АдрРФ
+                                    КодРегион="77"
+                                    Город="{{ expenseDocument.expFirmContact.town.name }}"
+                                    {% if expenseDocument.expFirmContact.town.id not in [598, 822] %}
+                                        Район="{{ expenseDocument.expFirmContact.town.region.name }}"
+                                    {% endif %}
+                                    {% if expenseDocument.expFirmContact.address.street %}
+                                        Улица="{{ expenseDocument.expFirmContact.address.street }}"
+                                    {% endif %}
+                                    {% if expenseDocument.expFirmContact.address.str %}
+                                        Корпус="{{ expenseDocument.expFirmContact.address.str }}"
+                                    {% endif %}
+                                    {% if expenseDocument.expFirmContact.address.house %}
+                                        Дом="{{ expenseDocument.expFirmContact.address.house }}"
+                                    {% endif %}
+                                    {% if expenseDocument.expFirmContact.address.kv %}
+                                        Кварт="{{ expenseDocument.expFirmContact.address.kv }}"
+                                    {% endif %}
+                                    {% if expenseDocument.expFirmContact.address.zip %}
+                                        Индекс="{{ expenseDocument.expFirmContact.address.zip }}"
+                                    {% endif %}
+                            />
+                        </Адрес>
+                        <Контакт Тлф="{{ expenseDocument.expFirmContact.phonemob }}"/>
+                        <БанкРекв НомерСчета="{{ expenseDocument.expFirmBeznal.rasschet }}">
+                            <СвБанк БИК="{{ expenseDocument.expFirmBeznal.bank.bik }}"
+                                    НаимБанк="{{ expenseDocument.expFirmBeznal.bank.name }}"
+                                    КорСчет="{{ expenseDocument.expFirmBeznal.bank.korschet }}"/>
+                        </БанкРекв>
+                    </Продавец>
+                    <Покупатель
+                            {% if expenseDocument.cashUserForDocument.ur.okpo %}
+                                ОКПО="{{ expenseDocument.cashUserForDocument.ur.okpo }}"
+                            {% endif %}
+                    >
+                        <ИдСв>
+                            <СвОрг>
+                                <СвЮЛ НаимОрг="{{ expenseDocument.cashUserForDocument.passportNameOrOrganization(true) }}"
+                                      ИННЮЛ="{{ expenseDocument.cashUserForDocument.ur.inn }}"
+                                      КПП="{{ expenseDocument.cashUserForDocument.ur.kpp }}"/>
+                            </СвОрг>
+                        </ИдСв>
+                        <Адрес>
+                            <АдрРФ
+                                    КодРегион="77"
+                                    Город="{{ expenseDocument.cashUserContactForDocument.town.name }}"
+                                    {% if expenseDocument.cashUserContactForDocument.town.id not in [598, 822] %}
+                                        Район="{{ expenseDocument.cashUserContactForDocument.town.region.name }}"
+                                    {% endif %}
+                                    {% if expenseDocument.cashUserContactForDocument.address.street %}
+                                        Улица="{{ expenseDocument.cashUserContactForDocument.address.street }}"
+                                    {% endif %}
+                                    {% if expenseDocument.cashUserContactForDocument.address.str %}
+                                        Корпус="{{ expenseDocument.cashUserContactForDocument.address.str }}"
+                                    {% endif %}
+                                    {% if expenseDocument.cashUserContactForDocument.address.house %}
+                                        Дом="{{ expenseDocument.cashUserContactForDocument.address.house }}"
+                                    {% endif %}
+                                    {% if expenseDocument.cashUserContactForDocument.address.kv %}
+                                        Кварт="{{ expenseDocument.cashUserContactForDocument.address.kv }}"
+                                    {% endif %}
+                                    {% if expenseDocument.cashUserContactForDocument.address.zip %}
+                                        Индекс="{{ expenseDocument.cashUserContactForDocument.address.zip }}"
+                                    {% endif %}
+                            />
+                        </Адрес>
+                        <Контакт Тлф="{{ expenseDocument.cashUserContactForDocument.phonemob }}"/>
+                        <БанкРекв НомерСчета="{{ expenseDocument.cashUserBeznalForDocument.rasschet }}">
+                            <СвБанк БИК="{{ expenseDocument.cashUserBeznalForDocument.bank.bik }}"
+                                    НаимБанк="{{ expenseDocument.cashUserBeznalForDocument.bank.name }}"
+                                    КорСчет="{{ expenseDocument.cashUserBeznalForDocument.bank.korschet }}"/>
+                        </БанкРекв>
+                    </Покупатель>
+                    <Основание
+                            {% if expenseDocument.osn.name is empty and expenseDocument.expUser.ur.dogovorNum is not empty and expenseDocument.expUser.ur.dogovorDate %}
+                                ДатаОсн="{{ expenseDocument.expUser.ur.dogovorDate|date('d.m.Y') }}"
+                                НаимОсн="{{ expenseDocument.expUser.ur.dogovorNum }}"
+                            {% else %}
+                                НаимОсн="{{ nakladnayaOsn }}"
+                            {% endif %}
+                    />
+                </СодФХЖ1>
+            </СвДокПТПр>
+            <СодФХЖ2>
+                {% for index, orderGood in orderGoods %}
+                    <СвТов Брутто="0.000" КодТов="-" НаимЕдИзм="{{ orderGood.ed_izm }}"
+                           НаимТов="{{ orderGood.detail_name }} ({{ orderGood.number }})"
+                           НалСт="{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') }}%"
+                           НеттоПередано="{{ orderGood.quantity }}.000" НомТов="{{ index + 1 }}"
+                           ОКЕИ_Тов="{{ orderGood.okei }}"
+                           СтБезНДС="{{ orderGood.sumWithoutNds|number_format(2, '.', '') }}" СтУчНДС="{{ orderGood.sum|number_format(2, '.', '') }}"
+                           СумНДС="{{ orderGood.ndsSum|number_format(2, '.', '') }}" Цена="{{ orderGood.priceWithoutNds|number_format(2, '.', '') }}">
+                    </СвТов>
+                {% endfor %}
+                <Всего НеттоВс="{{ sum.quantity }}" СтБезНДСВс="{{ sum.sumWithoutNds|number_format(2, '.', '') }}"
+                       СтУчНДСВс="{{ sum.sum|number_format(2, '.', '') }}"
+                       СумНДСВс="{{ sum.ndsSum|number_format(2, '.', '') }}"/>
+            </СодФХЖ2>
+        </СвДокПТПрКроме>
+        <СодФХЖ3 СодОпер="Перечисленные в документе ценности переданы"/>
+        <Подписант ОснПолн="Должностные обязанности" Статус="1" ОблПолн="1">
+            <ЮЛ ИННЮЛ="{{ expenseDocument.expFirm.inn }}" НаимОрг="{{ expenseDocument.expFirm.name }}"
+                Должн="Ген. директор">
+                <ФИО Отчество="{{ expenseDocument.expFirm.director.managerName.middlename }}"
+                     Имя="{{ expenseDocument.expFirm.director.managerName.firstname }}"
+                     Фамилия="{{ expenseDocument.expFirm.director.managerName.lastname }}"/>
+            </ЮЛ>
+        </Подписант>
+    </Документ>
+</Файл>

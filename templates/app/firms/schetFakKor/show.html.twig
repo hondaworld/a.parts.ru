@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Корректировочный счет фактура №{{ schetFakKor.document.documentNum }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('schetFakKor', {'page' : app.session.get('page/schetFakKor')|default(1)}) }}">Корректировочные
+            счета фактуры</a>
+    </li>
+    <li class="breadcrumb-item">Корректировочный счет фактура №{{ schetFakKor.document.documentNum }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {# {% if (edit == 'documentNum') %} #}
+    {# {{ include('app/firms/schet/documentNum/form.html.twig') }} #}
+    {# {% elseif (edit == 'pay') %} #}
+    {# {{ include('app/firms/schet/pay/pay.html.twig') }} #}
+    {# {% elseif (edit == 'payUrl') %} #}
+    {# {{ include('app/firms/schet/pay/payUrl.html.twig') }} #}
+    {# {% elseif (edit == 'cancel') %} #}
+    {# {{ include('app/firms/schet/pay/cancel.html.twig') }} #}
+    {# {% elseif (edit == 'userContact') %} #}
+    {# {{ include('app/firms/schet/userContact/form.html.twig') }} #}
+    {# {% endif %} #}
+
+    <div class="row">
+        <div class="col-12">
+            {{ include('app/firms/schetFakKor/document/index.html.twig') }}
+            {{ include('app/firms/schetFakKor/document/goods.html.twig') }}
+            {{ include('app/firms/schetFakKor/document/incomeDocuments.html.twig') }}
+            {{ include('app/firms/schetFakKor/document/schetFaks.html.twig') }}
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <p><strong>Номер: </strong>{{ weight.number.value }}</p>
+    <p><strong>Производитель: </strong>{{ weight.creater.name }}</p>
+
+    {{ form_row(form.weight) }}
+    {{ form_row(form.weightIsReal) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('weights', {'page' : app.session.get('page/weight')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

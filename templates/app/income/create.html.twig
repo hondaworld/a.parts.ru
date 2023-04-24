@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление прихода{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('income', {'page' : app.session.get('page/income')|default(1)}) }}">Приходы</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/income/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

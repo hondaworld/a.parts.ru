@@ -1,0 +1,112 @@
+{% extends 'blocks/block_container_full.html.twig' %}
+
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">{{ ticket.userSubject != '' ? ticket.userSubject : '(без темы)' }}</h3>
+        <div class="block-options">
+            <a href="" data-toggle="modal" data-target="#modalForm"
+               data-url="{{ path('client-tickets.tickets.user', {'id': ticket.id}) }}"
+               data-title="Клиент"
+               class="pl-2 ajax-modal-html">
+                <i class="fas fa-user" title="Клиент"></i>
+            </a>
+            {% if ticket.auto %}
+                <a href="" data-toggle="modal" data-target="#modalForm"
+                   data-url="{{ path('client-tickets.tickets.auto', {'id': ticket.id}) }}"
+                   data-title="Автомобиль"
+                   class="pl-2 ajax-modal-html">
+                    <i class="fas fa-car" title="Автомобиль"></i>
+                </a>
+            {% endif %}
+            {% if ticket.user and ticket.ticketOrder %}
+                <a href="" data-toggle="modal" data-target="#modalForm"
+                   data-url="{{ path('client-tickets.tickets.order', {'id': ticket.id}) }}"
+                   data-title="Заказ"
+                   class="pl-2 ajax-modal-html">
+                    <i class="fas fa-shopping-cart" title="Заказ"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="d-md-flex justify-content-between">
+        <div class="h4">Открыл: {{ managers[ticket.manager.id]|default('Менеджер') }}</div>
+        {% if ticket.dateofclosed %}
+            <div class="h4">
+                Закрыл: {{ managers[ticket.managerofclosed.id]|default('Менеджер') }} {{ ticket.dateofclosed|date('d.m.Y H:i:s') }}</div>
+        {% elseif not (ticket.answer == -1 and ticket.group|default(null) and not ticket.group.close) %}
+            <a class="btn btn-danger mb-2" data-toggle="modal" data-target="#modalConfirm"
+               onclick="confirmModal(this, 'Вы уверены, что хотите закрыть тикет?')"
+               href="{{ path('client-tickets.tickets.close', {'id': ticket.id}) }}"
+            >Закрыть</a>
+        {% endif %}
+    </div>
+
+    <table class="table table-borderless">
+        <tbody>
+        {% for answer in ticket.answers %}
+            <tr class="table-active">
+                <td class="font-size-sm text-muted">
+                    {% if answer.manager == -1 %}
+                        {% if ticket.user and is_granted('show', 'User') %}
+                            <a class="font-w600"
+                               href="{{ path('users.show', {'id': ticket.user.id}) }}">{{ ticket.clientName }}</a>
+                        {% else %}
+                            {{ ticket.clientName }}
+                        {% endif %}
+                    {% else %}
+                        {{ managers[answer.manager]|default('Менеджер') }}
+                    {% endif %}
+                    <em>{{ answer.dateofadded|date('d.m.Y H:i:s') }}{{ answer.ip != '' ? ' (IP: '~ answer.ip ~')' : '' }}</em>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ answer.text|raw }}
+                    {% if answer.attaches is not empty %}
+                        <div class="mt-2">
+                            <strong>Прикрепленные файлы:</strong>
+                            <div>
+                                {% for attach in answer.attaches %}
+                                    {% if attach.file(ticket_attach_folder) %}
+                                        <a href="{{ attach.file(ticket_attach_folder) }}" target="_blank" class="mr-2">{{ attach.name }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {# <strong>Прикрепленные файлы:</strong> #}
+                    {# <div> #}
+                    {# <? #}
+                    {# while($row2 = mysql_fetch_object($res2)) #}
+                    {# { #}
+                    {# ?> #}
+                    {# <a target="_blank" href="<?if (strpos($row2->name, "http://") === false) echo $tradesolutionsUrl . "/upload/ticket_attach/" . $row->answerID . "/" . rawurlencode(StripSlashes($row2->name)); else echo StripSlashes($row2->name);?>"><?if (strpos($row2->name, "http://") !== false) echo substr(StripSlashes($row2->name), strrpos(StripSlashes($row2->name), "/")+1); else echo htmlspecialchars(StripSlashes($row2->name))?></a>&nbsp; #}
+                    {# <? #}
+                    {# } #}
+                    {# ?> #}
+                    {# </div> #}
+
+                </td>
+            </tr>
+        {% endfor %}
+        {% if not (ticket.group|default(null) and ticket.group.hideUser) %}
+            <tr>
+                <td>
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(form.text) }}
+                    {{ form_row(form.attach) }}
+
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                    {{ form_end(form) }}
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

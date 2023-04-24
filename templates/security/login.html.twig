@@ -1,0 +1,94 @@
+{% set theme = app.user.settings['theme']|default([]) %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{% block title %}Авторизация{% endblock %}</title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        {% if (theme['theme-css']|default('') is not empty) %}
+            {{ encore_entry_link_tags(theme['theme-css']) }}
+        {% endif %}
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+
+
+    <div id="page-container">
+
+        <!-- Main Container -->
+        <main id="main-container">
+
+            <!-- Page Content -->
+            <div class="hero-static">
+                <div class="content">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-6 col-xl-4">
+                            <!-- Sign In Block -->
+                            <div class="block block-rounded block-themed mb-0">
+                                <div class="block-header bg-primary-dark">
+                                    <h3 class="block-title">Авторизация</h3>
+                                    <div class="block-options">
+                                    </div>
+                                </div>
+                                <div class="block-content">
+                                    <div class="p-sm-3 px-lg-4 py-lg-5">
+                                        <h1 class="h2 mb-1">Admin Parts Ru</h1>
+                                        <p class="text-muted">
+                                            Добро пожаловать в администраторский интерфейс, пожалуйста, авторизуйтесь.
+                                        </p>
+                                        {% if error %}
+                                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                        {% endif %}
+                                        <!-- Sign In Form -->
+                                        <!-- jQuery Validation (.js-validation-signin class is initialized in js/pages/op_auth_signin.min.js which was auto compiled from _js/pages/op_auth_signin.js) -->
+                                        <!-- For more info and examples you can check out https://github.com/jzaefferer/jquery-validation -->
+                                        <form class="js-validation-signin" method="POST">
+                                            <input type="hidden" name="_csrf_token"
+                                                   value="{{ csrf_token('authenticate') }}"
+                                            >
+                                            <div class="py-3">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control form-control-alt form-control-lg" id="inputLogin" name="login" placeholder="Логин" value="{{ last_username }}" required autofocus>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control form-control-alt form-control-lg" id="inputPassword" name="password" placeholder="Пароль" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="login-remember" name="_remember_me">
+                                                        <label class="custom-control-label font-w400" for="login-remember">Запомнить</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-md-6 col-xl-5">
+                                                    <button type="submit" class="btn btn-block btn-alt-primary">
+                                                        <i class="fa fa-fw fa-sign-in-alt mr-1"></i> Войти
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <!-- END Sign In Form -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END Sign In Block -->
+                        </div>
+                    </div>
+                </div>
+                <div class="content content-full font-size-sm text-muted text-center">
+                    <strong>Parts 1.0</strong> &copy; <span data-toggle="year-copy"></span>
+                </div>
+            </div>
+            <!-- END Page Content -->
+        </main>
+        <!-- END Main Container -->
+    </div>
+{% endblock %}
+
+</body>
+</html>
+

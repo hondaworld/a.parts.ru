@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление контакта сотрудника {{ manager.name }}{% endblock %}
+{% block header %}Добавление контакта сотрудника {{ manager.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers') }}">Сотрудники</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('managers.edit', {'id': manager.id}) }}">{{ manager.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('managers.contacts', {'managerID': manager.id}) }}">Контакты</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/managers/_tabs.html.twig') %}
+    {{ include('app/contacts/managers/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

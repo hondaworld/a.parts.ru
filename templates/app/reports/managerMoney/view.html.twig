@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Деньги менеджеров - детальная статистика{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('reports.managerMoney', {
+            'form': {
+                'dateofreport': {
+                    'date_from': filter.dateofreport.vars.data.date_from,
+                    'date_till': filter.dateofreport.vars.data.date_till
+                },
+                'period': 'month'
+            }
+        }) }}">Деньги менеджеров</a></li>
+    <li class="breadcrumb-item">Детальная статистика</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('reports.managerMoney.view.print') }}" class="nav-link" target="_blank"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('reports.managerMoney.view.excel') }}" class="nav-link" target="_blank"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% block header_form %}
+            <li class="nav-item mr-1">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.managerID) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.finance_typeID) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Клиент', 'user_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Сумма', 'balance') }}</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Менеджер или вид оплаты не выбраны</td>
+                </tr>
+            {% endif %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for balance in pagination %}
+                <tr>
+                    <td>{{ balance.dateofadded|date('d.m.Y H:i') }}</td>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': balance.userID}) }}">{{ balance.user_name }}</a>
+                        {% else %}
+                            {{ balance.user_name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ balance.balance|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+
+
+{% endblock %}

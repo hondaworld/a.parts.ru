@@ -1,0 +1,49 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Тексты для сайта</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('auto.generation.description.spare', {'auto_modelID': autoModel.id, 'id': autoGeneration.id}) }}"
+               title="Изменить текст запчастей"><i class="fas fa-cogs"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('auto.generation.description.acs', {'auto_modelID': autoModel.id, 'id': autoGeneration.id}) }}"
+               title="Изменить текст аксессуаров"><i class="fas fa-car-battery"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('auto.generation.description.tuning', {'auto_modelID': autoModel.id, 'id': autoGeneration.id}) }}"
+               title="Изменить текст тюнинга"><i class="fas fa-tachometer-alt"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p>
+    <strong>Запчасти: </strong>
+    {% if (autoGeneration.description.spare is empty) %}
+        {{ check_empty('', 'нет') }}
+    {% else %}
+        <div class="html-text-block">
+            {{ autoGeneration.description.spare|raw }}
+        </div>
+    {% endif %}
+    </p>
+    <p>
+    <strong>Аксессуары: </strong>
+    {% if (autoGeneration.description.acs is empty) %}
+        {{ check_empty('', 'нет') }}
+    {% else %}
+        <div class="html-text-block">
+            {{ autoGeneration.description.acs|raw }}
+        </div>
+    {% endif %}
+    </p>
+    <p>
+    <strong>Тюнинг: </strong>
+    {% if (autoGeneration.description.tuning is empty) %}
+        {{ check_empty('', 'нет') }}
+    {% else %}
+        <div class="html-text-block">
+            {{ autoGeneration.description.tuning|raw }}
+        </div>
+    {% endif %}
+    </p>
+{% endblock %}

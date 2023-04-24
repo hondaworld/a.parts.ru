@@ -1,0 +1,11 @@
+{% if 'incomeDocument' not in hideCols %}
+    <td>
+        {% if income.incomeDocumentID and incomeDocuments[income.incomeDocumentID]|default(null) %}
+            {{ incomeDocuments[income.incomeDocumentID]['doc_name'] }}
+            {% if incomeDocuments[income.incomeDocumentID]['doc_path'] %}
+                <a href="/{{ incomeDocuments[income.incomeDocumentID]['doc_path'] }}?id={{ income.incomeDocumentID }}" target="_blank">{{ incomeDocuments[income.incomeDocumentID]['document_num'] }}</a>
+            {% else %}
+                {{ incomeDocuments[income.incomeDocumentID]['document_num'] }}
+            {% endif %}
+        {% endif %}</td>
+{% endif %}

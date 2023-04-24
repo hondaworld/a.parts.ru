@@ -1,0 +1,32 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Данные отгрузки</h3>
+        <div class="block-options">
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Клиент: </strong>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': shippingView.userID}) }}">{{ shippingView.user_name }}</a>
+        {% else %}
+            {{ shippingView.user_name }}
+        {% endif %}
+    </p>
+    <p><strong>Получатель: </strong>{{ shippingView.gruz_user_name }}</p>
+    <p><strong>Отправитель: </strong>{{ shippingView.gruz_firm_name }}</p>
+    <p><strong>Город: </strong>{{ shippingView.gruz_user_town }}</p>
+    <p>
+        <strong>Статус: </strong>{{ shippingView.status_name }}
+        {% for status in statuses %}
+            {% if status.number - 1 == shipping.status.number %}
+                <a type="button" class="btn btn-sm btn-primary ml-3 confirmModal"
+                   data-toggle="modal" data-target="#modalConfirm"
+                   href="{{ path('shippings.status.change', {'id': shipping.id, 'status': status.id}) }}"
+                   onclick="confirmModal(this, 'Вы уверены, что хотите изменить статус на {{ status.name }}?')"
+                   title="Изменить статус на {{ status.name }}">Изменить статус на {{ status.name }}</a>
+            {% endif %}
+        {% endfor %}
+    </p>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Описание</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.description', {'id': zapCard.id}) }}"
+               title="Изменить описание"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Любая дополнительная информация о товаре: </strong>
+    {% if (zapCard.text is empty) %}
+        {{ check_empty('', 'не задана') }}
+    {% else %}
+        <div class="border rounded p-2">
+            {{ zapCard.text|nl2br }}
+        </div>
+    {% endif %}
+    </p>
+    <p><strong>Информация о подделках: </strong>
+    {% if (zapCard.textFake is empty) %}
+        {{ check_empty('', 'не задана') }}
+    {% else %}
+        <div class="border rounded p-2">
+            {{ zapCard.textFake|nl2br }}
+        </div>
+    {% endif %}
+    </p>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Поставщики{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Provider') %}
+                <li class="nav-item">
+                    <a href="{{ path('providers.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                 title="Добавить поставщика"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'Provider') %}
+                <li class="nav-item">
+                    <a href="{{ path('providers.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенных поставщиков?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'Provider') %}
+                <li class="nav-item">
+                    <a href="{{ path('providers.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенных поставщиков?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('providers', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-1">{{ form_widget(filter.showHide) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'p.name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Клиент', 'user_name') }}</th>
+            {% if is_granted('show', 'Provider') or is_granted('delete', 'Provider') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.name) }}</th>
+            <th></th>
+            {% if is_granted('show', 'Provider') or is_granted('delete', 'Provider') or is_granted('index', 'ProviderPrice') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for provider in pagination %}
+                <tr class="{{ provider.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': provider.providerID} only %}
+                    {% endif %}
+                    <td>{{ provider.name }}</td>
+                    <td><a href="{{ path('users.show', {'id': provider.userID}) }}">{{ provider.user_name }}</a></td>
+                    {% if is_granted('show', 'Provider') or is_granted('delete', 'Provider') or is_granted('index', 'ProviderPrice') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('index', 'ProviderPrice') %}
+                                    <a href="{{ path('providers.prices', {'form': {'providerID': provider.providerID}}) }}"
+                                       title="Прайс-листы">
+                                        <i class="fas fa-file-csv"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('provider_invoices', 'Provider') %}
+                                    <a href="{{ path('providers.invoice', {'providerID': provider.providerID}) }}"
+                                       title="Настройка инвойсов">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('provider_balance', 'Provider') %}
+                                    <a href="{{ path('providers.balance.history', {'providerID': provider.providerID}) }}"
+                                       title="Взаиморасчеты поставщика">
+                                        <i class="fas fa-receipt"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('show', 'Provider') %}
+                                    <a href="{{ path('providers.show', {'id': provider.providerID}) }}"
+                                       title="Просмотр поставщика">
+                                        <i class="fas fa-truck"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Provider') %}
+                                    <a href="{{ path('providers.delete', {'id': provider.providerID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить поставщика?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить поставщика">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

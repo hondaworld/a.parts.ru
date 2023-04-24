@@ -1,0 +1,162 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Товарный чек</h3>
+        <div class="block-options">
+
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <h3>Клиент</h3>
+
+    <div class="pb-3">
+        {% if user.mainContact %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Адрес есть</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Адреса нет
+            {% if is_granted('contacts', user) %}
+                <a href="{{ path('users.contacts', {'userID': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if not user.ur.isUr %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Клиент не является юридическим лицом</span>
+        {% else %}
+            {% if app.request.query.get('isUr') == 1 %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> Клиент является юридическим лицом</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> Клиент является юридическим лицом, подтвердите создание товарного чека</span>
+            {% endif %}
+            <div class="pl-3">
+                <div class="custom-control custom-checkbox d-inline-block">
+                    <input type="checkbox" class="custom-control-input" id="check_isUr" name="check-check_isUr"
+                           onclick="window.location='{{ path('order.expenseDocument', {'id': user.id, 'isUr': 1}) }}'"{{ app.request.query.get('isUr') == 1 ? ' checked disabled' : '' }}>
+                    <label class="custom-control-label" for="check_isUr">подтвердить</label>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <h3>Товары</h3>
+
+    <div class="pb-3">
+        {% if expenses %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Товары добавлены в отгрузку</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Товаров в отгрузке нет
+            {% if is_granted('show', 'Order') %}
+                <a href="{{ path('order.goods', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if not expenseDocument.isPicking %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Заказ собран</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Заказ находится в сборке
+            {% if is_granted('show', 'Order') %}
+                <a href="{{ path('order.goods', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <h3>Платежи</h3>
+
+    <div class="pb-3">
+        {% if user.balanceLimit == 0 and (expenseDocument.isSimpleCheck is null or expenseDocument.isSimpleCheck and sum > financeTypeBalance) %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Недостаточно поступлений у вида платежа</span>
+        {% elseif user.allowBalanceForOrder(sum) %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Денег достаточно</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Долги превышают лимит клиента
+            {% if is_granted('order_paid', 'Order') %}
+                <a href="{{ path('order.paids', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if expenseDocument.isSimpleCheck is null %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Не выбран вид оплаты<a
+                        href="{{ path('order.expenseDocument.data', {'id': user.id}) }}"
+                        class="pl-3">исправить</a></span>
+        {% elseif expenseDocument.isSimpleCheck == false %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Вид оплаты не должен быть "Безналичный расчет" или "Банковская карта"<a
+                        href="{{ path('order.expenseDocument.data', {'id': user.id}) }}"
+                        class="pl-3">исправить</a></span>
+        {% elseif not expenseDocument.financeType.firm %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> У вида оплаты не выбрано предприятие<a
+                        href="{{ path('finance.types.edit', {'id': expenseDocument.financeType.id}) }}" class="pl-3">исправить</a></span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Вид оплаты соответствует</span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if user.isDebt %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> У клиента просроченная задолженность</span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Задолженности нет</span>
+        {% endif %}
+    </div>
+
+    {% if user.opt.id == 1 %}
+
+        <h3>Сервис</h3>
+
+        <div class="pb-3">
+            <div>
+                <select class="form-control" name="isService5" id="isService5">
+                    <option value="0">Только запчасти</option>
+                    <option value="1">Запчасти и ремонт</option>
+                </select>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <h3>Товарный чек</h3>
+
+    <div class="pb-3">
+        {% if expenseDocument.shippings %}
+            <div class="pl-3">
+                <div class="custom-control custom-checkbox d-inline-block">
+                    <input type="checkbox" class="custom-control-input" id="isShipping5" name="isShipping5" checked
+                           disabled>
+                    <label class="custom-control-label" for="isShipping5"> Отгрузка создана</label>
+                </div>
+            </div>
+        {% else %}
+            <div class="pl-3">
+                <div class="custom-control custom-checkbox d-inline-block">
+                    <input type="checkbox" class="custom-control-input" id="isShipping5" name="isShipping5">
+                    <label class="custom-control-label" for="isShipping5"> Создать отгрузку</label>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if expenseDocument.financeType and expenseDocument.financeType.id in [3,6] %}
+        <p><strong class="text-danger">Не забудьте распечатать чек!!!</strong></p>
+    {% endif %}
+
+    <p>
+        <input type="Button" class="btn btn-primary" id="check_button5" name="check_button5"
+               onclick="createExpenseDocument(5);"
+               value="Товарный чек"{{ not isCheckPrint ? ' disabled' : '' }}>
+    </p>
+
+{% endblock %}

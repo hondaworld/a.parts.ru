@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Склады{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ZalSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.create') }}" class="nav-link" title="Добавить склад"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'ZalSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенный склад?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'ZalSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенный склад?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Кратко</th>
+            <th>Наименование</th>
+            <th>Торговый склад</th>
+            <th>Коэффициент</th>
+            <th>Опт</th>
+            {% if is_granted('edit', 'ZalSklad') or is_granted('delete', 'ZalSklad') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if zapSklads is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for zapSklad in zapSklads %}
+                <tr
+                        class="{{ zapSklad.isHide ? 'text-muted' : '' }}{{ zapSklad.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': zapSklad.zapSkladID} only %}
+                    {% endif %}
+                    <td>{{ zapSklad.name_short }}</td>
+                    <td>{{ zapSklad.name }}</td>
+                    <td class="text-center">{{ boolean_status(zapSklad.isTorg) }}</td>
+                    <td>{{ zapSklad.koef }}</td>
+                    <td>{{ zapSklad.opt }}</td>
+                    {% if is_granted('edit', 'ZalSklad') or is_granted('delete', 'ZalSklad') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('index', 'ExpenseSklad') %}
+                                    <a href="{{ path('sklads.shipping', {'id': zapSklad.zapSkladID}) }}"
+                                       title="Текущая отгрузка">
+                                        <i class="fas fa-truck"></i>
+                                    </a>
+                                    <a href="{{ path('sklads.income', {'id': zapSklad.zapSkladID}) }}"
+                                       title="Приход на склад">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('sklad_parts', 'ZalSklad') %}
+                                    <a href="{{ path('sklads.parts', {'id': zapSklad.zapSkladID}) }}"
+                                       title="Детали">
+                                        <i class="fas fa-warehouse"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('sklad_parts_prices', 'ZalSklad') %}
+                                    <a href="{{ path('sklads.prices', {'id': zapSklad.zapSkladID}) }}"
+                                       title="Цены">
+                                        <i class="fas fa-ruble-sign"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('edit', 'ZalSklad') %}
+                                    <a href="{{ path('sklads.edit', {'id': zapSklad.zapSkladID}) }}"
+                                       title="Изменить склад">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'ZalSklad') %}
+                                    {% if not zapSklad.noneDelete %}
+                                        <a href="{{ path('sklads.delete', {'id': zapSklad.zapSkladID}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить склад?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Удалить склад">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    {% else %}
+                                        <a><i class="far fa-trash-alt text-muted"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,11 @@
+<li>
+    <a class="text-dark media py-2" href="{{ path('client-tickets.tickets.show', {'id': ticket.ticketID}) }}">
+        <div class="mr-2 ml-3">
+            <i class="fa fa-fw fa-user {{ ticket.mins > 2880 ? 'text-danger' : (ticket.mins > 1440 ? 'text-warning' : 'text-success') }}"></i>
+        </div>
+        <div class="media-body pr-2">
+            <div class="font-w600">{{ ticket.user_subject }}</div>
+            <span class="font-w500 text-muted">{{ ticket.mins|number_format(0, '', ' ') }} мин назад</span>
+        </div>
+    </a>
+</li>

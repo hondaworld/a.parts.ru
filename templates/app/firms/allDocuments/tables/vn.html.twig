@@ -1,0 +1,30 @@
+<tr>
+    {% if isShowDocType|default(false) %}
+        <td>ВН</td>
+    {% endif %}
+    <td>{{ doc.document_num }}</td>
+    <td>{{ doc.dateofadded|date('d.m.Y') }}</td>
+    <td>
+        {% if is_granted('edit', 'Firm') %}
+            <a href="{{ path('firms.edit', {'id': doc.firmID}) }}">{{ doc.from_name }}</a>
+        {% else %}
+            {{ doc.from_name }}
+        {% endif %}
+    </td>
+    <td>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': doc.userID}) }}">{{ doc.to_name }}</a>
+        {% else %}
+            {{ doc.to_name }}
+        {% endif %}
+    </td>
+    <td class="text-right">{{ doc.sum|number_format(2, ',', ' ') }}</td>
+    <td class="text-left">
+        <div class="btn-group">
+            <a href="{{ path('return1.php', {'id': doc.id}) }}"
+               title="Печать возвратной накладной" target="_blank">
+                <i class="fas fa-print"></i>
+            </a>
+        </div>
+    </td>
+</tr>

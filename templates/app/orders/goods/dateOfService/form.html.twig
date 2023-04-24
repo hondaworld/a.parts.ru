@@ -1,0 +1,12 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'ajaxFormSubmit(event, this)'}, 'action': path('order.goods.dateOfService.update', {'id': user.id}) }) }}
+
+{{ form_row(form.dateofservice) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Изменить</button>
+    <button type="submit" class="btn btn-info" onclick="document.getElementById('form_dateofservice').value = ''">Очистить</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

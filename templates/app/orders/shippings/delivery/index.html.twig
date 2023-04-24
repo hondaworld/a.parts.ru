@@ -1,0 +1,45 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Транспортная компания</h3>
+        <div class="block-options">
+            {% if is_granted('edit', 'Shipping') %}
+                <a type="button" class="btn btn-sm btn-alt-primary"
+                   href="{{ path('shippings.delivery', {'id': shipping.id}) }}"
+                   title="Изменить данные"><i class="fas fa-edit"></i></a>
+
+                <a type="button" class="btn btn-sm btn-alt-primary"
+                   href="{{ path('shippings.attach', {'id': shipping.id}) }}"
+                   title="Накладная"><i class="fas fa-paperclip"></i></a>
+                <a type="button" class="btn btn-sm btn-alt-primary confirmModal"
+                   data-toggle="modal" data-target="#modalConfirm"
+                   href="{{ path('shippings.mail', {'id': shipping.id}) }}"
+                   onclick="confirmModal(this, 'Вы уверены, что хотите отправить данные по E-mail и SMS?')"
+                   title="Отправить данные по E-mail и SMS"><i class="far fa-envelope"></i></a>
+            {% endif %}
+            {# {% if not schet.isPayUrlNeed %} #}
+            {# <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('schet.php', {'id': schet.id}) }}" #}
+            {# title="Печать счета" target="_blank"><i class="fas fa-print"></i></a> #}
+            {# {% endif %} #}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Дата: </strong>
+        {{ shipping.dateofadded|date('d.m.Y') }}
+    </p>
+    <p><strong>Оплатил: </strong>
+        {{ check_empty(shippingView.pay_type_name, 'не задан') }}
+    </p>
+    <p><strong>ТК: </strong>
+        {{ check_empty(shippingView.delivery_tk, 'не задана') }}
+    </p>
+    <p><strong>Трекинг номер: </strong>
+        {{ check_empty(shippingView.tracknumber, 'не задан') }}
+    </p>
+    {% if (shipping.nakladnaya is not empty) %}
+        <p><strong>Накладная: </strong>
+        <a href="{{ user_shipping_attach_folder ~ shipping.nakladnaya }}" target="_blank">файл</a>
+        </p>
+    {% endif %}
+{% endblock %}

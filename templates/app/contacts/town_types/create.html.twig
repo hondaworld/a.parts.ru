@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление типа населенных пунктов{% endblock %}
+{% block header %}Добавление типа населенных пунктов{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('townTypes') }}">Типы населенных пунктов</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/contacts/town_types/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

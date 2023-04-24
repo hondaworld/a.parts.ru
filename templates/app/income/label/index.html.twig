@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Наклейки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('income', {'page' : app.session.get('page/income')|default(1)}) }}">Приходы</a>
+    </li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, {'attr': {'target': '_blank'}}) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+        {% block table_header %}
+            <th>Бренд</th>
+            <th>Наименование</th>
+            <th>Номер</th>
+            <th>Ячейка</th>
+            <th>Заказ</th>
+            <th>Кол</th>
+            <th>Разделять кол. по наклейкам</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Задайте фильтр</td>
+                </tr>
+            {% elseif pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for income in pagination %}
+                <tr>
+                    <td>{{ income.creater }}</td>
+                    <td>{{ income.detail_name }}</td>
+                    <td>{{ income.number }}</td>
+                    <td>
+                        {% if locations[income.zapCardID]|default(null) %}
+                            {% for zapSkladID, location in locations[income.zapCardID] %}
+                                <div>{{ location.sklad_name }}: {{ location.location }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td>{{ income.orderID }}</td>
+                    <td>{{ form_widget(form.children['quantity_' ~ income.incomeID]) }}</td>
+                    <td>{{ form_widget(form.children['isCheck_' ~ income.incomeID]) }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Распечатать') }}</button>
+    {{ form_end(form) }}
+
+{% endblock %}

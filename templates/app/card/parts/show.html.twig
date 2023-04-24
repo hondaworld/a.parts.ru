@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Деталь {{ zapCard.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item">{{ zapCard.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/parts/_tabs.html.twig') %}
+
+    {% if (edit == 'number') %}
+        {{ include('app/card/parts/part/number/form.html.twig') }}
+    {% elseif (edit == 'name') %}
+        {{ include('app/card/parts/part/name/form.html.twig') }}
+    {% elseif (edit == 'dop') %}
+        {{ include('app/card/parts/part/dop/form.html.twig') }}
+    {% elseif (edit == 'description') %}
+        {{ include('app/card/parts/part/description/form.html.twig') }}
+    {% elseif (edit == 'weight') %}
+        {{ include('app/card/parts/part/weight/form.html.twig') }}
+    {% elseif (edit == 'manager') %}
+        {{ include('app/card/parts/part/manager/form.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/card/parts/part/number/index.html.twig') }}
+            {{ include('app/card/parts/part/name/index.html.twig') }}
+            {{ include('app/card/parts/part/dop/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/card/parts/part/abc/index.html.twig') }}
+            {{ include('app/card/parts/part/weight/index.html.twig') }}
+            {{ include('app/card/parts/part/description/index.html.twig') }}
+            {{ include('app/card/parts/part/manager/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

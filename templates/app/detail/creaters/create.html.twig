@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление производителя{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('creaters', {'page' : app.session.get('page/creaters')|default(1)}) }}">Производители</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/detail/creaters/_form.html.twig') }}
+{% endblock %}

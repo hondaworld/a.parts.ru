@@ -1,0 +1,22 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {% if expenseDocument.expFirm %}
+        <p><strong>Рекомендуемое предприятие: </strong>{{ expenseDocument.expFirm.name }}</p>
+        {% if expenseDocument.expFirm.financeTypes|length > 0 %}
+            <p><strong>Рекомендуемые виды оплаты: </strong>{{ expenseDocument.expFirm.financeTypeNames|join(', ') }}</p>
+        {% endif %}
+    {% endif %}
+
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.finance_typeID) }}
+    {{ form_row(form.expense_type_id) }}
+    {{ form_row(form.reseller_id) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('order.expenseDocument', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

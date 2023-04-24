@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Данные документа клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Данные документа клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">{{ user.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    {% if (edit == 'expUser') %}
+        {{ include('app/orders/order/document/expUser/edit.html.twig') }}
+    {% elseif (edit == 'expFirm') %}
+        {{ include('app/orders/order/document/expFirm/edit.html.twig') }}
+    {% elseif (edit == 'cashier') %}
+        {{ include('app/orders/order/document/cashier/edit.html.twig') }}
+    {% elseif (edit == 'cashierFirmContr') %}
+        {{ include('app/orders/order/document/cashier/editFirmContr.html.twig') }}
+    {% elseif (edit == 'cashierSchetFak') %}
+        {{ include('app/orders/order/document/cashier/editSchetFak.html.twig') }}
+    {% elseif (edit == 'getter') %}
+        {{ include('app/orders/order/document/getter/edit.html.twig') }}
+    {% elseif (edit == 'getterFirmContr') %}
+        {{ include('app/orders/order/document/getter/editFirmContr.html.twig') }}
+    {% elseif (edit == 'sender') %}
+        {{ include('app/orders/order/document/sender/edit.html.twig') }}
+    {% elseif (edit == 'prefixes') %}
+        {{ include('app/orders/order/document/prefixes/edit.html.twig') }}
+    {% elseif (edit == 'osn') %}
+        {{ include('app/orders/order/document/osn/edit.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/orders/order/document/expFirm/index.html.twig') }}
+            {{ include('app/orders/order/document/expUser/index.html.twig') }}
+            {{ include('app/orders/order/document/osn/index.html.twig') }}
+            {{ include('app/orders/order/document/prefixes/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/orders/order/document/cashier/index.html.twig') }}
+            {{ include('app/orders/order/document/getter/index.html.twig') }}
+            {{ include('app/orders/order/document/sender/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

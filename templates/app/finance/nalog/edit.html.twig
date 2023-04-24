@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение налоговой схемы {{ nalog.name }}{% endblock %}
+{% block header %}{{ nalog.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('nalog') }}">Налоговые схемы</a></li>
+    <li class="breadcrumb-item">{{ nalog.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/finance/nalog/_form_edit.html.twig') }}
+{% endblock %}

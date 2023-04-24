@@ -1,0 +1,66 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Данные юридического лица</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.ur', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Является юридическим лицом: </strong>
+        {{ boolean_status(user.ur.isUr) }}
+    </p>
+    <p><strong>Полное наименование организации: </strong>
+        {% if user.ur.organization is empty %}
+            <span class="text-muted font-italic">не задано</span>
+        {% else %}
+            {{ user.ur.organization }}
+        {% endif %}
+    </p>
+    <p><strong>ИНН: </strong>
+        {% if user.ur.inn is empty %}
+            <span class="text-muted font-italic">не задан</span>
+        {% else %}
+            {{ user.ur.inn }}
+        {% endif %}
+    </p>
+    <p><strong>КПП: </strong>
+        {% if user.ur.kpp is empty %}
+            <span class="text-muted font-italic">не задан</span>
+        {% else %}
+            {{ user.ur.kpp }}
+        {% endif %}
+    </p>
+    <p><strong>ОКПО: </strong>
+        {% if user.ur.okpo is empty %}
+            <span class="text-muted font-italic">не задан</span>
+        {% else %}
+            {{ user.ur.okpo }}
+        {% endif %}
+    </p>
+    <p><strong>ОГРН: </strong>
+        {% if user.ur.ogrn is empty %}
+            <span class="text-muted font-italic">не задан</span>
+        {% else %}
+            {{ user.ur.ogrn }}
+        {% endif %}
+    </p>
+    <p><strong>Является плательщиком НДС: </strong>
+        {{ boolean_status(user.ur.isNDS) }}
+    </p>
+    <p><strong>Договор: </strong>
+        {% if user.ur.dogovorNum is empty %}
+            <span class="text-muted font-italic">номер не задан</span>
+        {% else %}
+            {{ user.ur.dogovorNum }}
+        {% endif %}
+        <strong> от </strong>
+        {% if not user.ur.dogovorDate %}
+            <span class="text-muted font-italic">дата не задана</span>
+        {% else %}
+            {{ user.ur.dogovorDate|date('d.m.Y') }}
+        {% endif %}
+    </p>
+{% endblock %}

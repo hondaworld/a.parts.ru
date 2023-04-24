@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Инвойсы поставщика {{ provider.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('providers', {'page' : app.session.get('page/providers')|default(1)}) }}">Поставщики</a>
+    </li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('providers.invoice.create', {'providerID': provider.id}) }}" class="nav-link"><i class="fas fa-plus"
+                                                                                     title="Добавить прайс-лист"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('providers.invoice.hide', {'providerID': provider.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные инвойсы?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('providers.invoice.unHide', {'providerID': provider.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные инвойсы?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Из статуса</th>
+            <th>В статус</th>
+            <th>Статус отсутствия</th>
+            <th>Начало файла</th>
+            <th>E-mail</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for invoice in all %}
+                <tr class="{{ invoice.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': invoice.providerInvoiceID} only %}
+                    {% endif %}
+                    <td>{{ invoice.status_from_name|join(', ') }}</td>
+                    <td>{{ statuses[invoice.status_to]|default('') }}</td>
+                    <td>{{ statuses[invoice.status_none]|default('') }}</td>
+                    <td>{{ invoice.price_email }}</td>
+                    <td>{{ invoice.email_from }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('providers.invoice.edit', {'providerID': provider.id, 'id': invoice.providerInvoiceID}) }}"
+                               title="Изменить инвойс">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('providers.invoice.delete', {'id': invoice.providerInvoiceID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить инвойс?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить инвойс">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

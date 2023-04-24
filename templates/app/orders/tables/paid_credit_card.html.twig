@@ -1,0 +1,44 @@
+{% embed 'tables/table_simple.html.twig' %}
+
+    {% block header %}{% endblock %}
+
+    {% block table_header %}
+        <th># заказа</th>
+        <th>Имя</th>
+        <th>Телефон</th>
+        <th>Дата</th>
+        {% if is_granted('create', 'Order') %}
+            <th>Операции</th>
+        {% endif %}
+    {% endblock %}
+
+    {% block table_body %}
+        {% if orders is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Записей нет</td>
+            </tr>
+        {% endif %}
+        {% for userID, user in orders %}
+            {% for orderID, order in user.orders %}
+                <tr>
+                    <td class="text-right">{{ order.orderID }}</td>
+                    <td>{{ user.user ? user.user.fullNameOrOrganization : '' }}</td>
+                    <td>{{ user.user ? phone_mobile(user.user.phonemob) : '' }}</td>
+                    <td>{{ order.dateofadded|default(null) ? order.dateofadded|date('d.m.Y H:i') : '' }}</td>
+                    {% if is_granted('create', 'Order') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('create', 'Order') %}
+                                    <a href="{{ path('orders.activate', {'id': orderID}) }}"
+                                       title="Активировать заказ">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    {% endblock %}
+{% endembed %}

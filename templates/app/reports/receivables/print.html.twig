@@ -1,0 +1,23 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Клиент</th>
+            <th>Задолженность</th>
+            <th>Дата образования задолженности</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for profit in profits %}
+                <tr>
+                    <td>{{ profit.name }}</td>
+                    <td class="text-right">{{ profit.balance|number_format(2, ',', ' ') }}</td>
+                    <td>{{ profit.debts_date|date('d.m.Y') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

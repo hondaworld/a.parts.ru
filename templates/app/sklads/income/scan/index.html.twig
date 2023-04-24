@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сканирование прихода на склад {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads') }}">Склады</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('sklads.income', {'id' : zapSklad.id}) }}">Приходы на
+            склад {{ zapSklad.nameShort }}</a>
+    </li>
+    <li class="breadcrumb-item">Сканирование</li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-6">
+            <button
+                    class="btn btn-primary mb-4"
+                    style="max-width: 450px; width: 100%; height: 100px; font-size: 30px;"
+                    id="buttonScan"
+                    data-toggle="modal"
+                    data-target="#modalNumber">Сканировать
+            </button>
+            {# {% if searchNumber is not empty %} #}
+            {# {% if arr|length == 0 %} #}
+            {# <div>Такой детали в приходе нет</div> #}
+            {# {% elseif isUnpackNumber %} #}
+            {# <div>Деталь полностью оприходована</div> #}
+            {# {% else %} #}
+            {# {{ include('app/income/scan/incomes.html.twig') }} #}
+            {# {% endif %} #}
+            {# {% endif %} #}
+        </div>
+        <div class="col-xl-6">
+            <h3>Неоприходованные</h3>
+            {{ include('app/sklads/income/scan/notScanned.html.twig') }}
+            <h3>Оприходованные</h3>
+            {{ include('app/sklads/income/scan/scanned.html.twig') }}
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalNumber" tabindex="-1" role="dialog" aria-labelledby="modalNumberLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form name="f_scan" action="{{ path('sklads.income.scan', {'id': zapSklad.id}) }}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalNumberLabel">Поиск по номеру</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="modalNumberText" class="modal-body">
+                        <div class="alert d-none" id="modalNumberAlert" role="alert">
+                            <p class="mb-0" id="modalNumberAlertMessage"></p>
+                        </div>
+                        <input type="text" name="number" id="searchNumber" class="form-control" value="">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="modalNumberButton" class="btn btn-primary">
+                            Найти
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalQuantityPack" tabindex="-1" role="dialog"
+         aria-labelledby="modalQuantityPackLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'action': path('sklads.income.scan', {'id': zapSklad.id, 'number': (searchNumber is not null ? searchNumber.value : ''), 'scan': 2})}) }}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalQuantityPackLabel">Количество</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="modalQuantityPackText" class="modal-body">
+                        <p>Деталь: {{ expenseSklad.creater_name|default('') }} {{ expenseSklad.number|default('') }}</p>
+                        <p>Осталось: {{ expenseSklad.quantity|default(0) - expenseSklad.quantityIncome|default(0) }} шт.</p>
+                        <p>Ячейка: {{ expenseSklad.location|default('')|nl2br }}</p>
+                        <p>Заказ: {{ expenseSklad.order|default('')|nl2br }}</p>
+                        {{ form_row(form.quantityIncome, {'id': 'quantityIncome'}) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="modalQuantityPackButton" class="btn btn-primary">
+                            Оприходовать
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+
+{% endblock %}

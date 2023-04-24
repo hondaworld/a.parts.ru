@@ -1,0 +1,16 @@
+{% embed 'blocks/block_container.html.twig' %}
+    {% block content %}
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="row mb-2">
+            <div class="col-auto">Накладная</div>
+            <div class="col-auto">{{ form_widget(form.document_num) }}</div>
+            <div class="col-auto">{{ form_widget(form.year) }}</div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+    {% endblock %}
+{% endembed %}

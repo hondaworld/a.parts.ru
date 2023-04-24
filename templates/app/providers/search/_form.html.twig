@@ -1,0 +1,18 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <p><strong>Производитель: </strong>{{ creater.name }}</p>
+    <p><strong>Номер: </strong>{{ number }}</p>
+    <p><strong>Поставщик: </strong>{{ providerPrice.fullName }}</p>
+    <p><strong>Валюта цены: </strong>{{ providerPrice.currency.name }}</p>
+
+    {{ form_row(form.price) }}
+    {{ form_row(form.quantity) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.prices.search', {'form' : {'number' : number }}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

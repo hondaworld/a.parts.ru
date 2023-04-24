@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Оборот{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Оборот</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('reports.turnover') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(profits, 'Клиент', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(profits, 'Доход', 'income') }}</th>
+            <th>{{ knp_pagination_sortable(profits, 'Прибыль', 'profit') }}</th>
+            <th>{{ knp_pagination_sortable(profits, 'Лимит', 'balanceLimit') }}</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for profit in profits %}
+                <tr>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': profit.userID}) }}">{{ profit.name }}</a>
+                        {% else %}
+                            {{ profit.name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ profit.income|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profit.profit|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profit.balanceLimit|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+    <script>
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.turnover.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.turnover.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+{% endblock %}

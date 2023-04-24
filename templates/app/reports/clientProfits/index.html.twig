@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прибыль по клиентам{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Прибыль по клиентам</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(printUsersForm, {'attr': {'novalidate': 'novalidate', 'id': 'printUsersForm', 'target': '_blank'} }) }}
+    {{ form_widget(printUsersForm.data, {'id': 'printUsersData'}) }}
+    {{ form_end(printUsersForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if profits is not null %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('reports.clientProfits') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.dateofprev) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Опт</th>
+            <th>Доход</th>
+            <th>Прибыль</th>
+            <th>МСК Доход</th>
+            <th>МСК Прибыль</th>
+            <th>МСК Доход сервис</th>
+            <th>МСК Прибыль сервис</th>
+            <th>СПБ Доход</th>
+            <th>СПБ Прибыль</th>
+            <th>СПБ Доход сервис</th>
+            <th>СПБ Прибыль сервис</th>
+            <th>Доход сервис</th>
+            <th>Прибыль сервис</th>
+            <th>Клиенты</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% else %}
+                {% for optID, opt in opts %}
+                    <tr>
+                        <td>{{ opt }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'Доход ({{ opt }})',
+                                    incomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_incomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].income.value|number_format(2, ',', ' ') }}{{ profits[optID].income.percent|default(null) ? balance(profits[optID].income.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'Прибыль ({{ opt }})',
+                                    profits['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_profits['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].profit.value|number_format(2, ',', ' ') }}{{ profits[optID].profit.percent|default(null) ? balance(profits[optID].profit.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'МСК Доход ({{ opt }})',
+                                    mskIncomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_mskIncomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].mskIncome.value|number_format(2, ',', ' ') }}{{ profits[optID].mskIncome.percent|default(null) ? balance(profits[optID].mskIncome.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'МСК Прибыль ({{ opt }})',
+                                    mskProfits['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_mskProfits['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].mskProfit.value|number_format(2, ',', ' ') }}{{ profits[optID].mskProfit.percent|default(null) ? balance(profits[optID].mskProfit.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'МСК Доход сервис ({{ opt }})',
+                                    mskServiceIncomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_mskServiceIncomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].mskServiceIncome.value|number_format(2, ',', ' ') }}{{ profits[optID].mskServiceIncome.percent|default(null) ? balance(profits[optID].mskServiceIncome.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'МСК Прибыль сервис ({{ opt }})',
+                                    mskServiceProfits['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_mskServiceProfits['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].mskServiceProfit.value|number_format(2, ',', ' ') }}{{ profits[optID].mskServiceProfit.percent|default(null) ? balance(profits[optID].mskServiceProfit.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'СПБ Доход ({{ opt }})',
+                                    spbIncomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_spbIncomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].spbIncome.value|number_format(2, ',', ' ') }}{{ profits[optID].spbIncome.percent|default(null) ? balance(profits[optID].spbIncome.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'СПБ Прибыль ({{ opt }})',
+                                    spbProfits['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_spbProfits['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].spbProfit.value|number_format(2, ',', ' ') }}{{ profits[optID].spbProfit.percent|default(null) ? balance(profits[optID].spbProfit.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'СПБ Доход сервис ({{ opt }})',
+                                    spbServiceIncomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_spbServiceIncomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].spbServiceIncome.value|number_format(2, ',', ' ') }}{{ profits[optID].spbServiceIncome.percent|default(null) ? balance(profits[optID].spbServiceIncome.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'СПБ Прибыль сервис ({{ opt }})',
+                                    spbServiceProfits['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_spbServiceProfits['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].spbServiceProfit.value|number_format(2, ',', ' ') }}{{ profits[optID].spbServiceProfit.percent|default(null) ? balance(profits[optID].spbServiceProfit.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'Доход сервис ({{ opt }})',
+                                    serviceIncomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_serviceIncomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].serviceIncome.value|number_format(2, ',', ' ') }}{{ profits[optID].serviceIncome.percent|default(null) ? balance(profits[optID].serviceIncome.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer text-nowrap small"
+                            onclick="
+                                    reloadGraph(
+                                    'Прибыль сервис ({{ opt }})',
+                                    serviceIncomes['{{ optID }}']
+                            {% if prevProfits is not null %}, prev_serviceIncomes['{{ optID }}']{% endif %})
+                                    ">{{ profits[optID].serviceProfit.value|number_format(2, ',', ' ') }}{{ profits[optID].serviceProfit.percent|default(null) ? balance(profits[optID].serviceProfit.percent, '%') : '' }}</td>
+                        <td class="text-center">
+                            <a href="#" onclick="showUserTemplate({{ optID }})" data-toggle="modal"
+                               data-target="#modalUsers"><i class="fas fa-users"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <div class="block block-rounded">
+        <div class="block-content block-content-full text-center">
+            <div class="py-3" id="myChartCont" style="max-width: 1200px;">
+                <canvas id="myChart" class="js-chartjs-bars"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {% for optID, user in users %}
+        <div id="userTemplate{{ optID }}" class="d-none">
+            {{ user.template|raw }}
+        </div>
+    {% endfor %}
+
+    <div class="modal fade" id="modalUsers" tabindex="-1" role="dialog" aria-labelledby="modalUsersLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalUsersLabel">Прибыль по клиентам</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalUsersText" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" onclick="printUsers()" id="modalUsersButton" class="btn btn-primary">
+                        Печать
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ include('app/reports/clientProfits/_javascript_consts.html.twig') }}
+    {% if prevProfits is not null %}
+        {{ include('app/reports/clientProfits/_javascript_prev_consts.html.twig') }}
+    {% endif %}
+
+    <script>
+        function showUserTemplate(optID) {
+            document.getElementById('modalUsersText').innerHTML = document.getElementById('userTemplate' + optID).innerHTML;
+            document.getElementById('printUsersData').value = document.getElementById('userTemplate' + optID).innerHTML;
+        }
+
+        function reloadGraph(label, data, prevData = null) {
+            event.preventDefault();
+            const datasets = [];
+            datasets.push({
+                label,
+                data,
+                backgroundColor,
+                borderColor,
+                borderWidth: 1
+            });
+            {% if prevProfits is not null %}
+            if (prevData) {
+                datasets.push({
+                    label: 'Предыдущий период',
+                    data: prevData,
+                    backgroundColor: prev_backgroundColor,
+                    borderColor: prev_borderColor,
+                    borderWidth: 1
+                });
+            }
+            {% endif %}
+            One.reloadGraph(datasets);
+        }
+
+        function printUsers() {
+            event.preventDefault();
+            document.getElementById('printUsersForm').action = '{{ path('reports.clientProfits.print.users') }}';
+            document.getElementById('printUsersForm').submit();
+        }
+
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.clientProfits.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.clientProfits.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        {% if profits %}
+        const backgroundColor = ['rgba(54, 162, 235, 0.2)'];
+        const borderColor = ['rgba(54, 162, 235, 1)'];
+        const prev_backgroundColor = ['rgba(255, 99, 132, 0.2)'];
+        const prev_borderColor = ['rgba(255, 99, 132, 1)'];
+        const months = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
+        const chartType = 'bar';
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Прибыль (Розница)',
+                data: profits['1'],
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        };
+        {% if prevProfits is not null %}
+        chartData.datasets.push({
+            label: 'Предыдущий период',
+            data: prev_profits['1'],
+            backgroundColor: prev_backgroundColor,
+            borderColor: prev_borderColor,
+            borderWidth: 1
+        });
+        {% endif %}
+        const chartOptions = {
+            // plugins: {
+            //     legend: {
+            //         display: false,
+            //     }
+            // },
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            },
+        };
+        {% endif %}
+
+    </script>
+
+{% endblock %}

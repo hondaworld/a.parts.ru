@@ -1,0 +1,21 @@
+<table class="table table-striped border">
+    <tr>
+        <th>Производитель</th>
+        <th>Номер</th>
+        <th>Регион</th>
+        <th>Всего</th>
+        <th>Собрано</th>
+    </tr>
+
+    {% for expense in expenses %}
+        {% if (expense.quantity != expense.quantityPicking) %}
+        <tr>
+            <td>{{ expense.creater_name }}</td>
+            <td>{{ expense.number }}</td>
+            <td>{{ expense.location }}</td>
+            <td>{{ expense.quantity }}</td>
+            <td>{{ expense.quantityPicking }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>

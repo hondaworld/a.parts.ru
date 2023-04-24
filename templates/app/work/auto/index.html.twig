@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Авто {{ workGroup.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('work.categories') }}">Категории работ</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('work.groups', {'workCategoryID' : workGroup.category.id}) }}">{{ workGroup.category.name }}</a>
+    </li>
+    <li class="breadcrumb-item">{{ workGroup.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block header %}
+            <div class="block-header block-header-default">
+                <h3 class="block-title">Марка автомобиля</h3>
+                <div class="block-options">
+                </div>
+            </div>
+        {% endblock %}
+        {% block content %}
+            {{ form_start(filter) }}
+            <div class="row">
+                <div class="col">
+                    {{ form_widget(filter.auto_markaID) }}
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Показать</button>
+                </div>
+            </div>
+            {{ form_end(filter) }}
+        {% endblock %}
+    {% endembed %}
+
+    {% if autoMarka and form %}
+        {% embed 'blocks/block_container.html.twig' %}
+            {% block header %}
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">Применимость</h3>
+                    <div class="block-options">
+                    </div>
+                </div>
+            {% endblock %}
+            {% block content %}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div>
+                    <div class="row">
+                        <div class="col-1">
+                            {{ autoMarka.name }}
+                        </div>
+                        <div class="col-auto">
+                            {{ form_widget(form.linkMarka) }}
+                        </div>
+                        <div class="col-2">
+                            {{ form_widget(form.normaMarka) }}
+                            {{ form_help(form.normaMarka) }}
+                        </div>
+                        <div class="col-2">
+                            {{ form_widget(form.partsMarka) }}
+                            {{ form_help(form.partsMarka) }}
+                        </div>
+                    </div>
+                    {% if autoMarka.models|length > 0 %}
+                        <div>
+                            {% for autoModel in autoMarka.models %}
+                                <div class="pt-3 border-top">
+                                    <div class="row">
+                                        <div class="offset-1 col-1">
+                                            {{ autoModel.name }}
+                                        </div>
+                                        <div class="col-auto">
+                                            {{ form_widget(form.children['linkModel_' ~ autoModel.id]) }}
+                                        </div>
+                                        <div class="col-2">
+                                            {{ form_widget(form.children['normaModel_' ~ autoModel.id]) }}
+                                            {{ form_help(form.children['normaModel_' ~ autoModel.id]) }}
+                                        </div>
+                                        <div class="col-2">
+                                            {{ form_widget(form.children['partsModel_' ~ autoModel.id]) }}
+                                            {{ form_help(form.children['partsModel_' ~ autoModel.id]) }}
+                                        </div>
+                                    </div>
+                                    {% if autoModel.generations|length > 0 %}
+                                        <div>
+                                            {% for autoGeneration in autoModel.generations %}
+                                                <div class="pt-3 border-top">
+                                                    <div class="row">
+                                                        <div class="offset-2 col-1">
+                                                            {{ autoGeneration.yearfrom ~ ' - ' ~ autoGeneration.yearto }}
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            {{ form_widget(form.children['linkGeneration_' ~ autoGeneration.id]) }}
+                                                        </div>
+                                                        <div class="col-2">
+                                                            {{ form_widget(form.children['normaGeneration_' ~ autoGeneration.id]) }}
+                                                            {{ form_help(form.children['normaGeneration_' ~ autoGeneration.id]) }}
+                                                        </div>
+                                                        <div class="col-2">
+                                                            {{ form_widget(form.children['partsGeneration_' ~ autoGeneration.id]) }}
+                                                            {{ form_help(form.children['partsGeneration_' ~ autoGeneration.id]) }}
+                                                        </div>
+                                                    </div>
+                                                    {% if autoGeneration.modifications|length > 0 %}
+                                                        <div>
+                                                            {% for autoModification in autoGeneration.modifications %}
+                                                                <div class="pt-3 border-top">
+                                                                    <div class="row">
+                                                                        <div class="offset-3 col-1">
+                                                                            {{ autoModification.name }}
+                                                                        </div>
+                                                                        <div class="col-auto">
+                                                                            {{ form_widget(form.children['linkModification_' ~ autoModification.id]) }}
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            {{ form_widget(form.children['normaModification_' ~ autoModification.id]) }}
+                                                                            {{ form_help(form.children['normaModification_' ~ autoModification.id]) }}
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            {{ form_widget(form.children['partsModification_' ~ autoModification.id]) }}
+                                                                            {{ form_help(form.children['partsModification_' ~ autoModification.id]) }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+                <a class="ml-3 btn btn-secondary" href="{{ path('work.groups', {'workCategoryID' : workGroup.category.id}) }}">Отменить</a>
+                {{ form_end(form) }}
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,480 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Товарная накладная Торг-12 №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-size: 10px;
+            font-family: Arial, serif;
+        }
+        body {
+            line-height: 1.0;
+        }
+
+        .border2 {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .border2-top {
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border2-bottom {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border, .border-bottom {
+            border-color: #000000 !important;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .font-size-9 {
+            font-size: 9px;
+        }
+
+        .font-size-13, .font-size-13 strong {
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+    </style>
+    <table>
+        <tr>
+            <td class="text-right font-size-9" style="padding-right: 100px;">Унифицированная форма № ТОРГ-12
+                Утверждена<br>постановлением Госкомстата России от 25.12.98 № 132
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td colspan="6"></td>
+                        <td class="border-bottom"></td>
+                        <td class="text-center border2-top">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Код&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" rowspan="2"
+                            class="border-bottom">{{ expenseDocumentPrint.fromGruz.gruz }}&nbsp;
+                        </td>
+                        <td rowspan="3" class="text-center font-size-9" valign="top">Форма</td>
+                        <td class="border-bottom">по&nbsp;ОКУД</td>
+                        <td class="text-center border2">
+                            <strong>&nbsp;</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="border-bottom">по&nbsp;ОКПО</td>
+                        <td class="text-center border2">
+                            <strong>{{ expenseDocumentPrint.fromGruz.gruzOkpo }}</strong>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-center border-bottom font-size-9">
+                            грузоотправитель, адрес, номер телефона, банковские реквизиты
+                        </td>
+                        <td class="border-bottom">&nbsp;</td>
+                        <td class="text-center border2">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-center font-size-9">структурное подразделение</td>
+                        <td rowspan="6" class="text-center font-size-9" valign="top" width="5%">Вид<br>деятельности
+                        </td>
+                        <td class="border-bottom">по&nbsp;ОКДП</td>
+                        <td class="text-center border2">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" align="right">Грузополучатель&nbsp;</td>
+                        <td colspan="4" class="border-bottom">{{ expenseDocumentPrint.toGruz.gruz }}&nbsp;</td>
+                        <td class="border-bottom">по&nbsp;ОКПО</td>
+                        <td class="text-center border2">
+                            <strong>{{ expenseDocumentPrint.toGruz.gruzOkpo }}</strong>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" align="right">Поставщик&nbsp;</td>
+                        <td colspan="4"
+                            style="border-bottom: 1px solid #000000; font-size: 10px;">{{ expenseDocumentPrint.from.nakladnaya }}
+                            &nbsp;
+                        </td>
+                        <td class="border-bottom">по&nbsp;ОКПО</td>
+                        <td class="text-center border2">
+                            <strong>{{ expenseDocumentPrint.from.okpo }}</strong>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" align="right">Плательщик&nbsp;</td>
+                        <td colspan="4" class="border-bottom">{{ expenseDocumentPrint.toCash.cash }}&nbsp;</td>
+                        <td class="border-bottom">по&nbsp;ОКПО</td>
+                        <td class="text-center border2">
+                            <strong>{{ expenseDocumentPrint.toCash.cashOkpo }}</strong>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" align="right">Основание&nbsp;</td>
+                        <td colspan="4" class="border-bottom">{{ expenseDocumentPrint.nakladnayaosn }}&nbsp;</td>
+                        <td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="right">
+                            номер&nbsp;
+                        </td>
+                        <td class="text-center border2">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" width="10%">&nbsp;</td>
+                        <td colspan="4" class="text-center font-size-9" width="100%">договор, заказ-наряд</td>
+                        <td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="right">дата&nbsp;</td>
+                        <td class="text-center border2">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" width="10%">&nbsp;</td>
+                        <td valign="bottom" width="30%">&nbsp;</td>
+                        <td style="font-size: 9px; border-left: 1px solid #000000; border-right: 1px solid #000000; border-top: 1px solid #000000;"
+                            align="center" width="5%" nowrap>номер документа
+                        </td>
+                        <td style="font-size: 9px; border-right: 1px solid #000000; border-top: 1px solid #000000;"
+                            align="center" width="5%" nowrap>дата составления
+                        </td>
+                        <td colspan="2" align="right">Транспортная накладная&nbsp;&nbsp;&nbsp;</td>
+                        <td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="right"
+                            width="5%">номер&nbsp;
+                        </td>
+                        <td class="text-center border2"
+                            width="5%">&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-size-13" valign="bottom" colspan="2" align="right"><strong>ТОВАРНАЯ
+                                НАКЛАДНАЯ&nbsp;&nbsp;&nbsp;</strong></td>
+                        <td class="font-size-13" style="border: 2px solid #000000;" align="center">
+                            <strong>{{ document_num }}</strong></td>
+                        <td class="font-size-13"
+                            style="border-bottom: 2px solid #000000; border-right: 2px solid #000000; border-top: 2px solid #000000;"
+                            align="center"><strong>{{ document_date|date('d.m.Y') }}</strong></td>
+                        <td colspan="2" align="right"></td>
+                        <td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000;" align="right">дата&nbsp;</td>
+                        <td class="text-center border2">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" align="right">Вид операции&nbsp;</td>
+                        <td class="text-center border2-bottom">
+                            &nbsp;
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table-goods">
+                    <tr>
+                        <th width="2%">Но-<br>мер по по-<br>рядку</th>
+                        <th width="30%" colspan="2">Товар</th>
+                        <th width="8%" colspan="2">Единица измерения</th>
+                        <th width="5%">Вид упаковки</th>
+                        <th width="8%" colspan="2">Количество</th>
+                        <th width="5%">Масса брутто</th>
+                        <th width="5%">Количество (масса нетто)</th>
+                        <th width="8%">Цена, руб. коп.</th>
+                        <th width="8%">Сумма без учета НДС, руб. коп.</th>
+                        <th width="13%" colspan="2">НДС</th>
+                        <th width="8%">Сумма с учетом НДС, руб. коп.</th>
+                    </tr>
+                    <tr>
+                        <th width="2%">&nbsp;</th>
+                        <th width="27%">наименование, характеристика, сорт, артикул товара</th>
+                        <th width="3%">код</th>
+                        <th width="4%">наиме-<br>нование</th>
+                        <th width="4%">код по ОКЕИ</th>
+                        <th width="5%">&nbsp;</th>
+                        <th width="4%">в одном месте</th>
+                        <th width="4%">мест, штук</th>
+                        <th width="5%">&nbsp;</th>
+                        <th width="5%">&nbsp;</th>
+                        <th width="8%">&nbsp;</th>
+                        <th width="8%">&nbsp;</th>
+                        <th width="5%">ставка, %</th>
+                        <th width="8%">сумма, руб. коп.</th>
+                        <th width="8%">&nbsp;</th>
+                    </tr>
+                    <tr>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>8</th>
+                        <th>9</th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                        <th>13</th>
+                        <th>14</th>
+                        <th>15</th>
+                    </tr>
+                    {% for index, orderGood in orderGoods %}
+                        <tr>
+                            <td class="text-center">{{ index + 1 }}</td>
+                            <td>{{ orderGood.detail_name }} ({{ orderGood.number }})</td>
+                            <td>&nbsp;</td>
+                            <td class="text-center">{{ orderGood.ed_izm }}</td>
+                            <td class="text-center">{{ orderGood.okei }}</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td class="text-center">{{ orderGood.quantity }},000</td>
+                            <td class="text-right"
+                                nowrap>{{ orderGood.priceWithoutNds|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.sumWithoutNds|number_format(2, ',', ' ') }}</td>
+                            <td class="text-center">{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.ndsSum|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.sum|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td class="text-right" colspan="7"
+                            style="border-bottom: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF;">Всего по накладной
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td class="text-center">{{ sum.quantity }},000</td>
+                        <td class="text-right" nowrap>{{ sum.priceWithoutNds|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right" nowrap>{{ sum.sumWithoutNds|number_format(2, ',', ' ') }}</td>
+                        <td class="text-center">{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') }}</td>
+                        <td class="text-right" nowrap>{{ sum.ndsSum|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right" nowrap>{{ sum.sum|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td colspan="3">Товарная накладная имеет приложение на 1 листах</td>
+                    </tr>
+                    <tr>
+                        <td nowrap>и содержит</td>
+                        <td style="border-bottom: 1px solid #000000;" width="100%"
+                            align="center">{{ numberInWords(orderGoods|length) }}</td>
+                        <td nowrap>порядковых номеров записей</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td style="font-size: 9px;" align="center">прописью</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td colspan="2">&nbsp;</td>
+                        <td nowrap>Масса груза (нетто)</td>
+                        <td style="border-bottom: 1px solid #000000;" align="center">&nbsp;</td>
+                        <td style="border-left: 2px solid #000000; border-right: 2px solid #000000; border-top: 2px solid #000000;">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="10%">Всего мест</td>
+                        <td style="border-bottom: 1px solid #000000; font-size: 9px;" align="center" width="20%">
+                            &nbsp;
+                        </td>
+                        <td nowrap width="10%">Масса груза (брутто)</td>
+                        <td style="border-bottom: 1px solid #000000; font-size: 9px;" width="50%" align="center"
+                            valign="top">прописью
+                        </td>
+                        <td style="border: 2px solid #000000;" width="10%">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td style="font-size: 9px;" align="center" valign="top">прописью</td>
+                        <td>&nbsp;</td>
+                        <td style="font-size: 9px;" align="center" valign="top">прописью</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td valign="top" width="50%" style="border-right: 1px solid #000000;">
+                            <table cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td width="50%" nowrap colspan="2">Приложение (паспорта, сертификаты и т.п.) на</td>
+                                    <td style="border-bottom: 1px solid #000000; font-size: 9px;" align="center"
+                                        width="25%">&nbsp;
+                                    </td>
+                                    <td nowrap width="25%">листах</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td style="font-size: 9px;" align="center">прописью</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="padding-bottom: 5px;"><strong>Всего
+                                            отпущено {{ numberInWords(orderGoods|length) }} наименований на
+                                            сумму {{ numberInWords(sum.sum, true) }}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="25%">Отпуск разрешил</td>
+                                    <td width="25%">Ген. директор</td>
+                                    <td width="25%">&nbsp;</td>
+                                    <td nowrap width="25%">({{ expenseDocumentPrint.director }})</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="font-size: 9px;" align="center" valign="top">должность</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Главный (старший) бухгалтер</td>
+                                    <td>&nbsp;</td>
+                                    <td nowrap>({{ expenseDocumentPrint.buhgalter }})</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                                </tr>
+                                <tr>
+                                    <td nowrap>Отпуск груза произвел</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td nowrap></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="font-size: 9px;" align="center" valign="top">должность</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td valign="top" width="50%" style="padding-left: 2px;">
+                            <table cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td width="25%">По доверенности №</td>
+                                    <td width="25%">&nbsp;</td>
+                                    <td width="25%">от</td>
+                                    <td width="25%"></td>
+                                </tr>
+                                <tr>
+                                    <td>выданной</td>
+                                    <td colspan="3" style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td colspan="3" style="font-size: 9px;" align="center" valign="top">кем, кому
+                                        (организация, должность, фамилия, и. о.)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td colspan="3" style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td nowrap>Груз принял</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td nowrap></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="font-size: 9px;" align="center" valign="top">должность</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                                </tr>
+                                <tr>
+                                    <td nowrap>Груз получил</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td nowrap></td>
+                                </tr>
+                                <tr>
+                                    <td>грузополучатель</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">должность</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                                    <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border-right: 1px solid #000000;"><br></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" width="50%" style="border-right: 1px solid #000000;">
+                            <table cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td width="25%" align="center">М.П.</td>
+                                    <td width="25%"></td>
+                                    <td width="25%">"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" ___________________</td>
+                                    <td width="25%">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;года</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td valign="top" width="50%" style="padding-left: 2px;">
+                            <table cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td width="25%" align="center">М.П.</td>
+                                    <td width="25%"></td>
+                                    <td width="25%">"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" ___________________</td>
+                                    <td width="25%">20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;года</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление колонки прайс-листа{% endblock %}
+{% block header %}Добавление колонки прайс-листа{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('price.list.opt') }}">Колонки прайс-листа</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/users/opt/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

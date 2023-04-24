@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}{{ include('blocks/block_header.html.twig', {'header': 'Начальная номерация документов'}) }}{% endblock %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.first_schet) }}
+    {{ form_row(form.first_nakladnaya) }}
+    {{ form_row(form.first_schetfak) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    {{ form_end(form) }}
+
+{% endblock %}

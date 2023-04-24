@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Запчасти по акции {{ stock.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.stocks') }}">Акции</a></li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('zap_card_stock_numbers_change', stock) %}
+                <li class="nav-item">
+                    <a href="{{ path('card.stocks.numbers.create', {'stockID': stock.id}) }}" class="nav-link"
+                       title="Добавить запчасть"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('card.stocks.numbers.upload', {'stockID': stock.id}) }}" class="nav-link"
+                       title="Загрузить запчасти"><i class="fas fa-upload"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater') }}</th>
+            <th>Цена</th>
+            {% if is_granted('zap_card_stock_numbers_change', stock) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for stockNumber in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': stockNumber.numberID} only %}
+                    {% endif %}
+                    <td>{{ stockNumber.number }}</td>
+                    <td>{{ stockNumber.creater }}</td>
+                    <td>{{ form_widget(form.children['price_' ~ stockNumber.numberID]) }}</td>
+                    {% if is_granted('zap_card_stock_numbers_change', stock) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('card.stocks.numbers.edit', {'stockID': stock.id, 'id': stockNumber.numberID}) }}"
+                                   title="Изменить запчасть">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('card.stocks.numbers.delete', {'stockID': stock.id, 'id': stockNumber.numberID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить запчасть?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить запчасть">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}
+            <button type="submit" class="btn btn-primary">Сохранить цены</button>
+        {% endblock %}
+    {% endembed %}
+
+
+    {{ form_end(form) }}
+
+{% endblock %}

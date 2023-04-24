@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение модели {{ motoModel.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.moto.model', {'auto_markaID': autoMarka.id}) }}">{{ autoMarka.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.moto.model.show', {'auto_markaID': autoMarka.id, 'id': motoModel.id}) }}">{{ motoModel.name }}</a></li>
+    <li class="breadcrumb-item">Текст тюнинг</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/auto/motoModel/description/tuning/_form.html.twig') }}
+{% endblock %}

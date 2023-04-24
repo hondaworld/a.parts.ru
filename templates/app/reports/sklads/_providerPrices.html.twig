@@ -1,0 +1,18 @@
+<table class="table table-sm table-bordered table-striped table-hover w-auto">
+    <thead>
+    <tr class="table-primary">
+        <th>Поставщик</th>
+        <th>Сумма</th>
+        <th>Процент</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for providerPriceID, profit in profits %}
+        <tr>
+            <td>{{ providerPrices[providerPriceID] }}</td>
+            <td class="text-right">{{ profit|number_format(2, ',', ' ') }}</td>
+            <td class="text-right">{{ (profit / sum_income * 100)|round(2)|number_format(2, ',', ' ') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

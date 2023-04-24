@@ -1,0 +1,34 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Дополнительные параметры</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.dop', {'id': zapCard.id}) }}"
+               title="Изменить дополнительные параметры"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Страна: </strong>
+        {% if (zapCard.country is null) %}
+            {{ check_empty('', 'не задана') }}
+        {% else %}
+            {{ zapCard.country.name }}
+        {% endif %}
+    </p>
+    <p><strong>Тип: </strong>
+        {% if (zapCard.shoptype is null) %}
+            {{ check_empty('', 'не задан') }}
+        {% else %}
+            {{ zapCard.shoptype.name }}
+        {% endif %}
+    </p>
+    <p><strong>Единица измерения: </strong>
+        {% if (zapCard.edIzm is null) %}
+            {{ check_empty('', 'не задан') }}
+        {% else %}
+            {{ zapCard.edIzm.name }}
+        {% endif %}
+    </p>
+{% endblock %}

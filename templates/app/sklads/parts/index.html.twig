@@ -1,0 +1,339 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Номенклатура склада {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads') }}">Склады</a></li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter, {'attr' : {'onsubmit' : 'onSubmitFilter()'}}) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ZapCard') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.parts.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                  title="Добавить деталь"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('sklad_parts', 'ZapSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.parts.scan', {'id' : zapSklad.id}) }}"
+                       data-title="Разложить детали" class="nav-link">
+                        <i class="fas fa-box-open" title="Разложить детали"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('sklads.parts', {'id': zapSklad.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-1">{{ form_widget(filter.auto_modelID) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.year) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.quantity) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.searchWholeNumber) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.showDeleted) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>ABC</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Менеджер', 'manager_nick') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Тип', 'shop_type_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'group_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'zc.number') }}</th>
+            <th>Закупка</th>
+            <th>{{ opt.name }}</th>
+            {% for sklad in sklads %}
+                <th>{{ sklad }}</th>
+            {% endfor %}
+            <th>Мин</th>
+            <th>Макс</th>
+            <th>Принять</th>
+            <th>Передать</th>
+            {% if is_granted('show', 'ZapCard') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.abc) }}</th>
+            <th>{{ form_widget(filter.managerID) }}</th>
+            <th>{{ form_widget(filter.shop_typeID) }}</th>
+            <th>{{ form_widget(filter.zapGroupID) }}</th>
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            <th></th>
+            {% for skladID, sklad in sklads %}
+                <th>
+                    {% if skladID == 1 %}
+                        <div class="row">
+                            <div class="col-6 pr-0">{{ form_widget(filter.quantity1_from) }}</div>
+                            <div class="col-6 pl-0">{{ form_widget(filter.quantity1_till) }}</div>
+                        </div>
+                    {% elseif skladID == 5 %}
+                        <div class="row">
+                            <div class="col-6 pr-0">{{ form_widget(filter.quantity5_from) }}</div>
+                            <div class="col-6 pl-0">{{ form_widget(filter.quantity5_till) }}</div>
+                        </div>
+                    {% elseif skladID == 6 %}
+                        <div class="row">
+                            <div class="col-6 pr-0">{{ form_widget(filter.quantity6_from) }}</div>
+                            <div class="col-6 pl-0">{{ form_widget(filter.quantity6_till) }}</div>
+                        </div>
+                    {% endif %}
+                </th>
+            {% endfor %}
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            {% if is_granted('show', 'ZapCard') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for zapCard in pagination %}
+                <tr class="{{ zapCard.isDeleted ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': zapCard.zapCardID} only %}
+                    {% endif %}
+                    <td>{{ abc[zapCard.zapCardID]|default('') }}</td>
+                    <td>{{ zapCard.manager_nick }}</td>
+                    <td>{{ zapCard.shop_type_name }}</td>
+                    <td>{{ zapCard.group_name }}</td>
+                    <td>{{ zapCard.creater }}</td>
+                    <td>{{ zapCard.number }}</td>
+                    <td class="text-right">{{ zapCard.price|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ zapCard.optPrice|number_format(0, ',', ' ') }}</td>
+                    {% for skladID, sklad in sklads %}
+                        <td id="quantity_{{ zapCard.zapCardID }}_{{ skladID }}">
+                            {{ quantityInWarehouse[zapCard.zapCardID]|default(null) ? quantityInWarehouse[zapCard.zapCardID][skladID]|default(0) : 0 }}
+
+                            {% if (quantityTo[zapCard.zapCardID]|default(null) ? quantityTo[zapCard.zapCardID][skladID]|default(null) : null) %}
+                                (+{{ quantityTo[zapCard.zapCardID][skladID] }})
+                            {% endif %}
+
+                            {% if (quantityFrom[zapCard.zapCardID]|default(null) ? quantityFrom[zapCard.zapCardID][skladID]|default(null) : null) %}
+                                (-{{ quantityFrom[zapCard.zapCardID][skladID] }})
+                            {% endif %}
+
+                            {% if (quantityIncome[zapCard.zapCardID]|default(null) ? quantityIncome[zapCard.zapCardID][skladID]|default(null) : null) %}
+                                [+{{ quantityIncome[zapCard.zapCardID][skladID] }}]
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td>
+                        <input
+                                type="text"
+                                class="form-control form-control-sm form-control-alt table-col-input form-not-submit"
+                                style="min-width: 70px; max-width: 70px;"
+                                data-old="{{ zapCard.quantityMin }}"
+                                data-id="{{ zapCard.zapSkladLocationID }}"
+                                data-ident="quantityMin"
+                                data-url-submit="{{ path('sklads.parts.quantityMin', {'id': zapCard.zapSkladLocationID}) }}"
+                                value="{{ zapCard.quantityMin }}"
+                        >
+                    </td>
+                    <td>
+                        <input
+                                type="text"
+                                class="form-control form-control-sm form-control-alt table-col-input form-not-submit"
+                                style="min-width: 70px; max-width: 70px;"
+                                data-old="{{ zapCard.quantityMax }}"
+                                data-id="{{ zapCard.zapSkladLocationID }}"
+                                data-ident="quantityMax"
+                                data-url-submit="{{ path('sklads.parts.quantityMax', {'id': zapCard.zapSkladLocationID}) }}"
+                                value="{{ zapCard.quantityMax }}"
+                        >
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <button class="btn btn-sm btn-outline-primary" type="button"
+                                    onclick="changeQuantity(this, -1)"><i
+                                        class="fas fa-minus"></i></button>
+                            <input
+                                    type="text"
+                                    class="form-control form-control-sm js-convert-number text-center form-not-submit"
+                                    style="width: 50px;"
+                                    data-max-value="-1"
+                                    data-url-submit="{{ path('sklads.parts.peremFrom', {'zapCardID': zapCard.zapCardID, 'id': zapSklad.id}) }}"
+                                    value=""
+                                    name="peremFrom[]"
+                                    onkeyup="onChangeQuantity(this)"
+                            >
+                            <button class="btn btn-sm btn-outline-primary" type="button"
+                                    onclick="changeQuantity(this, 1)"><i
+                                        class="fas fa-plus"></i></button>
+                            <select class="form-control form-control-sm form-not-submit" style="min-width: 70px;">
+                                {% for skladID, sklad_name in sklads %}
+                                    {% if skladID != zapSklad.id %}
+                                        <option value="{{ skladID }}">{{ sklad_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-primary" type="button" data-name="submit" disabled="disabled"
+                                    onclick="perem(this)">&gt;&gt;
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <button class="btn btn-sm btn-outline-primary" type="button"
+                                    onclick="changeQuantity(this, -1)"><i
+                                        class="fas fa-minus"></i></button>
+                            <input
+                                    type="text"
+                                    class="form-control form-control-sm js-convert-number text-center form-not-submit"
+                                    style="width: 50px;"
+                                    data-max-value="{{ quantityInWarehouse[zapCard.zapCardID]|default(null) ? quantityInWarehouse[zapCard.zapCardID][zapSklad.id]|default(0) : 0 }}"
+                                    data-url-submit="{{ path('sklads.parts.peremTo', {'zapCardID': zapCard.zapCardID, 'id': zapSklad.id}) }}"
+                                    value=""
+                                    name="peremTo[]"
+                                    onkeyup="onChangeQuantity(this)"
+                            >
+                            <button class="btn btn-sm btn-outline-primary" type="button"
+                                    onclick="changeQuantity(this, 1)"><i
+                                        class="fas fa-plus"></i></button>
+                            <select class="form-control form-control-sm form-not-submit" style="min-width: 70px;">
+                                {% for skladID, sklad_name in sklads %}
+                                    {% if skladID != zapSklad.id %}
+                                        <option value="{{ skladID }}">{{ sklad_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-primary" type="button" data-name="submit" disabled="disabled"
+                                    onclick="perem(this)">&gt;&gt;
+                            </button>
+                        </div>
+                    </td>
+                    {% if is_granted('show', 'ZapCard') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'ZapCard') %}
+                                    <a href="{{ path('card.parts.show', {'id': zapCard.zapCardID}) }}"
+                                       title="В карточку детали">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                    <a href="{{ path('card.parts.prices', {'id': zapCard.zapCardID}) }}"
+                                       title="Цены">
+                                        <i class="fas fa-ruble-sign"></i>
+                                    </a>
+                                    <a href="{{ path('card.parts.sklad', {'id': zapCard.zapCardID}) }}"
+                                       title="Склады">
+                                        <i class="fas fa-warehouse"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {# {% block table_footer %} #}
+        {# <tr> #}
+        {# <th></th> #}
+        {# <th></th> #}
+        {# <th></th> #}
+        {# <th></th> #}
+        {# <th></th> #}
+        {# <th></th> #}
+        {# {% for skladID, sklad in sklads %} #}
+        {# <th></th> #}
+        {# {% endfor %} #}
+        {# <th></th> #}
+        {# <th></th> #}
+        {# <th> #}
+        {# <button #}
+        {# class="btn btn-sm btn-primary" #}
+        {# type="button" #}
+        {# onclick="confirmModalAndFunc('Вы уверены, что хотите принять детали, у которых указано количество?', peremFrom)" #}
+        {# data-toggle="modal" #}
+        {# data-target="#modalConfirm">Принять указанные #}
+        {# </button> #}
+        {# </th> #}
+        {# <th></th> #}
+        {# </tr> #}
+        {# {% endblock %} #}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <script>
+        function changeQuantity(el, i) {
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'input') {
+                    item.value = +item.value + i;
+                    onChangeQuantity(item);
+                }
+            });
+        }
+
+        function onChangeQuantity(el) {
+            if (el.value < 0) el.value = 0;
+            // if (+el.dataset.maxValue >= 0 && +el.value > +el.dataset.maxValue) el.value = el.dataset.maxValue;
+            if (+el.value === 0) el.value = '';
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'button' && item.dataset.name === 'submit') {
+                    item.disabled = el.value === '';
+                }
+            });
+        }
+
+        function perem(el) {
+            var input;
+            var select;
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'input') {
+                    input = item;
+                }
+                if (item.localName === 'select') {
+                    select = item;
+                }
+            });
+            if (input && select) {
+                tableColInputSubmit(input, {zapSkladID_to: select.value});
+                // input.value = '';
+                // onChangeQuantity(input);
+            }
+        }
+
+        function peremFrom() {
+            var input;
+            var select;
+            document.getElementsByName('peremFrom[]').forEach(function (el) {
+                input = el;
+                el.parentElement.childNodes.forEach(function (item) {
+                    if (item.localName === 'select') {
+                        select = item;
+                    }
+                });
+                // if (input.value !== '') {
+                //     console.log(input, select.value);
+                // }
+            });
+            // if (input && select) tableColInputSubmit(input, {zapSkladID_to: select.value});
+        }
+
+        function onSubmitFilter() {
+            document.querySelectorAll('.form-not-submit').forEach(function (el) {
+                el.disabled = true;
+            });
+        }
+    </script>
+{% endblock %}

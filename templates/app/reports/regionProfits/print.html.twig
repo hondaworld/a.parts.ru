@@ -1,0 +1,34 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Регион</th>
+            <th>Доход</th>
+            <th>Прибыль</th>
+            <th>Чеки</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% endif %}
+            {% for region, regions in profits %}
+                {% for opt, opts in regions %}
+                    {% set regionName = region == 'msk' ? 'Москва' : (region == 'spb' ? 'СПБ' : 'Регионы') %}
+                    {% set optName = opt == 'opt' ? 'опт' : (opt == 'notOpt' ? 'розница' : 'сервис') %}
+                    <tr>
+                        <td>{{ regionName }} {{ optName }}</td>
+                        <td class="text-right">{{ profits[region][opt].income.value|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right">{{ profits[region][opt].profit.value|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right">{{ profits[region][opt].checks.value }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

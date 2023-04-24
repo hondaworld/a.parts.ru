@@ -1,0 +1,15 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('auto.moto.model.edit', {'auto_markaID': autoMarka.id, 'id': motoModel.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Группа: </strong> {{ motoModel.group.name }}</p>
+    <p><strong>Наименование: </strong> {{ motoModel.name }}</p>
+{% endblock %}

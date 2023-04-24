@@ -1,0 +1,264 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">ТОРГ-12</h3>
+        <div class="block-options">
+
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <h3>Документ</h3>
+
+    <div class="pb-3">
+        {% if not expenseDocument.expFirm %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Предприятие не выбрано
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.expFirm', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.expFirmContact %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У предприятия не выбран адрес
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.expFirm', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.expFirmBeznal %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У предприятия не выбран реквизит
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.expFirm', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Предприятие выбрано</span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if not expenseDocument.gruzFirmForDocument %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Грузоотправитель не выбран
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.sender', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.gruzFirmContactForDocument %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У грузоотправителя не выбран адрес
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.sender', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.gruzFirmBeznalForDocument %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У грузоотправителя не выбран реквизит
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.sender', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Грузоотправитель выбран</span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if not expenseDocument.expUser %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Клиент не выбран
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.expUser', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.expUserContact %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У клиента не выбран адрес
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.expUser', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.expUserBeznal and expenseDocument.beznal %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У клиента не выбран реквизит
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.expUser', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Клиент выбран</span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if not expenseDocument.gruzUserForDocument %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Грузополучатель не выбран
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.getter', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.gruzUserContactForDocument %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У грузополучателя не выбран адрес
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.getter', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% elseif not expenseDocument.gruzUserBeznalForDocument and expenseDocument.beznal %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                У грузополучателя не выбран реквизит
+            {% if is_granted('edit', 'Order') %}
+                <a href="{{ path('order.document.getter', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+            </span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Грузополучатель выбран</span>
+        {% endif %}
+    </div>
+
+    <h3>Товары</h3>
+
+    <div class="pb-3">
+        {% if expenses %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Товары добавлены в отгрузку</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Товаров в отгрузке нет
+            {% if is_granted('show', 'Order') %}
+                <a href="{{ path('order.goods', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if not expenseDocument.isPicking %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Заказ собран</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Заказ находится в сборке
+            {% if is_granted('show', 'Order') %}
+                <a href="{{ path('order.goods', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <h3>Платежи</h3>
+
+    {% if user.debt.debtInDays > 0 and user.balance < 0 and countDebtDays > user.debt.debtInDays %}
+        <div class="pb-3">
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Просрочка платежей на {{ countDebtDays - user.debt.debtInDays }} с {{ dateDebtDays|date('d.m.Y') }} <span
+                        class="text-muted font-italic">(в тестовом режиме, на создание накладной не влияет)</span>
+        </span>
+        </div>
+    {% endif %}
+
+    <div class="pb-3">
+        {% if user.balanceLimit == 0 and (expenseDocument.isSimpleCheck is null or not expenseDocument.isSimpleCheck and sum > financeTypeBalance) %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Недостаточно поступлений у вида платежа</span>
+        {% elseif user.allowBalanceForOrder(sum) %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Денег достаточно</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i>
+                Долги превышают лимит клиента
+            {% if is_granted('order_paid', 'Order') %}
+                <a href="{{ path('order.paids', {'id': user.id}) }}" class="pl-3">исправить</a>
+            {% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if expenseDocument.isSimpleCheck is null %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Не выбран вид оплаты<a
+                        href="{{ path('order.expenseDocument.data', {'id': user.id}) }}"
+                        class="pl-3">исправить</a></span>
+        {% elseif expenseDocument.isSimpleCheck == true %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Вид оплаты должен быть "Безналичный расчет" или "Банковская карта"<a
+                        href="{{ path('order.expenseDocument.data', {'id': user.id}) }}"
+                        class="pl-3">исправить</a></span>
+        {% elseif not expenseDocument.financeType.firm %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> У вида оплаты не выбрано предприятие<a
+                        href="{{ path('finance.types.edit', {'id': expenseDocument.financeType.id}) }}" class="pl-3">исправить</a></span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Вид оплаты соответствует</span>
+        {% endif %}
+    </div>
+
+    <div class="pb-3">
+        {% if user.isDebt %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> У клиента просроченная задолженность</span>
+        {% else %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Задолженности нет</span>
+        {% endif %}
+    </div>
+
+    {% if user.opt.id == 1 %}
+
+        <h3>Сервис</h3>
+
+        <div class="pb-3">
+            <div>
+                <select class="form-control" name="isService3" id="isService3">
+                    <option value="0">Только запчасти</option>
+                    <option value="1">Запчасти и ремонт</option>
+                </select>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <h3>Товарный чек</h3>
+
+    <div class="pb-3">
+        {% if expenseDocument.shippings %}
+            <div class="pl-3">
+                <div class="custom-control custom-checkbox d-inline-block">
+                    <input type="checkbox" class="custom-control-input" id="isShipping3" name="isShipping3" checked
+                           disabled>
+                    <label class="custom-control-label" for="isShipping3"> Отгрузка создана</label>
+                </div>
+            </div>
+        {% else %}
+            <div class="pl-3">
+                <div class="custom-control custom-checkbox d-inline-block">
+                    <input type="checkbox" class="custom-control-input" id="isShipping3" name="isShipping3">
+                    <label class="custom-control-label" for="isShipping3"> Создать отгрузку</label>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if expenseDocument.financeType and expenseDocument.financeType.id in [5] %}
+        <p><strong class="text-danger">Не забудьте распечатать чек!!!</strong></p>
+    {% endif %}
+
+    <p>
+        <input type="Button" class="btn btn-primary" id="check_button3" name="check_button3"
+               onclick="createExpenseDocument(3);"
+               value="Торг-12"{{ not isTorg12Print ? ' disabled' : '' }}>
+    </p>
+
+    {{ form_start(form, {'attr': {'target': '_blank'}, 'action': path('nakladnaya_test.php', {'id': user.id})}) }}
+    <div class="row">
+        <div class="col-auto">#</div>
+        <div class="col-auto">
+           {{ form_widget(form.document_num) }}
+        </div>
+        <div class="col-auto">от</div>
+        <div class="col-auto">
+            {{ form_widget(form.document_date) }}
+        </div>
+        <div class="col">
+            <input type="Submit" class="btn btn-primary" id="check_button_test" name="check_button_test"
+                   value="Торг-12 (тестовая)"{{ not isTorg12TestPrint ? ' disabled' : '' }}>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение инвентаризации {{ inventarization.id }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('inventarizations', {'page' : app.session.get('page/inventarization')|default(1)}) }}">Инвентаризации</a>
+    </li>
+    <li class="breadcrumb-item">{{ inventarization.id }}</li>
+{% endblock %}
+
+{% block body %}
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            {{ form_row(form.dateofadded) }}
+            {{ form_row(form.isClose) }}
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a class="ml-3 btn btn-secondary"
+               href="{{ path('inventarizations', {'page' : app.session.get('page/inventarization')|default(1)}) }}">Отменить</a>
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

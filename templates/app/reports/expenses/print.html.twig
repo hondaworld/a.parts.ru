@@ -1,0 +1,21 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Клиент</th>
+            <th>Сумма</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for profit in profits %}
+                <tr>
+                    <td>{{ profit.name }}</td>
+                    <td class="text-right">{{ profit.sum|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

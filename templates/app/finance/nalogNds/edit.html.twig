@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение НДС в налоговой схемы {{ nalog.name }}{% endblock %}
+{% block header %}Изменение НДС налоговой схемы {{ nalog.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('nalog') }}">Налоговые схемы</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('nalog.nds', {'nalogID': nalog.id}) }}">{{ nalog.name }}</a></li>
+    <li class="breadcrumb-item">{{ nalog.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/finance/nalogNds/_form.html.twig') }}
+{% endblock %}

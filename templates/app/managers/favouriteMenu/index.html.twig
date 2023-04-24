@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Избранное меню{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Избранное меню</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('favouriteMenu.create') }}" class="nav-link"
+                   title="Добавить пункт меню"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Раздел</th>
+            <th>Адрес</th>
+            <th>Сортировка</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for menu in all %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ menu.id : '') }}>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': menu.id} only %}
+                    {% endif %}
+                    <td>{{ menu.name }}</td>
+                    <td>{{ menu.menu_section|default('') }}</td>
+                    <td>{{ menu.url }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('favouriteMenu.sort', {'id': menu.id}) }}"
+                        data-direction="asc">{{ menu.sort }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('favouriteMenu.edit', {'id': menu.id}) }}"
+                               title="Изменить наименование меню">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('favouriteMenu.delete', {'id': menu.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить пункт меню?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить пункт меню">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

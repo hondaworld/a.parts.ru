@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Комплекты {{ autoModel.marka.name ~ ' ' ~ autoModel.name }}{% endblock %}
+{% block header %}Комплекты {{ autoModel.marka.name ~ ' ' ~ autoModel.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('parts.price.kits') }}">Модели автомобилей</a></li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+
+            <div class="list-group">
+                {% for kit in autoModel.kits %}
+                    <div><a class="list-group-item list-group-item-action" href="{{ path('parts.price.kits.kit', {'id' : kit.id}) }}">{{ kit.name }}</a></div>
+                {% endfor %}
+            </div>
+
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

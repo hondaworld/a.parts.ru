@@ -1,0 +1,13 @@
+{% if 'order' not in hideCols %}
+    <td
+            {% if (income.userTown|default(null)) %}
+                title="{{ income.userTown }}"
+            {% endif %}
+    >
+        {% if income.orderID != 'Склад' and income.orderUserID and is_granted('show', 'Order') %}
+            <a href="{{ path('order.goods', {'id': income.orderUserID, 'form' : {'isShowAllGoods': 1, 'orderID': income.orderID}}) }}">{{ income.orderID }}</a>
+        {% else %}
+            {{ income.orderID }}
+        {% endif %}
+    </td>
+{% endif %}

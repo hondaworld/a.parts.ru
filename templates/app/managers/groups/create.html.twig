@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление группы сотрудников{% endblock %}
+{% block header %}Добавление группы сотрудников{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers.groups') }}">Группы сотрудников</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/managers/groups/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

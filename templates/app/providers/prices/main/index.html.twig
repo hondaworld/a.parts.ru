@@ -1,0 +1,27 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('providers.prices.edit', {'id': providerPrice.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <p><strong>Група: </strong> {{ providerPrice.group.name }}</p>
+    <p><strong>Поставщик: </strong> <a href="{{ path('providers.show', {'id': providerPrice.provider.id}) }}">{{ providerPrice.provider.name }}</a></p>
+    <p><strong>Наименование: </strong> {{ providerPrice.name }} - {{ providerPrice.description }}</p>
+    <p><strong>Срок: </strong> {{ providerPrice.srok }} ({{ providerPrice.srokInDays }} дней)</p>
+    <p><strong>Валюта: </strong> {{ providerPrice.currency.nameShort }}</p>
+    <p><strong>Коэффициент: </strong> {{ providerPrice.koef }}</p>
+    <p><strong>Собственный курс: </strong> {{ providerPrice.currencyOwn }}</p>
+    <p><strong>Доставка за кг: </strong> {{ providerPrice.deliveryForWeight }}</p>
+    <p><strong>Доставка в процентах: </strong> {{ providerPrice.deliveryInPercent }}</p>
+    <p><strong>Максимальная скидка деталей со складов: </strong> {{ providerPrice.discount }}</p>
+    <p><strong>Количество дней просрочки прайс-листа: </strong> {{ providerPrice.daysofchanged }}</p>
+    <p><strong>Скрыть на сайтах: </strong> {{ boolean_status(providerPrice.clientsHide) }}</p>
+
+{% endblock %}

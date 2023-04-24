@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение вида товаров {{ shopType.name }}{% endblock %}
+{% block header %}{{ shopType.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shop.types') }}">Виды товаров</a></li>
+    <li class="breadcrumb-item">{{ shopType.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/shop/shopTypes/_form.html.twig') }}
+{% endblock %}

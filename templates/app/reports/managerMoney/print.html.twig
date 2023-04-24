@@ -1,0 +1,31 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Деньги менеджеров{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Менеджер</th>
+            <th>Сумма</th>
+            {% for finance_typeID, financeTypeName in financeTypes %}
+                <th>{{ financeTypeName }}</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% for managerID, managerName in managers %}
+                {% if profits[managerID]|default(null) %}
+                    <tr>
+                        <td>{{ managerName }}</td>
+                        <td class="text-right">{{ profits[managerID].value|number_format(2, ',', ' ') }}</td>
+                        {% for finance_typeID, financeTypeName in financeTypes %}
+                            <td class="text-right">{{ profits[managerID]['financeTypes'][finance_typeID]|default(0)|number_format(2, ',', ' ') }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

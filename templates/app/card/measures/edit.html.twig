@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение единицы измерения {{ edIzm.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.measures') }}">Единицы измерения</a></li>
+    <li class="breadcrumb-item">{{ edIzm.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/card/measures/_form.html.twig') }}
+{% endblock %}

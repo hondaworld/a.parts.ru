@@ -1,0 +1,27 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('schet.createFromNew', {'id': user.id}) }) }}
+
+<p>
+    {% if newSchetData.qnt|default(0) > 0 %}
+        В счете {{ newSchetData.qnt|default(0) }} товаров на {{ newSchetData.sum|default(0) }} р.
+    {% else %}
+        Деталей в счет не добавлено
+    {% endif %}
+</p>
+
+<div class="row">
+    <div class="col-6">{{ form_row(form.document_prefix) }}</div>
+    <div class="col-6">{{ form_row(form.document_sufix) }}</div>
+</div>
+
+{{ form_row(form.finance_typeID) }}
+{{ form_row(form.isEmail) }}
+
+<div class="text-right">
+    {% if newSchetData.qnt|default(0) > 0 %}
+        <button type="submit" class="btn btn-primary">Создать</button>
+    {% endif %}
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

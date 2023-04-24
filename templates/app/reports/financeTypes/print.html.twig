@@ -1,0 +1,26 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Вид оплаты</th>
+            <th>Сумма</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% endif %}
+            {% for finance_typeID, financeTypeName in financeTypes %}
+                <tr>
+                    <td>{{ financeTypeName }}</td>
+                    <td class="text-right">{{ profits[finance_typeID].value|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение скидки {{ discount.summ }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('discounts') }}">Скидки</a></li>
+    <li class="breadcrumb-item">{{ discount.summ }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/users/discounts/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

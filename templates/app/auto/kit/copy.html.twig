@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Копирование комплекта ЗЧ {{ kit.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.model', {'auto_markaID': autoModel.marka.id}) }}">{{ autoModel.marka.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.model.show', {'auto_markaID': autoModel.marka.id, 'id': autoModel.id}) }}">{{ autoModel.name }}</a></li>
+    <li class="breadcrumb-item">Копирование комплекта ЗЧ</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/auto/kit/_form.html.twig', {'buttonName': 'Копировать'}) }}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сотрудники организации {{ firm.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('firms.edit', {'id': firm.id}) }}">{{ firm.nameShort }}</a></li>
+    <li class="breadcrumb-item">Сотрудники</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/firms/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('firms.managers.create', {'firmID': firm.id}) }}" class="nav-link"
+                   title="Добавить сотрудника"><i class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Сотрудник</th>
+            <th>Подразделение</th>
+            <th>Должность</th>
+            <th>Принят</th>
+            <th>Уволен</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if managers is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for manager in managers %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': manager.linkID} only %}
+                    {% endif %}
+                    <td>{{ manager.manager }}</td>
+                    <td>{{ manager.org_group }}</td>
+                    <td>{{ manager.org_job }}</td>
+                    <td>{{ manager.dateofadded is null ? '' : manager.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ manager.dateofclosed is null ? '' : manager.dateofclosed|date('d.m.Y') }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('firms.managers.edit', {'firmID': firm.id, 'id': manager.linkID}) }}"
+                               title="Изменить сотрудника">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('firms.managers.delete', {'firmID': firm.id, 'id': manager.linkID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу сотрудника?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить сотрудника">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Инвентаризации{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Инвентаризации</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_pagination.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('inventarizations.create') }}"
+                   class="nav-link" title="Добавить инвентаризацию"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, '#', 'inventarizationID') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Закрыта', 'isClose') }}</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for inventarization in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': inventarization.inventarizationID} only %}
+                    {% endif %}
+                    <td>{{ inventarization.inventarizationID }}</td>
+                    <td>{{ inventarization.dateofadded|date('d.m.Y') }}</td>
+                    <td class="text-center">{{ boolean_status(inventarization.isClose) }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('inventarizations.goods.inventarization', {'id': inventarization.inventarizationID}) }}"
+                               title="Инвентаризация">
+                                <i class="fas fa-boxes"></i>
+                            </a>
+                            <a href="{{ path('inventarizations.goods', {'id': inventarization.inventarizationID}) }}"
+                               title="Товары">
+                                <i class="fas fa-cogs"></i>
+                            </a>
+                            <a href="{{ path('inventarizations.goods.scan.search', {'id': inventarization.inventarizationID}) }}"
+                               title="Сканирование">
+                                <i class="fas fa-barcode"></i>
+                            </a>
+                            <a href="{{ path('inventarizations.edit', {'id': inventarization.inventarizationID}) }}"
+                               title="Изменить инвентаризацию">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('inventarizations.delete', {'id': inventarization.inventarizationID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить инвентаризацию?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить инвентаризацию">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

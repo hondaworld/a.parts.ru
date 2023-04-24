@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение департамента {{ clientTicketGroup.name }}{% endblock %}
+{% block header %}{{ clientTicketGroup.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('client-tickets.groups') }}">Департаменты</a></li>
+    <li class="breadcrumb-item">{{ clientTicketGroup.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/tickets/clientTicketGroups/_form.html.twig') }}
+
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Поставщик {{ logInvoiceAll.providerName }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('providers.invoices', {'page' : app.session.get('page/logInvoice')|default(1)}) }}">Инвойсы</a>
+    </li>
+    <li class="breadcrumb-item">{{ logInvoiceAll.providerName }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('providers.invoices.updatePrices') }}" data-toggle="modal" data-target="#modalConfirm"
+                   onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите поменять закупочные цены в приходе у выделенных деталей?')"
+                   data-title="Поменять закупочные цены в приходе" class="nav-link">
+                    <i class="fas fa-dollar-sign" title="Поменять цены"></i>
+                </a>
+            </li>
+        {% endblock %}
+
+        {% block table_header %}
+            <th rowspan="2">Номер</th>
+            <th rowspan="2">Приход</th>
+            <th colspan="3">Цена</th>
+            <th colspan="2">Количество</th>
+            <th colspan="2">Статус</th>
+            <th rowspan="2">Дата</th>
+            <th rowspan="2">Комментарий</th>
+            <th rowspan="2">ГТД</th>
+            <th rowspan="2">Страна</th>
+            </tr>
+            <tr class="table-primary">
+            <th></th>
+            <th>сейчас</th>
+            <th>была</th>
+            <th>в с/ф</th>
+            <th>в приходе</th>
+            <th>в с/ф</th>
+            <th>исходный</th>
+            <th>конечный</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if logInvoiceAll.logs is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for log in logInvoiceAll.logs %}
+                {% set isDisable = true %}
+                {% set class = '' %}
+                {% if not log.income %}
+                    {% set class = 'font-weight-bold' %}
+                {% else %}
+                    {% if (log.income.priceZak != log.priceInvoice and (log.providerInvoice.num.price != '' or log.providerInvoice.num.summ != '')) %}
+                        {% set class = 'text-danger' %}
+                        {% set isDisable = false %}
+                    {% else %}
+                        {% set class = 'text-success' %}
+                    {% endif %}
+                {% endif %}
+                <tr class="{{ class }}">
+                    {% if (table_checkable|default(false) and not isDisable) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': log.id} only %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>
+                        {% if is_granted('index', 'Income') %}
+                            <a href="{{ path('income', {'form': {'number': log.number.value}}) }}">{{ log.number.value }}</a>
+                        {% else %}
+                            {{ log.number.value }}
+                        {% endif %}
+                    </td>
+                    <td id="incomeID_{{ log.id }}">
+                        {% if log.income %}
+                            {% if is_granted('index', 'Income') %}
+                                <a href="{{ path('income', {'form': {'incomeID': log.income.id}}) }}">{{ log.income.id }}</a>
+                            {% else %}
+                                {{ log.income.id }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="text-right"
+                        id="priceZak_{{ log.id }}">{{ (log.income and log.income.priceZak != 0) ? log.income.priceZak|number_format(2, ',', ' ') : '' }}</td>
+                    <td class="text-right"
+                        id="priceIncome_{{ log.id }}">{{ log.priceIncome|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ log.priceInvoice|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right" id="quantityIncome_{{ log.id }}">{{ log.quantityIncome }}</td>
+                    <td class="text-right">{{ log.quantityInvoice }}</td>
+                    <td id="statusFrom_{{ log.id }}">{{ statuses[log.statusFrom]|default('') }}</td>
+                    <td>{{ statuses[log.statusTo]|default('') }}</td>
+                    <td>{{ log.dateofadded|date('d.m.Y') }}</td>
+                    <td
+                            {% if (log.comment == 'Количество не совпадает') %}
+                                data-url-submit="{{ path('providers.invoices.update', {'id': log.id}) }}"
+                                style="cursor: pointer;"
+                                id="comment_{{ log.id }}"
+                                onclick="tableColInputSubmit(this)"
+                                title="Изменить"
+                            {% endif %}
+                    >{{ log.comment }}</td>
+                    <td id="gtd_{{ log.id }}">{{ log.gtd }}</td>
+                    <td id="country_{{ log.id }}">{{ log.country }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block table_footer %}
+            <tr>
+                <th colspan="3"></th>
+                <th class="text-right">{{ sum['priceZak']|number_format(2, ',', '') }}</th>
+                <th class="text-right">{{ sum['income']|number_format(2, ',', '') }}</th>
+                <th class="text-right">{{ sum['invoice']|number_format(2, ',', '') }}</th>
+                <th class="text-right">{{ sum['quantityIncome'] }}</th>
+                <th class="text-right">{{ sum['quantityInvoice'] }}</th>
+                <th colspan="20">&nbsp;</th>
+            </tr>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

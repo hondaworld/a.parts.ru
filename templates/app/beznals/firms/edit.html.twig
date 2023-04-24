@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение реквизита сотрудника {{ firm.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('firms.edit', {'id': firm.id}) }}">{{ firm.nameShort }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('firms.beznals', {'firmID': firm.id}) }}">Реквизиты</a></li>
+    <li class="breadcrumb-item">Изменение</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/firms/_tabs.html.twig') %}
+
+    {{ include('app/beznals/firms/_form.html.twig') }}
+{% endblock %}

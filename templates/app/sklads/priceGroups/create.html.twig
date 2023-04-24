@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление группы прайс-листа{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('price.list.price.lists') }}">Прайс-листы</a>
+    <li class="breadcrumb-item"><a href="{{ path('price.list.price.lists.show', {'id': priceList.id}) }}">{{ priceList.name }}</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/sklads/priceGroups/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

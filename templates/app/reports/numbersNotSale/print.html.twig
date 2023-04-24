@@ -1,0 +1,39 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>ABC</th>
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Количество</th>
+            <th>Сумма</th>
+            <th>Дней не продается</th>
+            <th>ID самого старого прихода</th>
+            <th>Дата прихода</th>
+            <th>Цена прихода</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for item in pagination %}
+                <tr>
+                    <td>
+                        {% for sklad_name, abc in item.abc %}
+                            {{ sklad_name }} - {{ abc }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ item.creater_name }}</td>
+                    <td>{{ item.number }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.sum|number_format(2, ',', ' ') }}</td>
+                    <td>{{ item.days }}</td>
+                    <td>{{ item.income_incomeID }}</td>
+                    <td>{{ item.income_dateofin ? item.income_dateofin|date('d.m.Y') : null }}</td>
+                    <td class="text-right">{{ item.income_price ? item.income_price|number_format(2, ',', ' ') : null }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% if 'number' not in hideCols %}
+    <td class="options-container-table">
+        <div class="options-overlay-table bg-black-10">
+            <div class="options-overlay-table-content">
+                <a class="btn btn-sm btn-primary mr-1" title="Копировать"
+                   href="javascript:void(0)"
+                   onclick="copyNumber(this)">
+                    <i class="fas fa-copy"></i>
+                </a>
+                {% if income.status not in [4, 5, 8, 10] and income.reserve == 0 %}
+                    <a class="btn btn-sm btn-primary mr-1" title="Изменить"
+                       data-toggle="modal"
+                       data-target="#modalNumber"
+                       data-incomeid="{{ income.incomeID }}"
+                       data-number="{{ income.number }}"
+                       onclick="modalNumberChange(this)"
+                       href="#">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                {% endif %}
+                <a class="btn btn-sm btn-primary mr-1" title="В карточку детали"
+                   href="{{ path('card.parts.show', {'id': income.zapCardID}) }}">
+                    <i class="fas fa-cog"></i>
+                </a>
+            </div>
+        </div>
+        <span>{{ income.number }}</span>
+    </td>
+{% endif %}

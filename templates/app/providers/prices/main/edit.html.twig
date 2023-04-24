@@ -1,0 +1,43 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение основных данных прайс-листа'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.providerPriceGroupID) }}
+    {{ form_row(form.providerID) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.description) }}
+
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.srok) }}</div>
+        <div class="col-md-6">{{ form_row(form.srokInDays) }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">{{ form_row(form.currencyID) }}</div>
+        <div class="col-md-4">{{ form_row(form.koef) }}</div>
+        <div class="col-md-4">{{ form_row(form.currencyOwn) }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.deliveryForWeight) }}</div>
+        <div class="col-md-6">{{ form_row(form.deliveryInPercent) }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.discount) }}</div>
+        <div class="col-md-6">{{ form_row(form.daysofchanged) }}</div>
+    </div>
+
+    {{ form_row(form.clients_hide) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.prices.show', {'id': providerPrice.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

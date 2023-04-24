@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление отгрузки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shippings', {'page' : app.session.get('page/shippings')|default(1)}) }}">Отгрузки</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/orders/shippings/create/form.html.twig') }}
+
+    {% if all is not empty %}
+        {{ include('app/orders/shippings/create/table.html.twig') }}
+    {% endif %}
+
+{% endblock %}

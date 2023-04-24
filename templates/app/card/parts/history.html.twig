@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}История продаж {{ zapCard.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item">История продаж {{ zapCard.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('card.parts.history', {'id': zapCard.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Операция</th>
+            <th>Документ</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>Предприятие</th>
+            <th>Склад</th>
+            <th>Кол</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.doc_typeID) }}</th>
+            <th>{{ form_widget(filter.document_num) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.firmID) }}</th>
+            <th>{{ form_widget(filter.zapSkladID) }}</th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for history in pagination %}
+                <tr>
+                    <td>{{ documentTypes[history.doc_typeID]['name']|default('') }}</td>
+                    <td>{{ documentTypes[history.doc_typeID]['name_short']|default('') }} {{ history.document_num }}</td>
+                    <td>{{ history.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ firms[history.firmID]|default('') }}</td>
+                    <td>{{ sklads[history.zapSkladID]['name_short']|default('') }}</td>
+                    <td>{{ history.quantity }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

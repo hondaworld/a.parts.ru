@@ -1,0 +1,22 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение данных для обработки приходов'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.incomeOrderNumber) }}
+    {{ form_row(form.incomeOrderSubject) }}
+    {{ form_row(form.incomeOrderText) }}
+    {{ form_row(form.incomeOrderSubject5) }}
+    {{ form_row(form.incomeOrderText5) }}
+    {{ form_row(form.incomeOrderEmail) }}
+    {{ form_row(form.isIncomeOrder) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.show', {'id': provider.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

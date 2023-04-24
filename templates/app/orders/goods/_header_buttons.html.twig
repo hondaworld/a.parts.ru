@@ -1,0 +1,140 @@
+{% if is_granted('order_good_create', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" id="modalCreaterLink" data-target="#modalCreate"
+           data-url="{{ path('order.goods.create', {'id': user.id}) }}"
+           data-title="Добавить деталь в заказ"
+           class="nav-link ajax-modal-html">
+            <i class="fas fa-plus" title="Добавить деталь в заказ"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('order.goods.createFile', {'id': user.id}) }}" class="nav-link">
+            <i class="fas fa-file-medical" title="Добавить детали из файла"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_good_reserve', 'Order') %}
+    <li class="nav-item">
+        <a href="{{ path('order.goods.reserve') }}"
+           class="nav-link" data-toggle="modal"
+           data-target="#modalConfirm"
+           title="Обработать"
+           onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите обработать выделенные записи?<br><br>Складские детали будут поставлены в резерв, заказные будут заказаны.')">
+            <i class="fas fa-dolly-flatbed text-success"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('order.goods.reserve.delete') }}"
+           class="nav-link" data-toggle="modal"
+           data-target="#modalConfirm"
+           title="Снять резерв"
+           onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите снять резерв у выделенных записей?<br><br>Заказные детали также будут сняты с резерва. Если деталь еще не заказана, она будет удалена из приходов.')">
+            <i class="fas fa-dolly-flatbed text-danger"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_good_expense', 'Order') %}
+    {% if not user.isDebt and not expenseDocument.isPick %}
+        <li class="nav-item">
+            <a href="{{ path('order.goods.expense', {'id': expenseDocument.id}) }}"
+               class="nav-link" data-toggle="modal"
+               data-target="#modalConfirm"
+               title="Добавить в отгрузку"
+               onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите добавить в отгрузку выделенные записи?')">
+                <i class="fas fa-pallet text-success"></i>
+            </a>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <div class="nav-link"><i class="fas fa-pallet text-muted"></i></div>
+        </li>
+    {% endif %}
+{% endif %}
+{% if is_granted('order_good_expense', 'Order') %}
+    <li class="nav-item">
+        <a href="{{ path('order.goods.confirm', {'id': user.id}) }}"
+           class="nav-link" data-toggle="modal"
+           data-target="#modalConfirm"
+           title="Подтвердить заказ"
+           onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите отправить подтверждение о заказах выделенных деталей?<br><br>Будут учтены только незаказанные детали и не находящиеся в резерве.')">
+            <i class="fas fa-user-check"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_good_refuse', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('order.goods.refuse') }}"
+           data-title="Отказ от деталей"
+           class="nav-link ajax-modal-html" title="Отказ от деталей">
+            <i class="far fa-trash-alt text-danger"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_sms', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('order.goods.sms.warehouseForm', {'id': user.id}) }}"
+           data-title="SMS с приходом на склад"
+           class="nav-link ajax-modal-html" title="SMS с приходом на склад">
+            <i class="fas fa-sms"></i>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('order.goods.sms.payForm', {'id': user.id}) }}"
+           data-title="SMS с оплатой на карту Сбербанка"
+           class="nav-link ajax-modal-html">
+            <i class="fas fa-comment-dollar" title="SMS с оплатой на карту Сбербанка"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_good_schet_create', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('order.goods.perem') }}"
+           data-title="Переместить на другой склад"
+           class="nav-link ajax-modal-html" title="Переместить на другой склад">
+            <i class="fas fa-warehouse text-success"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_good_change_price', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('order.goods.discount') }}"
+           data-title="Изменить скидку"
+           class="nav-link ajax-modal-html" title="Изменить скидку">
+            <i class="fas fa-percent"></i>
+        </a>
+    </li>
+{% endif %}
+<li class="nav-item">
+    <a href="" data-toggle="modal" data-target="#modalForm"
+       data-url="{{ path('order.print.blankForm', {'id': user.id}) }}"
+       data-title="Распечатать бланк заказа"
+       data-check-selected-item="true"
+       class="nav-link ajax-modal-html" title="Распечатать бланк заказа">
+        <i class="fas fa-receipt"></i>
+    </a>
+</li>
+{% if is_granted('order_good_schet_create', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('schet.createFromNewForm', {'id': user.id}) }}"
+           data-title="Создать счет"
+           class="nav-link ajax-modal-html" title="Создать счет">
+            <i class="fas fa-file-invoice-dollar text-warning"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('order_return_document', 'Order') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('order.goods.documentReturn', {'returning': arReturning}) }}"
+           data-title="Возврат"
+           class="nav-link ajax-modal-html" title="Возвратить">
+            <i class="fas fa-file-upload text-danger"></i>
+        </a>
+    </li>
+{% endif %}

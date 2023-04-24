@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение организации {{ firm.nameShort }}{% endblock %}
+{% block header %}{{ firm.nameShort }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item">{{ firm.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/firms/_tabs.html.twig') %}
+
+    {{ include('app/firms/_form_edit.html.twig') }}
+
+{% endblock %}

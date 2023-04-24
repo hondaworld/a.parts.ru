@@ -1,0 +1,50 @@
+<div class="overflow-y-auto" style="height: 300px;">
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr class="table-primary">
+            <th>Заказ</th>
+            <th>Кол</th>
+            <th>Срок</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if all is empty and allSklad is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Записей нет</td>
+            </tr>
+        {% endif %}
+        {% for reserve in all %}
+            <tr>
+                <td>
+                    {% if is_granted('show', 'Order') %}
+                        <a href="{{ path('order.goods', {'id': reserve.userID, 'form': {'isShowAllGoods': 1, 'orderID': reserve.orderID}}) }}" target="_blank">{{ reserve.orderID }}</a>
+                    {% else %}
+                        {{ reserve.orderID }}
+                    {% endif %}
+                </td>
+                <td>{{ reserve.reserve }}</td>
+                <td>
+                    {% if reserve.dateofclosed %}
+                        {{ reserve.dateofclosed|date('d.m.Y') }}
+                    {% else %}
+                        <i class="fas fa-infinity"></i>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        {% for reserve in allSklad %}
+            <tr>
+                <td>{{ reserve.sklad_name }}</td>
+                <td>{{ reserve.reserve }}</td>
+                <td>
+                    {% if reserve.dateofclosed|default(null) %}
+                        {{ reserve.dateofclosed|date('d.m.Y') }}
+                    {% else %}
+                        <i class="fas fa-infinity"></i>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,55 @@
+{% if prices is not empty %}
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr class="table-primary">
+            <th>Бренд</th>
+            <th>Поставщик</th>
+            <th>Цена, руб.</th>
+            <th>Кол.</th>
+            <th>% поставки</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for price in prices %}
+            <tr class="{{ price.providerPriceID == income.providerPrice.id ? 'font-weight-bold' : '' }}">
+                <td>{{ price.createrName }}</td>
+                <td>{{ price.providerPriceName }}</td>
+                <td class="text-right">{{ price.priceWithDostRub|number_format(2, ',', ' ') }}</td>
+                <td class="text-center">{{ price.quantity }}</td>
+                <td class="text-center">{{ price.percentIncome }}</td>
+                <td class="text-center"><a class="btn btn-primary"
+                                           href="{{ path('income.providerPrice.update', {'id': income.id, 'providerPriceID': price.providerPriceID}) }}"
+                                           onclick="changeUrl(this)">&gt;&gt;</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit' : 'return changeAction(this)'}, 'action': path('income.providerPrice.update', {'id': income.id}) }) }}
+<div class="row">
+    <div class="col">
+        {{ form_widget(form.windowTop) }}
+        {{ form_widget(form.providerPriceID) }}
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">&gt;&gt;</button>
+    </div>
+</div>
+{{ form_end(form) }}
+
+<script>
+    console.log(window.pageYOffset || document.documentElement.scrollTop);
+
+    function changeUrl(obj) {
+        obj.href += '&windowTop=' + window.pageYOffset || document.documentElement.scrollTop;
+    }
+
+    function changeAction(obj) {
+        document.getElementById('form_windowTop').value = window.pageYOffset || document.documentElement.scrollTop;
+    }
+</script>
+
+
+

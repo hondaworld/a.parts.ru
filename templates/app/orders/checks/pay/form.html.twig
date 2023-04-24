@@ -1,0 +1,18 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('order.check.pay.update', {'id': expenseDocument.id}) }) }}
+
+{% if lastPay.balance|default(null) and lastPay.state|default(null) == 'done' %}
+    <p>На последний платеж {{ lastPay.balance }}р. уже <span
+                class="text-danger">распечатан чек на сумму {{ lastPay.fiscal_summ }}р.</span> Внимательно
+        впишите сумму, на которую не распечатаны чеки. Если клиенту распечатаны все чеки, впишите сумму 0.</p>
+{% endif %}
+
+{{ form_row(form.zapSkladID) }}
+{{ form_row(form.sum) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Печать</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

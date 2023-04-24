@@ -1,0 +1,78 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Счета фактуры</h3>
+        <div class="block-options">
+            {% if is_granted('edit', 'ScheFakKor') %}
+                <a href="" data-toggle="modal" data-target="#modalFormBig"
+                   data-url="{{ path('schetFakKor.schetFak') }}"
+                   data-title="Добавить счет-фактуру по номеру" class="ml-3 btn btn-primary ajax-modal-html">
+                    Добавить счет-фактуру по номеру
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        function formFromSchetFak(id) {
+            let url = '{{ path('schetFakKor.schetFakAdd', {'id': schetFakKor.id, 'schetFakID': '*schetFakID*'}) }}';
+            url = url.replace('*schetFakID*', id);
+            window.location = url;
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <p>Данные по товарам в возвратных накладных сверяются с данными по товарам счетов фактур. Если не найдены
+        возвращенные детали, товары в корректировочном счете фактуре не показываются. Однако, эти счета фактуры будут
+        включены в перечисление, на основании которых делается корректировочный счет фактура.</p>
+    <table class="table table-sm table-bordered table-striped table-hover">
+        <thead>
+        <tr class="table-primary">
+            <th>#</th>
+            <th>Дата</th>
+            <th>От кого</th>
+            <th>Кому</th>
+            <th>Сумма</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for schetFak in schetFakKor.schetFaks %}
+            <tr>
+                <td>{{ schetFak.document.num }}</td>
+                <td>{{ schetFak.dateofadded|date('d.m.Y') }}</td>
+                <td>
+                    {% if is_granted('edit', 'Firm') %}
+                        <a href="{{ path('firms.edit', {'id': schetFak.firm.id}) }}"
+                           target="_blank">{{ schetFak.firm.nameShort }}</a>
+                    {% else %}
+                        {{ schetFak.firm.nameShort }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if is_granted('show', 'User') %}
+                        <a href="{{ path('users.show', {'id': schetFak.expenseDocument.user.id}) }}"
+                           target="_blank">{{ schetFak.expenseDocument.user.name }}</a>
+                    {% else %}
+                        {{ schetFak.expenseDocument.user.name }}
+                    {% endif %}
+                </td>
+                <td class="text-right">{{ schetFak.expenseDocument.goodsSum|number_format(2, ',', ' ') }}</td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        {% if is_granted('edit', 'SchetFakKor') %}
+                            <a href="{{ path('schetFakKor.deleteSchetFak', {'id': schetFakKor.id, 'schetFakID': schetFak.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить счет-фактуру?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить счет-фактуру">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

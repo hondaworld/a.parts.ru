@@ -1,0 +1,28 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('order.user.comments.create.action', {'id': user.id}) }) }}
+
+<p>
+    <strong>Клиент:</strong>
+    {% if is_granted('show', 'User') %}
+        <a href="{{ path('users.show', {'id': user.id}) }}"
+           title="Карточка клиента">
+            {{ user.userName.fullname }}
+        </a>
+    {% else %}
+        {{ user.userName.fullname }}
+    {% endif %}
+</p>
+<p><strong>Телефон:</strong> <a href="tel:{{ user.phonemob }}" title="Позвонить">{{ phone_mobile(user.phonemob) }}</a>
+</p>
+{% if user.email.value|default(null) and user.email.value is not empty %}
+    <p><strong>E-mail:</strong> <a href="mailto:{{ user.email.value }}" title="Написать">{{ user.email.value }}</a></p>
+{% endif %}
+
+{{ form_row(form.comment) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

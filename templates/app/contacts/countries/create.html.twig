@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление страны{% endblock %}
+{% block header %}Добавление страны{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('countries') }}">Страны</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/contacts/countries/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

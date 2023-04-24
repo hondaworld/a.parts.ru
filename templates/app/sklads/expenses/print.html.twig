@@ -1,0 +1,300 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Накладная на внутреннее перемещение №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-family: Arial, serif;
+            font-size: 10px;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .border2 {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .border2-top {
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border2-bottom {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border, .border-bottom {
+            border-color: #000000 !important;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .font-size-9 {
+            font-size: 9px;
+        }
+
+        .font-size-13, .font-size-13 strong {
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.border1 {
+            width: auto;
+            border : 1px solid #000000;
+            border-collapse : collapse;
+        }
+        table.border1 td, table.border1 th {
+            border : 1px solid #000000;
+            border-collapse : collapse;
+            font-size : 10px;
+            vertical-align : top;
+            padding: 5px;
+        }
+
+        table.table-goods {
+            border: 2px solid #000000;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+        h2 {
+            margin: 0;
+            font-weight : bold;
+            font-size : 18px;
+        }
+    </style>
+    <table>
+        <tr>
+            <td align="right" style="padding-right: 10px; font-size: 9px;">Унифицированная форма № ТОРГ-13<br>Утверждена постановлением Госкомстата<br>России от 25.12.98 г. № 132</td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td colspan="6"></td>
+                        <td style="border-bottom: 1px solid #000000;"></td>
+                        <td align="center" style="border-left: 1px solid #000000; border-right: 1px solid #000000; border-top: 1px solid #000000; border-bottom: 2px solid #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Код&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" rowspan="2" style="border-bottom: 1px solid #000000;" align="center">{{ expenseSkladDocument.firm.name }}&nbsp;</td>
+                        <td rowspan="2" align="right" valign="top" style="">Форма&nbsp;</td>
+                        <td style="border-bottom: 1px solid #000000;">по&nbsp;ОКУД</td>
+                        <td align="center" style="border-left: 2px solid #000000; border-right: 2px solid #000000; border-bottom: 1px solid #000000;"><strong>0330213</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #000000;">по&nbsp;ОКПО</td>
+                        <td align="center" style="border-left: 2px solid #000000; border-right: 2px solid #000000; border-bottom: 1px solid #000000;"><strong>{{ expenseSkladDocument.firm.okpo }}</strong>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="font-size: 9px;" align="center">организация</td>
+                        <td style="" align="center" valign="top" width="5%">Вид&nbsp;деятельности&nbsp;</td>
+                        <td style="border-bottom: 1px solid #000000;">по&nbsp;ОКДП</td>
+                        <td align="center" style="border-left: 2px solid #000000; border-right: 2px solid #000000; border-bottom: 1px solid #000000;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" align="right">Вид операции&nbsp;</td>
+                        <td align="center" style="border-left: 2px solid #000000; border-right: 2px solid #000000; border-bottom: 2px solid #000000;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td valign="bottom" width="10%">&nbsp;</td>
+                        <td valign="bottom" width="30%">&nbsp;</td>
+                        <td style="font-size: 9px; border-left: 1px solid #000000; border-right: 1px solid #000000; border-top: 1px solid #000000;" align="center" width="5%" nowrap>номер документа</td>
+                        <td style="font-size: 9px; border-right: 1px solid #000000; border-top: 1px solid #000000;" align="center" width="5%" nowrap>дата составления</td>
+                        <td colspan="2" align="right"></td>
+                        <td align="right" width="5%"></td>
+                        <td align="center" width="5%">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="font-size-13" valign="bottom" colspan="2" align="right" style=><strong>НАКЛАДНАЯ&nbsp;&nbsp;&nbsp;</strong></td>
+                        <td class="font-size-13" style="border: 2px solid #000000;" align="center"><strong>{{ document_num }}</strong></td>
+                        <td class="font-size-13" style="border-bottom: 2px solid #000000; border-right: 2px solid #000000; border-top: 2px solid #000000;" align="center"><strong>{{ document_date|date('d.m.Y') }}</strong></td>
+                        <td colspan="2" align="right"></td>
+                        <td align="right">&nbsp;</td>
+                        <td align="center">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="font-size-13" valign="bottom" colspan="4" align="right" style=><strong>НА ВНУТРЕННЕЕ ПЕРЕМЕЩЕНИЕ, ПЕРЕДАЧУ ТОВАРОВ, ТАРЫ</strong></td>
+                        <td colspan="2" align="right"></td>
+                        <td align="right">&nbsp;</td>
+                        <td align="center">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>
+                <table class="border1">
+                    <tr>
+                        <td colspan="2">Отправитель</td>
+                        <td colspan="2">Получатель</td>
+                        <td colspan="2">Корреспондирующий счет</td>
+                    </tr>
+                    <tr>
+                        <td>структурное подразделение</td>
+                        <td>вид деятельности</td>
+                        <td>структурное подразделение</td>
+                        <td>вид деятельности</td>
+                        <td>счет, субсчет</td>
+                        <td>код аналитического учета</td>
+                    </tr>
+                    <tr>
+                        <td>{{ expenseSkladDocument.zapSklad.name }}</td>
+                        <td></td>
+                        <td>{{ expenseSkladDocument.zapSkladTo.name }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table-goods">
+                    <tr>
+                        <th width="30%" rowspan="2" colspan="2">Товар, тара</th>
+                        <th width="5%" rowspan="3">Сорт</th>
+                        <th width="8%" rowspan="2" colspan="2">Единица измерения</th>
+                        <th width="8%" colspan="4">Отпущено</th>
+                        <th width="8%" colspan="2" rowspan="2">По учетным ценам</th>
+                    </tr>
+                    <tr>
+                        <th width="8%" colspan="2">Количество</th>
+                        <th width="8%" colspan="2">Масса</th>
+                    </tr>
+                    <tr>
+                        <th width="27%">наименование, характеристика</th>
+                        <th width="3%">код</th>
+                        <th width="4%">наиме-<br>нование</th>
+                        <th width="4%">код по ОКЕИ</th>
+                        <th width="4%">в одном месте</th>
+                        <th width="4%">мест, штук</th>
+                        <th width="5%">брутто</th>
+                        <th width="5%">нетто</th>
+                        <th width="8%">цена, руб. коп.</th>
+                        <th width="8%">сумма, руб. коп.</th>
+                    </tr>
+                    <tr>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>8</th>
+                        <th>9</th>
+                        <th>10</th>
+                        <th>11</th>
+                    </tr>
+                    {% set sum = 0 %}
+                    {% set weight = 0 %}
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.zapCard.detailName }} ({{ expense.zapCard.number.value }})</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td class="text-center">{{ expense.zapCard.edIzm.name }}</td>
+                        <td class="text-center">{{ expense.zapCard.edIzm.okei }}</td>
+                        <td class="text-center">{{ expense.quantity }},000</td>
+                        <td>1,000</td>
+                        <td>{{ weights[expense.id]|default(null) ? (weights[expense.id]['weight'] * expense.quantity)|number_format(2, ',', ' ') : '' }}</td>
+                        <td>{{ weights[expense.id]|default(null) ? (weights[expense.id]['weight'] * expense.quantity)|number_format(2, ',', ' ') : '' }}</td>
+                        <td class="text-right" nowrap>{{ expense.income.price|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right" nowrap>{{ (expense.income.price * expense.quantity)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                        {% set sum = sum + expense.income.price * expense.quantity %}
+                        {% set weight = weight + (weights[expense.id]|default(null) ? (weights[expense.id]['weight'] * expense.quantity) : 0) %}
+                    {% endfor %}
+                    <tr>
+                        <td valign=top align="right" colspan="6" style="border-bottom: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF;">Итого</td>
+                        <td>&nbsp;</td>
+                        <td valign=top nowrap>{{ weight|number_format(2, ',', ' ') }}</td>
+                        <td valign=top nowrap>{{ weight|number_format(2, ',', ' ') }}</td>
+                        <td align="center">X</td>
+                        <td valign=top align="right" nowrap>{{ sum|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td valign=top align="right" colspan="6" style="border-bottom: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF;">Всего по накладной</td>
+                        <td>&nbsp;</td>
+                        <td valign=top nowrap>{{ weight|number_format(2, ',', ' ') }}</td>
+                        <td valign=top nowrap>{{ weight|number_format(2, ',', ' ') }}</td>
+                        <td align="center">X</td>
+                        <td valign=top align="right" nowrap>{{ sum|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><br><br></td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="0" cellspacing="2" width="100%">
+                    <tr>
+                        <td width="5%">Отпустил</td>
+                        <td width="15%" style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                        <td width="15%" style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                        <td width="15%" style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                        <td width="50%" nowrap> товар и тару по количеству и надлежащему качеству</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-size: 9px;" align="center" valign="top">должность</td>
+                        <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                        <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                    </tr>
+                    <tr>
+                        <td>на сумму </td>
+                        <td colspan="4"><strong>{{ numberInWords(sum, true) }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>Получил</td>
+                        <td style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #000000;">&nbsp;</td>
+                        <td nowrap></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="font-size: 9px;" align="center" valign="top">должность</td>
+                        <td style="font-size: 9px;" align="center" valign="top">подпись</td>
+                        <td style="font-size: 9px;" align="center" valign="top">расшифровка подписи</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

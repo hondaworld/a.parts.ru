@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Непродаваемые детали{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Непродаваемые детали</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('reports.numbersNotSale') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.days) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>ABC</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Количество', 'quantity') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Сумма', 'sum') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дней не продается', 'days') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'ID самого старого прихода', 'income_incomeID') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата прихода', 'income_dateofin') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Цена прихода', 'income_price') }}</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for item in pagination %}
+                <tr>
+                    <td>
+                        {% for sklad_name, abc in item.abc %}
+                            {{ sklad_name }} - {{ abc }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ item.creater_name }}</td>
+                    <td>
+                        {% if is_granted('show', 'ZapCard') %}
+                            <a href="{{ path('card.parts.show', {'id': item.zapCardID}) }}" title="В карточку детали">{{ item.number }}</a>
+                        {% else %}
+                            {{ item.number }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.sum|number_format(2, ',', ' ') }}</td>
+                    <td>{{ item.days }}</td>
+                    <td>
+                        {% if is_granted('index', 'Income') %}
+                            <a href="{{ path('income', {'form': {'incomeID': item.zapCardID}}) }}" title="В приходы">{{ item.income_incomeID }}</a>
+                        {% else %}
+                            {{ item.income_incomeID }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.income_dateofin ? item.income_dateofin|date('d.m.Y') : null }}</td>
+                    <td class="text-right">{{ item.income_price ? item.income_price|number_format(2, ',', ' ') : null }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <script>
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.numbersNotSale.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.numbersNotSale.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+
+{% endblock %}

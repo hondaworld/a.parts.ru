@@ -1,0 +1,140 @@
+<div id="orders-list">
+    <div class="mb-1">
+        <ul class="nav-main nav-main-horizontal nav-main-hover">
+            <li class="nav-main-item pr-2 font-weight-bold">
+                <div class="py-2">Неактивные</div>
+            </li>
+            <li class="nav-main-item{{ param == 'paid_credit_card' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'paid_credit_card' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countPaidCreditCard') }}"
+                   data-id="paid_credit_card"
+                >Оплаченные кредитной картой <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'not_ordered' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'not_ordered' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countNotOrdered') }}"
+                   data-id="not_ordered"
+                >Недооформленные заказы <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+        </ul>
+    </div>
+    <div class="mb-1">
+        <ul class="nav-main nav-main-horizontal nav-main-hover">
+            <li class="nav-main-item pr-2 font-weight-bold">
+                <div class="py-2">Заказы</div>
+            </li>
+            <li class="nav-main-item{{ param == 'newByUser' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'newByUser' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countNewOrders') }}"
+                   data-id="newByUser"
+                >Новые клиентские <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'newByManager' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'newByManager' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countNewOrders') }}"
+                   data-id="newByManager"
+                >Новые менеджерские <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'newByCron' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'newByCron' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countNewOrders') }}"
+                   data-id="newByCron"
+                >Новые автоматические <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'not_paid' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'not_paid' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countNotPaid') }}"
+                   data-id="not_paid"
+                >С неоплаченными счетами <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'in_work' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'in_work' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countInWork') }}"
+                   data-id="in_work"
+                >В работе <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'not_sent' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'not_sent' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countNotSent') }}"
+                   data-id="not_sent"
+                >Неотгруженные <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'picking' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'picking' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countPick') }}"
+                   data-id="picking"
+                >В сборке <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'picked' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'picked' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countPick') }}"
+                   data-id="picked"
+                >Собранные <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'expired' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'expired' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countExpired') }}"
+                   data-id="expired"
+                >Просроченные <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+        </ul>
+    </div>
+    <div class="mb-1">
+        <ul class="nav-main nav-main-horizontal nav-main-hover">
+            <li class="nav-main-item pr-2 font-weight-bold">
+                <div class="py-2">Алерты</div>
+            </li>
+            {% for typeID, typeName in alertTypes %}
+                <li class="nav-main-item{{ param == 'alert_' ~ typeID ? ' active' : '' }}">
+                    <a class="nav-main-link{{ param == 'alert_' ~ typeID ? ' active' : '' }}"
+                       href="#"
+                       data-url="{{ path('orders.countAlerts') }}"
+                       data-id="alert_{{ typeID }}"
+                    >{{ typeName }} <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="mb-1">
+        <ul class="nav-main nav-main-horizontal nav-main-hover">
+            <li class="nav-main-item pr-2 font-weight-bold">
+                <div class="py-2">С датой</div>
+            </li>
+            <li class="nav-main-item{{ param == 'service' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'service' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countService') }}"
+                   data-id="service"
+                >Сервис <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item{{ param == 'delivery' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'delivery' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countDelivery') }}"
+                   data-id="delivery"
+                >Доставка <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+            <li class="nav-main-item pr-2 font-weight-bold">
+                <div class="py-2">Реселлеры</div>
+            </li>
+            <li class="nav-main-item{{ param == 'reseller' ? ' active' : '' }}">
+                <a class="nav-main-link{{ param == 'reseller' ? ' active' : '' }}"
+                   href="#"
+                   data-url="{{ path('orders.countReseller') }}"
+                   data-id="reseller"
+                >ZZAP/AVITO <span class="nav-main-link-badge badge badge-pill badge-primary">...</span></a>
+            </li>
+        </ul>
+    </div>
+</div>

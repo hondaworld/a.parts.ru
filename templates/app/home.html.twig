@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Система управления Parts.ru{% endblock %}
+{% block header %}Главная{% endblock %}
+{% block breadcrumb %}{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/newsAdmin.html.twig', {'title': 'Объявления', 'type' : 1}) }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/newsAdmin.html.twig', {'title': 'Новости', 'type' : 2}) }}
+        </div>
+    </div>
+
+{% endblock %}

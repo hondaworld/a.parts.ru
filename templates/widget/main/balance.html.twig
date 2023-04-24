@@ -1,0 +1,7 @@
+{% if sum > 0 %}
+    <span class="text-success">+{{ sum }}{{ addSymbol }}</span>
+{% elseif sum < 0 %}
+    <span class="text-danger">{{ sum }}{{ addSymbol }}</span>
+{% else %}
+    <span class="text-secondary">{{ sum }}{{ addSymbol }}</span>
+{% endif %}

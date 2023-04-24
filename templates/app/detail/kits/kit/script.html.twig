@@ -1,0 +1,172 @@
+<script>
+    function partProviders(el, event) {
+        event.preventDefault();
+        const block = el.parentNode.parentNode;
+        const id = block.id;
+
+        document.querySelectorAll('.' + block.id).forEach(function (item) {
+            if (item.style.display === 'none') {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+    }
+
+    document.getElementById('check-all').addEventListener('click', function () {
+        for (let i = 0; i < document.forms['work'].elements.length; i++) {
+            const el = document.forms['work'].elements[i];
+            if (el.id.indexOf('part_') === 0) {
+                el.checked = this.checked;
+            }
+        }
+        sumWorks();
+    });
+
+    function changeProvider(el) {
+        let id = null;
+        const classList = Array.from(el.classList);
+        classList.forEach(function (item) {
+            if (item.indexOf('part_block_') === 0) {
+                id = item.substring(11);
+            }
+        });
+        const tdElements = [];
+
+        el.childNodes.forEach(function (item) {
+            if (item.tagName === 'TD') {
+                tdElements.push(item);
+            }
+        });
+
+        if (id) {
+            const parent_div = document.getElementById('part_block_' + id);
+            const input = document.getElementById('part_' + id);
+            const quantity = input.dataset.quantity;
+
+            parent_div.querySelector('.part-postavka').innerText = tdElements[3].innerText;
+            parent_div.querySelector('.part-srok').innerText = tdElements[4].innerText;
+            parent_div.querySelector('.part-creater').innerText = tdElements[1].innerText;
+            parent_div.querySelector('.part-number').innerText = tdElements[2].innerText;
+            parent_div.querySelector('.part-price').innerText = (+quantity > 1 ? quantity + ' x ' : '') + tdElements[5].innerText;
+
+            input.dataset.price = el.dataset.price;
+            input.dataset.provider = el.dataset.provider;
+            input.dataset.sklad = el.dataset.sklad;
+            input.dataset.creater = el.dataset.creater;
+            input.dataset.number = el.dataset.number;
+
+            document.querySelectorAll('.part_block_' + id).forEach(function (item) {
+                item.classList.remove('table-primary');
+                item.style.display = 'none';
+            });
+
+            el.classList.add('table-primary');
+
+            sumWorks();
+        }
+    }
+
+
+    function skladChange() {
+        const sklad = document.getElementById('form_zapSkladID').value;
+        for (let i = 0; i < document.forms['work'].elements.length; i++) {
+            let el = document.forms['work'].elements[i];
+            if (el.id !== undefined) {
+                if (el.id.indexOf('part_') === 0) {
+                    const workGroupID = el.id.substring(5);
+                    const block_id = 'part_block_' + workGroupID;
+
+                    if (el.dataset.sklad !== sklad) {
+                        document.querySelectorAll('.' + block_id).forEach(function (part) {
+
+                            if (
+                                part.dataset.number === el.dataset.number &&
+                                part.dataset.creater === el.dataset.creater &&
+                                part.dataset.provider === el.dataset.provider &&
+                                part.dataset.sklad === sklad
+                            ) {
+                                el.dataset.sklad = sklad;
+
+                                const tdElements = [];
+                                part.childNodes.forEach(function (item) {
+                                    if (item.tagName === 'TD') {
+                                        tdElements.push(item);
+                                    }
+                                });
+
+                                document.querySelectorAll('.part_block_' + workGroupID).forEach(function (item) {
+                                    item.classList.remove('table-primary');
+                                    item.style.display = 'none';
+                                });
+
+                                part.classList.add('table-primary');
+
+                                document.getElementById(block_id).querySelector('.part-postavka').innerText = tdElements[3].innerText;
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    /* Подсчет суммы работ и деталей */
+    function sumWorks() {
+        let sum = 0;
+        for (let i = 0; i < document.forms['work'].elements.length; i++) {
+            const el = document.forms['work'].elements[i];
+            if (el.checked) {
+                if (el.id.indexOf('part_') !== -1) {
+                    sum += +el.dataset.quantity * +el.dataset.price;
+                }
+            }
+        }
+        document.getElementById('workSum').innerText = sum.toLocaleString();
+    }
+
+    function kitOrderAdd(form, event) {
+        event.preventDefault();
+
+        const userID = document.getElementById('form_user_id').value;
+
+        if (+userID === 0) {
+            One.helpers('notify', {
+                align: 'center',
+                type: 'danger',
+                icon: 'fa fa-check mr-1',
+                message: 'Клиент не выбран'
+            });
+        } else {
+
+            const arr = checkSelectedItems(true, 0);
+            if (arr.length > 0) {
+                let url = '{{ path('parts.price.kits.createGood') }}';
+
+                for (let i = 0; i < document.forms['work'].elements.length; i++) {
+                    let el = document.forms['work'].elements[i];
+                    if (el.checked && el.id.indexOf('part_') !== -1) {
+
+                        const data = {
+                            userID: userID,
+                            number: el.dataset.number,
+                            providerPriceID: el.dataset.provider,
+                            zapSkladID: el.dataset.sklad,
+                            createrID: el.dataset.creater,
+                            quantity: el.dataset.quantity
+                        }
+
+                        getResultsCols(null, url, data, false, 0);
+
+                    }
+                }
+                let urlGoods = '{{ path('order.goods', {'id': '|userID|'}) }}';
+                urlGoods = urlGoods.replace('|userID|', userID);
+                window.open(urlGoods);
+            }
+        }
+    }
+
+    sumWorks();
+</script>

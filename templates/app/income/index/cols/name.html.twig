@@ -1,0 +1,18 @@
+{% if 'name' not in hideCols %}
+    <td
+            {% if is_granted('edit', 'ZapCard') %}
+                title="Изменить наименование"
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#modalName"
+                data-zapcardid="{{ income.zapCardID }}"
+                data-zapgroupid="{{ income.zapGroupID }}"
+                data-name="{{ income.name }}"
+                data-description="{{ income.description }}"
+                data-name_big="{{ income.name_big }}"
+                data-nameeng="{{ income.nameEng }}"
+                data-ident="name"
+                onclick="modalNameChange(this)"
+            {% endif %}
+    >{{ income.detail_name }}</td>
+{% endif %}

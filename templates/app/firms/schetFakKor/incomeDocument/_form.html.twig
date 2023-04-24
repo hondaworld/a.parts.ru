@@ -1,0 +1,8 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': "showIncomeDocuments(); return false"}}) }}
+<div class="row">
+    <div class="col-auto">{{ form_widget(form.document_num) }}</div>
+    <div class="col">
+        <button type="submit" class="btn btn-primary">Найти</button>
+    </div>
+</div>
+{{ form_end(form) }}

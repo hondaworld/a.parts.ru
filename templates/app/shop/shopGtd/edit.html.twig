@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение ГТД {{ shopGtd.name.value }}{% endblock %}
+{% block header %}{{ shopGtd.name.value }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shop.gtd', {'page' : app.session.get('page/shopGtd')|default(1)}) }}">ГТД</a></li>
+    <li class="breadcrumb-item">{{ shopGtd.name.value }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/shop/shopGtd/_form.html.twig') }}
+{% endblock %}

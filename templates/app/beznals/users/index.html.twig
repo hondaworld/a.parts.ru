@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Реквизиты клиента {{ user.name }}{% endblock %}
+{% block header %}Реквизиты клиента {{ user.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users') }}">Клиенты</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item">Реквизиты</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/users/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('beznals_change', user) %}
+                <li class="nav-item">
+                    <a href="{{ path('users.beznals.create', {'userID': user.id}) }}"
+                       title="Добавить реквизит клиента" class="nav-link"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('users.beznals.hide', {'userID': user.id}) }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные реквизиты клиента?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('users.beznals.unHide', {'userID': user.id}) }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные реквизиты клиента?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Банк</th>
+            <th>Рассчетный счет</th>
+            {% if is_granted('beznals_change', user) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if beznals is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for beznal in beznals %}
+                <tr class="{{ beznal.isHide ? ' text-muted' : '' }}{{ beznal.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': beznal.beznalID} only %}
+                    {% endif %}
+                    <td>{{ beznal.bank }}</td>
+                    <td>{{ beznal.rasschet }}</td>
+                    {% if is_granted('beznals_change', user) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('users.beznals.edit', {'userID': user.id, 'id': beznal.beznalID}) }}"
+                                   title="Изменить реквизит клиента">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('users.beznals.delete', {'userID': user.id, 'id': beznal.beznalID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить реквизит клиента?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить реквизит клиента">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

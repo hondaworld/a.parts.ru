@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Платежи клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Платежи клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">Платежи</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+    <div class="block block-rounded">
+
+        <div class="block-content block-content-full d-inline-block w-auto">
+            <div><strong>Баланс клиента: {{ user.balance|number_format(2, ',', ' ') }} руб.</strong></div>
+            <div class="pt-2">Сумма текущей отгрузки: <strong>{{ sum|number_format(2, ',', ' ') }} руб.</strong><br>
+                {% if sum > user.balance %}
+                    Клиенту необходимо доплатить <strong>{{ (sum - user.balance)|number_format(2, ',', ' ') }} руб.</strong>
+                {% else %}
+                    Клиенту ничего не нужно доплачивать
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-4">
+            {{ include('app/orders/paid/_formCreate.html.twig') }}
+        </div>
+        <div class="col-xl-8">
+            {{ include('app/orders/paid/_lastOperations.html.twig') }}
+        </div>
+    </div>
+
+    {{ include('app/orders/paid/_operations.html.twig') }}
+
+
+{% endblock %}

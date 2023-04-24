@@ -1,0 +1,4 @@
+{% if 'price' not in hideCols %}
+    <td class="text-right text-nowrap{{ discountPrices[income.incomeID]|default(null) and income.price > discountPrices[income.incomeID] ? ' text-danger font-weight-bold' }}"
+        id="price_{{ income.incomeID }}">{{ income.price|number_format(2, ',', ' ') }}</td>
+{% endif %}

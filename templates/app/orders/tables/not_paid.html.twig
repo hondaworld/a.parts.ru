@@ -1,0 +1,49 @@
+{% embed 'tables/table_simple.html.twig' %}
+
+    {% block header %}{% endblock %}
+
+    {% block table_header %}
+        {{ include('app/orders/tables/_main_header.html.twig') }}
+        <th>Счет</th>
+        <th>Дата</th>
+        <th>Сумма</th>
+        {% if is_granted('show', 'Order') %}
+            <th>Операции</th>
+        {% endif %}
+    {% endblock %}
+
+    {% block table_body %}
+        {% if orders is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Записей нет</td>
+            </tr>
+        {% endif %}
+        {% for userID, order in orders %}
+            <tr>
+                {{ include('app/orders/tables/_main_body.html.twig') }}
+                <td>
+                    {% for schetID, schet in order.schets %}
+                        <div>
+                            {% if is_granted('show', 'Schet') %}
+                                <a href="{{ path('schets.show', {'id': schetID}) }}">{{ schet.schet_num }}</a>
+                            {% else %}
+                                {{ schet.schet_num }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for schetID, schet in order.schets %}
+                        <div>{{ schet.dateofschet|date('d.m.Y') }}</div>
+                    {% endfor %}
+                </td>
+                <td class="text-right">
+                    {% for schetID, schet in order.schets %}
+                        <div>{{ schet.sum|number_format(0, '', ' ') }}</div>
+                    {% endfor %}
+                </td>
+                {{ include('app/orders/tables/_operations.html.twig') }}
+            </tr>
+        {% endfor %}
+    {% endblock %}
+{% endembed %}

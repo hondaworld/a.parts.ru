@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Model\Auto\UseCase\WorkPeriod\Copy;
+
+
+use App\ReadModel\Auto\AutoModificationFetcher;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class Form extends AbstractType
+{
+    private AutoModificationFetcher $autoModificationFetcher;
+
+    public function __construct(AutoModificationFetcher $autoModificationFetcher)
+    {
+        $this->autoModificationFetcher = $autoModificationFetcher;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('copy_auto_modificationID', Type\ChoiceType::class, [
+                'label' => 'Источник',
+                'choices' => array_flip($this->autoModificationFetcher->assocForTO($options['data']->auto_modificationID)),
+                'expanded' => false,
+                'multiple' => false,
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Command::class,
+        ]);
+    }
+}

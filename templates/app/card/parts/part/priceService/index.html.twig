@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Сервис</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.priceService', {'id': zapCard.id}) }}"
+               title="Изменить стоимость замены"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Стоимость замены: </strong> {{ check_empty(zapCard.priceService, 'не задана') }} руб.</p>
+{% endblock %}

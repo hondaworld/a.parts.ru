@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Бухгалтерские документы #{{ document_num }} {{ year }} года{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/firms/allDocuments/_search_form.html.twig') }}
+
+
+    {% embed 'tables/table_simple.html.twig' %}
+        {% block header_buttons %}{% endblock %}
+
+        {% block table_header %}
+            <th>Тип</th>
+            <th>#</th>
+            <th>Дата</th>
+            <th>От кого</th>
+            <th>Кому</th>
+            <th>Сумма</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if documents is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for doc in documents %}
+                {% if doc.template %}
+                    {{ include('app/firms/allDocuments/tables/' ~ doc.template ~ '.html.twig', {'isShowDocType': true}) }}
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

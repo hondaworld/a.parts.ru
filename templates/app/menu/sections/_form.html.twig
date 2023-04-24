@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.icon) }}
+    {{ form_row(form.url) }}
+    {{ form_row(form.entity) }}
+    {{ form_row(form.pattern) }}
+    {{ form_row(form.actions) }}
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('menu.sections', {'groupID': group.id, 'parentID': parentID}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -1,0 +1,68 @@
+<table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th rowspan="2">Склад</th>
+        <th rowspan="2">Всего</th>
+        <th colspan="2">В наличии</th>
+        <th rowspan="2">Перемещено</th>
+    </tr>
+    <tr class="table-primary">
+        <th>Факт</th>
+        <th>Док</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td></td>
+        <td>{{ income.quantity }}</td>
+        <td>{{ income.quantityIn }}</td>
+        <td></td>
+        <td></td>
+    </tr>
+    {% if incomeQuantity %}
+        {% for skladID, item in incomeQuantity %}
+            <tr>
+                <td>{{ sklads[skladID]['name_short']|default('') }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.quantityIn }}</td>
+                <td>{{ item.quantityInDoc }}</td>
+                <td>{{ item.quantityPerem }}</td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+
+<div style="max-height: 400px; overflow-y: auto">
+
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr class="table-primary">
+            <th>Операция</th>
+            <th>Документ</th>
+            <th>Дата</th>
+            <th>Предприятие</th>
+            <th>Склад</th>
+            <th>Кол</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if all is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Записей нет</td>
+            </tr>
+        {% endif %}
+        {% for history in all %}
+            <tr>
+                <td>{{ documentTypes[history.doc_typeID]['name']|default('') }}</td>
+                <td>{{ documentTypes[history.doc_typeID]['name_short']|default('') }} {{ history.document_num }}</td>
+                <td>{{ history.dateofadded|date('d.m.Y') }}</td>
+                <td>{{ firms[history.firmID]|default('') }}</td>
+                <td>{{ sklads[history.zapSkladID]['name_short']|default('') }}</td>
+                <td>{{ history.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>

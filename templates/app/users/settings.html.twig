@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки клиента {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users', {'page' : app.session.get('page/users')|default(1)}) }}">Клиенты</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item">Настройки</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/users/_tabs.html.twig') %}
+
+    {% if (edit == 'cashier') %}
+        {{ include('app/users/settings/cashier/edit.html.twig') }}
+    {% elseif (edit == 'cashierFirmContr') %}
+        {{ include('app/users/settings/cashier/editFirmContr.html.twig') }}
+    {% elseif (edit == 'cashierSchetFak') %}
+        {{ include('app/users/settings/cashier/editSchetFak.html.twig') }}
+    {% elseif (edit == 'getter') %}
+        {{ include('app/users/settings/getter/edit.html.twig') }}
+    {% elseif (edit == 'getterFirmContr') %}
+        {{ include('app/users/settings/getter/editFirmContr.html.twig') }}
+    {% elseif (edit == 'price') %}
+        {{ include('app/users/settings/price/edit.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/users/settings/cashier/index.html.twig') }}
+            {{ include('app/users/settings/getter/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/users/settings/price/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

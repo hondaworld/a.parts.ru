@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Группы товаров категории {{ zapCategory.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.categories') }}">Категории товаров</a></li>
+    <li class="breadcrumb-item">{{ zapCategory.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('zap_group_change', zapCategory) %}
+                <li class="nav-item">
+                    <a href="{{ path('card.categories.groups.create', {'zapCategoryID': zapCategory.id}) }}"
+                       class="nav-link" title="Добавить группу товаров"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Фото</th>
+            {% if is_granted('zap_group_change', zapCategory) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if groups is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for group in groups %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': group.zapGroupID} only %}
+                    {% endif %}
+                    <td>{{ group.name }}</td>
+                    <td>
+                        {% if (group.photo != '') %}
+                            <img src="{{ zap_group_photo_folder ~ group.photo }}">
+                        {% endif %}
+                    </td>
+                    {% if is_granted('zap_group_change', zapCategory) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('card.categories.groups.photo', {'zapCategoryID': zapCategory.id, 'id': group.zapGroupID}) }}"
+                                   title="Изменить фото">
+                                    <i class="far fa-file-image"></i>
+                                </a>
+                                <a href="{{ path('card.categories.groups.edit', {'zapCategoryID': zapCategory.id, 'id': group.zapGroupID}) }}"
+                                   title="Изменить группу товаров">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('card.categories.groups.delete', {'zapCategoryID': zapCategory.id, 'id': group.zapGroupID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу товаров?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить группу товаров">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

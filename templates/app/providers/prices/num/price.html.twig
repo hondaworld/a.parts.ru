@@ -1,0 +1,37 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение основных данных прайс-листа'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <h2 class="content-heading border-bottom mb-4 pb-2">Файл</h2>
+
+    {{ form_row(form.superProviderPriceID) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.price_copy) }}
+    {{ form_row(form.price_email) }}
+    {{ form_row(form.email_from) }}
+    {{ form_row(form.isNotCheckExt) }}
+
+    <h2 class="content-heading border-bottom mb-4 pb-2">Колонки</h2>
+
+    {{ form_row(form.createrID) }}
+
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.razd) }}</div>
+        <div class="col-md-6">{{ form_row(form.razd_decimal) }}</div>
+    </div>
+
+    {{ form_row(form.priceadd) }}
+    {{ form_row(form.rg_value) }}
+    {{ form_row(form.isUpdate) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.prices.show', {'id': providerPrice.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

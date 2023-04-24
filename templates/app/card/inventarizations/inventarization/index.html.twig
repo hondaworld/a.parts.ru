@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Инвентаризация №{{ inventarization.id }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('inventarizations', {'page' : app.session.get('page/good')|default(1)}) }}">Инвентаризации</a>
+    </li>
+    <li class="breadcrumb-item">Инвентаризация №{{ inventarization.id }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/inventarizations/_tabs.html.twig') %}
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('inventarizations.goods.inventarization', {'id': inventarization.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>Наименование</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Склад', 'sklad_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Местоположение', 'location') }}</th>
+            <th>Количество</th>
+            <th>Резерв</th>
+            <th>Передать</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.zapSkladID) }}</th>
+            <th>{{ form_widget(filter.location) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for good in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': good.goodID} only %}
+                    {% endif %}
+                    <td>{{ good.creater_name }}</td>
+                    <td>{{ good.number }}</td>
+                    <td>{{ good.detail_name }}</td>
+                    <td>{{ good.sklad_name }}</td>
+                    <td>{{ good.location }}</td>
+                    <td>{{ good.quantity }}</td>
+                    <td>{{ good.reserve }}</td>
+                    <td class="text-center">
+                        <div class="d-flex">
+                            <input
+                                    type="text"
+                                    class="form-control form-control-sm js-convert-number text-center"
+                                    style="width: 50px;"
+                                    data-url-submit="{{ path('inventarizations.goods.create', {'id': inventarization.id}) }}"
+                                    value="{{ good.quantity }}"
+                            >
+
+                            <button class="btn btn-primary btn-sm ml-1" type="button" onclick="perem(this, {{ good.zapCardID }}, {{ good.zapSkladID }})">&gt;&gt;</button>
+
+{#                            <a href="{{ path('inventarizations.goods.edit', {'inventarizationID': inventarization.id, 'id': good.goodID}) }}"#}
+{#                               title="Изменить количество">#}
+{#                                <i class="fas fa-edit"></i>#}
+{#                            </a>#}
+{#                            <a href="{{ path('inventarizations.goods.delete', {'id': good.goodID}) }}"#}
+{#                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить товар?')"#}
+{#                               data-toggle="modal"#}
+{#                               data-target="#modalConfirm"#}
+{#                               class="text-danger"#}
+{#                               title="Удалить товар">#}
+{#                                <i class="far fa-trash-alt"></i>#}
+{#                            </a>#}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+
+    <script>
+        function perem(el, zapCardID, zapSkladID) {
+            let input;
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'input') {
+                    input = item;
+                }
+            });
+            if (input) {
+                tableColInputSubmit(input, {'zapCardID': zapCardID, 'zapSkladID': zapSkladID});
+            }
+        }
+    </script>
+
+{% endblock %}

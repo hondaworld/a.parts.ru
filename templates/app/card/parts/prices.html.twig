@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Цены {{ zapCard.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item">{{ zapCard.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/parts/_tabs.html.twig') %}
+
+    {% if (edit == 'profit') %}
+        {{ include('app/card/parts/part/profit/form.html.twig') }}
+    {% elseif (edit == 'profitAll') %}
+        {{ include('app/card/parts/part/profitAll/form.html.twig') }}
+    {% elseif (edit == 'profitZapCard') %}
+        {{ include('app/card/parts/part/profitZapCard/form.html.twig') }}
+    {% elseif (edit == 'profitPriceGroup') %}
+        {{ include('app/card/parts/part/profitPriceGroup/form.html.twig') }}
+    {% elseif (edit == 'price') %}
+        {{ include('app/card/parts/part/price/form.html.twig') }}
+    {% elseif (edit == 'stock') %}
+        {{ include('app/card/parts/part/stock/form.html.twig') }}
+    {% elseif (edit == 'priceService') %}
+        {{ include('app/card/parts/part/priceService/form.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/card/parts/part/prices/index.html.twig') }}
+            {{ include('app/card/parts/part/price/index.html.twig') }}
+            {{ include('app/card/parts/part/stock/index.html.twig') }}
+            {{ include('app/card/parts/part/priceService/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/card/parts/part/profitPriceGroup/index.html.twig') }}
+            {{ include('app/card/parts/part/profitZapCard/index.html.twig') }}
+            {{ include('app/card/parts/part/profit/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление организации{% endblock %}
+{% block header %}Добавление организации{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/firms/_form_create.html.twig') }}
+
+{% endblock %}

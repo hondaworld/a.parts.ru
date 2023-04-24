@@ -1,0 +1,26 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Акция</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.stock', {'id': zapCard.id}) }}"
+               title="Изменить акцию"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+        {% if stock %}
+            <p>
+                <strong>Акция: </strong>
+            {{ stock.stock.name }} от {{ stock.stock.dateofadded|date('d.m.Y') }}
+            {% if stock.stock.isHide %}
+                <span class="text-muted">(не активна)</span>
+            {% endif %}
+
+            <p><strong>Цена по акции: </strong> {{ stock.priceStock }} руб.</p>
+            </p>
+        {% else %}
+            <p><strong>В акциях не участвует</strong></p>
+        {% endif %}
+{% endblock %}

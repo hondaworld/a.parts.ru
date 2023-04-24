@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Города страны {{ country.name }}{% endblock %}
+{% block header %}Города страны {{ country.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('countries') }}">Страны</a></li>
+    <li class="breadcrumb-item">Города</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('towns.create', {'countryID': country.id}) }}" class="nav-link"
+                   title="Добавить город"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('towns.hide', {'countryID': country.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные города?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('towns.unHide', {'countryID': country.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные города?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% set reset_path = path('towns', {'countryID': country.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Регион', 'region') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Тип', 'type') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Коротко', 'name_short') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'В документах', 'name_doc') }}</th>
+            <th>Дней от Москвы</th>
+            <th>Бесплатная доставка</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.regionID) }}</th>
+            <th>{{ form_widget(filter.typeID) }}</th>
+            <th>{{ form_widget(filter.name_short) }}</th>
+            <th>{{ form_widget(filter.name) }}</th>
+            <th></th>
+            <th></th>
+            <th>{{ form_widget(filter.isFree) }}</th>
+            <th></th>
+        {% endblock %}
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for town in pagination %}
+                <tr class="{{ town.isHide ? ' text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': town.townID} only %}
+                    {% endif %}
+                    <td>{{ town.region }}</td>
+                    <td>{{ town.type }}</td>
+                    <td>{{ town.name_short }}</td>
+                    <td>{{ town.name }}</td>
+                    <td>{{ town.name_doc }}</td>
+                    <td>{{ town.daysFromMoscow }}</td>
+                    <td class="text-center">{{ boolean_status(town.isFree) }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('towns.edit', {'countryID': country.id, 'id': town.townID}) }}"
+                               title="Изменить город">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('towns.delete', {'countryID': country.id, 'id': town.townID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить город?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить город">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends '@KnpMenu/menu.html.twig' %}
+
+{% block label %}
+    {% if item.extra('icon') is not empty %}
+        <i class="nav-main-link-icon {{ item.extra('icon') }}"></i>
+    {% endif %}
+    {{ parent() }}
+    {% if item.extra('badge') is not empty %}
+        <span class="nav-main-link-badge badge badge-pill badge-primary">{{ item.extra('badge') }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block item %}
+    {% if item.displayed %}
+        {% if matcher.isCurrent(item) %}
+            {% do item.setLinkAttribute('class', item.getLinkAttribute('class') ~ ' ' ~ options.currentClass) %}
+        {% endif %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block compressed_root %}
+    {{ block('root')|spaceless }}
+{% endblock %}
+
+{% block linkElement %}{% import _self as knp_menu %}<a href="{{ item.uri }}"{{ knp_menu.attributes(item.linkAttributes) }}><span class="nav-main-link-name">{{ block('label') }}</span></a>{% endblock %}

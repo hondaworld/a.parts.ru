@@ -1,0 +1,331 @@
+{% set theme = app.user.settings['theme']|default([]) %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{% block title %}Админка{% endblock %}</title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        {% if (theme['theme-css']|default('') is not empty) %}
+            {{ encore_entry_link_tags(theme['theme-css']) }}
+        {% endif %}
+    {% endblock %}
+</head>
+<body>
+{% block main %}
+    <div id="page-loader" class="show"></div>
+    <div id="page-container"
+         class="sidebar-o {{ theme['sidebar']|default('') }} {{ theme['page-header']|default('') }} enable-page-overlay side-scroll page-header-fixed main-content-narrow">
+        <!-- Side Overlay-->
+        {{ include('base/_overlay.html.twig') }}
+        <!-- END Side Overlay -->
+
+        <!-- Sidebar -->
+        <nav id="sidebar" aria-label="Main Navigation">
+            <!-- Side Header -->
+            <div class="content-header bg-white-5">
+                <!-- Logo -->
+                <a class="font-w600 text-dual" href="{{ path('home') }}">
+                        <span class="smini-visible">
+                            <i class="fa fa-circle-notch text-primary"></i>
+                        </span>
+                    <span class="smini-hide font-size-h5 tracking-wider">
+                            Parts<span class="font-w400">RU</span>
+                        </span>
+                </a>
+                <!-- END Logo -->
+
+                <!-- Extra -->
+                <div>
+                    <!-- Options -->
+                    {{ include('base/_themes.html.twig') }}
+                    <!-- END Options -->
+
+                    <!-- Close Sidebar, Visible only on mobile screens -->
+                    <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+                    <a class="d-lg-none btn btn-sm btn-dual ml-1" data-toggle="layout" data-action="sidebar_close"
+                       href="javascript:void(0)">
+                        <i class="fa fa-fw fa-times"></i>
+                    </a>
+                    <!-- END Close Sidebar -->
+                </div>
+                <!-- END Extra -->
+            </div>
+            <!-- END Side Header -->
+
+            <!-- Sidebar Scrolling -->
+            <div class="js-sidebar-scroll">
+                <!-- Side Navigation -->
+                <div class="content-side">
+                    {{ knp_menu_render('sidebar', {'currentClass': 'active'}) }}
+                </div>
+                <!-- END Side Navigation -->
+            </div>
+            <!-- END Sidebar Scrolling -->
+        </nav>
+        <!-- END Sidebar -->
+
+        <!-- Header -->
+        <header id="page-header">
+            <!-- Header Content -->
+            <div class="content-header">
+                <!-- Left Section -->
+                <div class="d-flex align-items-center">
+                    <!-- Toggle Sidebar -->
+                    <!-- Layout API, functionality initialized in Template._uiApiLayout()-->
+                    <button type="button" class="btn btn-sm btn-dual mr-2 d-lg-none" data-toggle="layout"
+                            data-action="sidebar_toggle">
+                        <i class="fa fa-fw fa-bars"></i>
+                    </button>
+                    <!-- END Toggle Sidebar -->
+
+                    <!-- Toggle Mini Sidebar -->
+                    <!-- Layout API, functionality initialized in Template._uiApiLayout()-->
+                    <button type="button" class="btn btn-sm btn-dual mr-2 d-none d-lg-inline-block" data-toggle="layout"
+                            data-action="sidebar_mini_toggle">
+                        <i class="fa fa-fw fa-ellipsis-v"></i>
+                    </button>
+                    <!-- END Toggle Mini Sidebar -->
+
+                    <!-- Apps Modal -->
+                    <!-- Opens the Apps modal found at the bottom of the page, after footer’s markup -->
+{#                    <button type="button" class="btn btn-sm btn-dual mr-2" data-toggle="modal"#}
+{#                            data-target="#one-modal-apps">#}
+{#                        <i class="fa fa-fw fa-cubes"></i>#}
+{#                    </button>#}
+                    <!-- END Apps Modal -->
+
+                    <!-- Open Search Section (visible on smaller screens) -->
+                    <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+                    <button type="button" class="btn btn-sm btn-dual mr-2 d-md-none" data-toggle="layout"
+                            data-action="header_search_on">
+                        <i class="fa fa-fw fa-search"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-dual mr-2 d-md-none" data-toggle="layout"
+                            data-action="header_search_order_on">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                    <!-- END Open Search Section -->
+
+                    <!-- Search Form (visible on larger screens) -->
+                    <form class="d-none d-md-inline-block mr-2" action="{{ path('parts.price') }}" method="GET">
+                        <div class="input-group input-group-sm">
+                            <input type="hidden" name="form[optID]" value="1">
+                            <input type="text" class="form-control form-control-alt" placeholder="Поиск по номеру"
+                                   id="page-header-search-input2" name="form[number]">
+                            <div class="input-group-append">
+                                    <button type="submit" class="input-group-text bg-body border-0">
+                                        <i class="fa fa-fw fa-search"></i>
+                                    </button>
+                            </div>
+                        </div>
+                    </form>
+                    <form class="d-none d-md-inline-block mr-2" action="{{ path('orders') }}" method="GET">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-alt mr-1" placeholder="Телефон, имя или организация"
+                                   id="page-header-search-order-user2" name="form[user]">
+                            <input type="text" class="form-control form-control-alt" placeholder="Номер заказа"
+                                   id="page-header-search-order-orderID2" name="form[orderID]">
+                            <div class="input-group-append">
+                                    <button type="submit" class="input-group-text bg-body border-0">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- END Search Form -->
+                </div>
+                <!-- END Left Section -->
+
+                <!-- Right Section -->
+                {{ include('base/_right_section.html.twig') }}
+                <!-- END Right Section -->
+            </div>
+            <!-- END Header Content -->
+
+            <!-- Header Search -->
+            <div id="page-header-search" class="overlay-header bg-white">
+                <div class="content-header">
+                    <form class="w-100" action="{{ path('parts.price') }}" method="GET">
+                        <input type="hidden" name="form[optID]" value="1">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+                                <button type="button" class="btn btn-alt-danger" data-toggle="layout"
+                                        data-action="header_search_off">
+                                    <i class="fa fa-fw fa-times-circle"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Поиск по номеру"
+                                   id="page-header-search-input" name="form[number]">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="page-header-search-order" class="overlay-header bg-white">
+                <div class="content-header">
+                    <form class="w-100" action="{{ path('orders') }}" method="GET">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+                                <button type="button" class="btn btn-alt-danger" data-toggle="layout"
+                                        data-action="header_search_order_off">
+                                    <i class="fa fa-fw fa-times-circle"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Телефон, имя или организация"
+                                   id="page-header-search-order-user" name="form[user]">
+                            <input type="text" class="form-control" placeholder="Номер заказа"
+                                   id="page-header-search-order-orderID" name="form[orderID]">
+                            <div class="d-none"><input type="submit" class="btn btn-primary" value=""></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- END Header Search -->
+
+            <!-- Header Loader -->
+            <!-- Please check out the Loaders page under Components category to see examples of showing/hiding it -->
+            <div id="page-header-loader" class="overlay-header bg-white">
+                <div class="content-header">
+                    <div class="w-100 text-center">
+                        <i class="fa fa-fw fa-circle-notch fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- END Header Loader -->
+        </header>
+        <!-- END Header -->
+
+        <!-- Main Container -->
+        <main id="main-container">
+            <!-- Hero -->
+            <div class="bg-body-light">
+                <div class="content content-full py-0">
+                    <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
+                        <h1 class="flex-sm-fill h3 my-2">
+                            {% block header %}{% endblock %} <small
+                                    class="d-block d-sm-inline-block mt-2 mt-sm-0 font-size-base font-w400 text-muted">{% block headerDescription %}{% endblock %}</small>
+                        </h1>
+                        <nav class="flex-sm-00-auto ml-sm-3" aria-label="breadcrumb">
+                            <ol class="breadcrumb breadcrumb-alt">
+                                {% block breadcrumb %}
+                                    <li class="breadcrumb-item"><a class="link-fx" href="{{ path('home') }}">Главная</a>
+                                    </li>
+                                {% endblock %}
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- END Hero -->
+
+            <div class="content">
+                {% include '_flashes.html.twig' %}
+                {% block body %}{% endblock %}
+            </div>
+        </main>
+        <!-- END Main Container -->
+
+        <!-- Footer -->
+        <footer id="page-footer" class="bg-body-light">
+            <div class="content py-3">
+                <div class="row font-size-sm">
+                    <div class="col-sm-6 order-sm-2 py-1 text-center text-sm-right">
+                        <a class="font-w600" href="https://www.parts.ru" target="_blank">PartsRu</a> &copy;
+                        <span data-toggle="year-copy"></span>
+                    </div>
+                    <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-left">
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- END Footer -->
+    </div>
+{% endblock %}
+
+<div id="toast-orders" class="toast fade hide" data-delay="4000" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 5rem; right: 2rem; z-index: 9999999; min-width: 300px;">
+    <div class="toast-header">
+        <i class="si si-basket-loaded text-primary mr-2"></i>
+        <strong class="mr-auto">Новые заказы</strong>
+        <button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body"></div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="modalConfirmLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmLabel">Подтверждение</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalConfirmText" class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" id="modalConfirmButton" class="btn btn-primary" data-dismiss="modal">Да</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalAlert" tabindex="-1" role="dialog" aria-labelledby="modalAlertLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAlertLabel">Сообщение</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalAlertText" class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="modalFormLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFormLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalFormText" class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalFormBig" tabindex="-1" role="dialog" aria-labelledby="modalFormBigLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFormBigLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalFormBigText" class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+</body>
+</html>

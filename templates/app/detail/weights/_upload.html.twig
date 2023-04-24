@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Загрузка весов'}) }}
+{% endblock %}
+{% block content %}
+    <p>
+        Первая колонка номер, вторая колонка - вес в кг
+        <a class="pl-2" href="{{ path('weights.upload1') }}">Загрузить</a>
+    </p>
+    <p>
+        Первая колонка производитель, вторая - номер, третья - вес в кг
+        <a class="pl-2" href="{{ path('weights.upload2') }}">Загрузить</a>
+    </p>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение контрагента {{ firmcontr.ur.organization }}{% endblock %}
+{% block header %}{{ firmcontr.ur.organization }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firmcontr') }}">Контрагенты</a></li>
+    <li class="breadcrumb-item">{{ firmcontr.ur.organization }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/users/firmContr/_form.html.twig') }}
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Группы</h3>
+    </div>
+{% endblock %}
+{% block content %}
+
+    {% set table_checkable = true %}
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('group_change', priceList) %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.price.groups.create', {'price_listID': priceList.id}) }}" class="nav-link"><i class="fas fa-plus"
+                                                                                              title="Добавить группу прайс-листа"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('price.list.price.groups.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные группы?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('price.list.price.groups.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные группы?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            {% if is_granted('group_change', priceList) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if priceGroups is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for priceGroup in priceGroups %}
+                <tr class="{{ priceGroup.isHide ? 'text-muted' : '' }}{{ priceGroup.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': priceGroup.price_groupID} only %}
+                    {% endif %}
+                    <td>{{ priceGroup.name }}</td>
+                    {% if is_granted('group_change', priceList) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('price.list.price.groups.edit', {'price_listID': priceList.id, 'id': priceGroup.price_groupID}) }}"
+                                   title="Просмотр прайс-листа">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('price.list.price.groups.delete', {'id': priceGroup.price_groupID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить прайс-лист?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить прайс-листа">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+
+{% endblock %}

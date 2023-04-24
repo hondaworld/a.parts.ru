@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение категории работ {{ category.name }}{% endblock %}
+{% block header %}{{ category.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('work.categories') }}">Категории работ</a></li>
+    <li class="breadcrumb-item">{{ category.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/work/categories/_form.html.twig') }}
+{% endblock %}

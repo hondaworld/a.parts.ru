@@ -1,0 +1,36 @@
+<tr>
+    {% if isShowDocType|default(false) %}
+        <td>ПН</td>
+    {% endif %}
+    <td>{{ doc.document_num }}</td>
+    <td>{{ doc.dateofadded|date('d.m.Y') }}</td>
+    <td>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': doc.userID}) }}">{{ doc.from_name }}</a>
+        {% else %}
+            {{ doc.from_name }}
+        {% endif %}
+    </td>
+    <td>
+        {% if is_granted('edit', 'Firm') %}
+            <a href="{{ path('firms.edit', {'id': doc.firmID}) }}">{{ doc.to_name }}</a>
+        {% else %}
+            {{ doc.to_name }}
+        {% endif %}
+    </td>
+    <td class="text-right">{{ doc.sum|number_format(2, ',', ' ') }}</td>
+    <td class="text-left">
+        <div class="btn-group">
+            {% if is_granted('index', 'Income') %}
+                <a href="{{ path('income', {'form': {'incomeDocument': doc.document_num}}) }}"
+                   title="Приходы">
+                    <i class="fas fa-dolly"></i>
+                </a>
+            {% endif %}
+            <a href="{{ path('income.php', {'id': doc.id}) }}"
+               title="Печать приходной накладной" target="_blank">
+                <i class="fas fa-print"></i>
+            </a>
+        </div>
+    </td>
+</tr>

@@ -1,0 +1,11 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ include('app/finance/currency/_form1.html.twig') }}
+    {{ include('app/finance/currency/_form2.html.twig') }}
+    {{ include('app/finance/currency/_form3.html.twig') }}
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Номер</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.number', {'id': zapCard.id}) }}"
+               title="Изменить номер"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if (zapCard.deleted) %}
+        <p>
+            <span class="font-weight-bold text-danger">Деталь удалена {{ zapCard.dateofdeleted|date('d.m.Y') }}</span>
+            <a href="{{ path('card.parts.restore', {'id': zapCard.id}) }}" class="btn btn-success ml-2 mb-2">Восстановить</a>
+        </p>
+    {% else %}
+        <p>
+            <a href="{{ path('card.parts.delete', {'id': zapCard.id}) }}" class="btn btn-danger mb-2">Удалить</a>
+        </p>
+    {% endif %}
+    <p>
+        <strong>Номер: </strong> {{ zapCard.number.value }}
+    </p>
+    <p>
+        <strong>Производитель: </strong> {{ zapCard.creater.name }}
+    </p>
+{% endblock %}

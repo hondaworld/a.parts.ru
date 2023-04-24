@@ -1,0 +1,18 @@
+{% if 'priceZak' not in hideCols %}
+    <td class="text-right text-nowrap">
+        {% if income.status not in [4,5,10] and income.incomeDocumentID is null %}
+            <input
+                    type="text"
+                    class="form-control form-control-sm form-control-alt table-col-input"
+                    style="min-width: 70px;"
+                    data-old="{{ income.priceZak }}"
+                    data-id="{{ income.incomeID }}"
+                    data-ident="priceZak"
+                    data-url-submit="{{ path('income.price', {'id': income.incomeID}) }}"
+                    value="{{ income.priceZak }}"
+            >
+        {% else %}
+            {{ income.priceZak|number_format(2, ',', ' ') }}
+        {% endif %}
+    </td>
+{% endif %}

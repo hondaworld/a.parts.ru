@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% if showFirm|default(false) %}
+        {{ form_row(form.firmID) }}
+    {% endif %}
+    {{ form_row(form.org_groupID) }}
+    {{ form_row(form.org_jobID) }}
+    {{ form_row(form.dateofadded) }}
+    {{ form_row(form.dateofclosed) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('managers.firms', {'managerID': manager.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}

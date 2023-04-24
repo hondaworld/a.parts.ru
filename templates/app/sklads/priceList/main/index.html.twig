@@ -1,0 +1,20 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('price.list.price.lists.edit', {'id': priceList.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Наименование: </strong> {{ priceList.name }}</p>
+    <p>
+        <strong>Процент от дилерской цены (если цена больше): </strong> {{ priceList.koefDealer }}<br>
+        <span class="text-muted font-italic">Задайте "0", если не учитывать</span>
+    </p>
+    <p><strong>Не учитывать скидку: </strong> {{ boolean_status(priceList.noDiscount) }}</p>
+    <p><strong>Основной прайс-лист: </strong> {{ boolean_status(priceList.isMain) }}</p>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% if ticket.user %}
+    <p>
+        <strong>Клиент: </strong>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': ticket.user.id}) }}">{{ ticket.user.name }}</a>
+        {% else %}
+            {{ ticket.user.name }}
+        {% endif %}
+    </p>
+    <p>
+        <strong>Телефон:</strong> <a href="tel:{{ ticket.user.phonemob }}"
+                                     title="Позвонить">{{ phone_mobile(ticket.user.phonemob) }}</a>
+    </p>
+    {% if ticket.user.email.value %}
+        <p>
+            <strong>E-mail: </strong><a href="mailto:{{ ticket.user.email.value }}">{{ ticket.user.email.value }}</a>
+        </p>
+    {% endif %}
+{% else %}
+    {% if ticket.userName %}
+        <p>
+            <strong>Клиент: </strong>{{ ticket.userName }}
+        </p>
+    {% endif %}
+    {% if ticket.userEmail %}
+        <p>
+            <strong>E-mail: </strong><a href="mailto:{{ ticket.userEmail }}">{{ ticket.userEmail }}</a>
+        </p>
+    {% endif %}
+{% endif %}

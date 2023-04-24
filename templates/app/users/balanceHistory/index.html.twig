@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}История баланса клиента {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users') }}">Клиенты</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item">Баланс</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/users/_tabs.html.twig') %}
+    <div class="block block-rounded">
+
+        <div class="block-content block-content-full d-inline-block w-auto">
+            <div><strong>Баланс клиента: {{ user.balance|number_format(2, ',', ' ') }} руб.</strong></div>
+        </div>
+    </div>
+
+    <div>
+        {{ include('app/users/balanceHistory/actForm.html.twig') }}
+    </div>
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('users.balance.history', {'userID': user.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Предприятие</th>
+            <th>СЧ</th>
+            <th>РН</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>Кредит</th>
+            <th>Дебет</th>
+            <th>Вид оплаты</th>
+            <th>Платежка</th>
+            <th>Комментарий</th>
+            {% if is_granted('balance_change', user) or is_granted('balance_change_finance_type', user) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.firmID) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            {% if is_granted('balance_change', user) or is_granted('balance_change_finance_type', user) %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for balance in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': balance.balanceID} only %}
+                    {% endif %}
+                    <td>
+                        {% if is_granted('edit', 'Firm') %}
+                            <a href="{{ path('firms.edit', {'id': balance.firmID}) }}">{{ balance.firm }}</a>
+                        {% else %}
+                            {{ balance.firm }}
+                        {% endif %}
+                    </td>
+                    <td>{{ balance.schet_num }}</td>
+                    <td>{{ balance.document_num }}</td>
+                    <td>{{ balance.dateofadded|date('d.m.Y H:i') }}</td>
+                    <td class="text-success text-right">{{ balance.balance > 0 ?  balance.balance|number_format(2, ',', ' ') : '' }}</td>
+                    <td class="text-danger text-right">{{ balance.balance < 0 ? (-balance.balance)|number_format(2, ',', ' ') : '' }}</td>
+                    <td>{{ balance.finance_type }}</td>
+                    <td class="text-center">
+                        {% if (balance.attach is not empty) %}
+                            <a href="{{ user_balance_attach_folder ~ balance.attach }}" target="_blank"><i
+                                        class="fas fa-paperclip"></i></a>
+                        {% endif %}
+                    </td>
+                    <td>{{ balance.description }}</td>
+                    {% if is_granted('balance_change', user) or is_granted('balance_change_finance_type', user) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('balance_change_finance_type', user) %}
+                                    <a href="{{ path('users.balance.history.editFinanceType', {'userID': user.id, 'id': balance.balanceID}) }}"
+                                       title="Изменить вид оплаты">
+                                        <i class="fas fa-money-check-alt"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('balance_change', user) %}
+                                    <a href="{{ path('users.balance.history.edit', {'userID': user.id, 'id': balance.balanceID}) }}"
+                                       title="Изменить баланс клиента">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ path('users.balance.history.attach', {'userID': user.id, 'id': balance.balanceID}) }}"
+                                       title="Прикрепить платежку">
+                                        <i class="fas fa-paperclip"></i>
+                                    </a>
+                                    <a href="{{ path('users.balance.history.delete', {'userID': user.id, 'id': balance.balanceID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить баланс клиента?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить баланс клиента">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

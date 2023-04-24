@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление корректировочного счета фактуры{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('schetFakKor', {'page' : app.session.get('page/schetFakKor')|default(1)}) }}">Корректировочные
+            счета фактуры</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <p>При выборе счета фактуры будьте внимательны! Ее данные будут использованы в корректировочном счете фактуре в не зависимости от остальных добавленных счетов фактуры.</p>
+            <div class="row">
+                <div class="col-auto">{{ form_label(form.schet_fakID) }}</div>
+                <div class="col-auto">{{ form_widget(form.schet_fakID) }}{{ form_errors(form.schet_fakID) }}</div>
+                <div class="col">
+                    <a href="" data-toggle="modal" data-target="#modalFormBig"
+                       data-url="{{ path('schetFakKor.schetFak') }}"
+                       data-title="Выбрать счет-фактуру" class="ml-3 btn btn-info ajax-modal-html">
+                        Выбрать счет-фактуру
+                    </a>
+                </div>
+            </div>
+
+            {{ form_row(form.document_prefix) }}
+            {{ form_row(form.document_sufix) }}
+
+            <button type="submit" class="btn btn-primary">Добавить</button>
+            <a class="ml-3 btn btn-secondary"
+               href="{{ path('schetFakKor', {'page' : app.session.get('page/schetFakKor')|default(1)}) }}">Отменить</a>
+            {{ form_end(form) }}
+
+            <script>
+                function formFromSchetFak(id) {
+                    document.getElementById('form_schet_fakID').value = id;
+                }
+            </script>
+
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

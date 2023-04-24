@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Доставка{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Delivery') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.delivery.create') }}" class="nav-link"
+                       title="Добавить доставку"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'Delivery') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.delivery.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные доставки?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'Delivery') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.delivery.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные доставки?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Значения</th>
+            <th>ТК</th>
+            <th>Сортировка</th>
+            {% if is_granted('edit', 'Delivery') or is_granted('delete', 'Delivery') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for delivery in all %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ delivery.deliveryID : '') }}
+                        class="{{ delivery.isHide ? ' text-muted' : '' }}{{ delivery.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': delivery.deliveryID} only %}
+                    {% endif %}
+                    <td>{{ delivery.name }}</td>
+                    <td>{{ delivery.val }}</td>
+                    <td>{{ boolean_status(delivery.isTK) }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('shop.delivery.sort', {'id': delivery.deliveryID}) }}"
+                        data-direction="asc">{{ delivery.number }}</td>
+                    {% if is_granted('edit', 'Delivery') or is_granted('delete', 'Delivery') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'Delivery') %}
+                                    <a href="{{ path('shop.delivery.edit', {'id': delivery.deliveryID}) }}"
+                                       title="Изменить доставку">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if (is_granted('delete', 'Delivery')) %}
+                                    <a href="{{ path('shop.delivery.delete', {'id': delivery.deliveryID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить доставку?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить доставку">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

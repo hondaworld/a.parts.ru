@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение Авито объявления {{ avitoNotice.title }}{% endblock %}
+{% block header %}{{ avitoNotice.title }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('resellers.avito.notices') }}">Авито объявления</a></li>
+    <li class="breadcrumb-item">{{ avitoNotice.title }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/reseller/avito/notices/_formEdit.html.twig') }}
+{% endblock %}

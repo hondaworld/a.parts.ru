@@ -1,0 +1,264 @@
+<div class="modal fade" id="modalPrice" tabindex="-1" role="dialog" aria-labelledby="modalPriceLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        {{ form_start(formPrice, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'name': 'formPrice', 'action': ''}) }}
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPriceLabel">Изменение цены</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalPriceText" class="modal-body">
+                <div class="alert d-none" id="modalPriceAlert" role="alert">
+                    <p class="mb-0" id="modalPriceAlertMessage"></p>
+                </div>
+                {{ form_row(formPrice.price, {'id': 'formPrice_price', 'attr': {'onkeyup': 'modalPriceChangePrice(this)'}}) }}
+                {{ form_row(formPrice.discount, {'id': 'formPrice_discount', 'attr': {'onkeyup': 'modalPriceChangePrice(this)'}}) }}
+                <div class="form-group">Цена со скидкой: <span id="formPrice_priceDiscount"></span></div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="modalPriceButton" class="btn btn-primary">
+                    Сохранить
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+        {{ form_end(formPrice) }}
+    </div>
+</div>
+
+<div class="modal fade" id="modalName" tabindex="-1" role="dialog" aria-labelledby="modalNameLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        {{ form_start(formName, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'name': 'formName', 'action': ''}) }}
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNameLabel">Изменение наименования</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalNameText" class="modal-body">
+                <div class="alert d-none" id="modalNameAlert" role="alert">
+                    <p class="mb-0" id="modalNameAlertMessage"></p>
+                </div>
+                {{ form_row(formName.zapGroupID, {'id': 'formName_zapGroupID'}) }}
+                {{ form_row(formName.name, {'id': 'formName_name'}) }}
+                {{ form_row(formName.description, {'id': 'formName_description'}) }}
+                {{ form_row(formName.name_big, {'id': 'formName_name_big'}) }}
+                {{ form_row(formName.nameEng, {'id': 'formName_nameEng'}) }}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="modalNameButton" class="btn btn-primary">
+                    Сохранить
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+        {{ form_end(formName) }}
+    </div>
+</div>
+
+<div class="modal fade" id="modalProviderPrice" tabindex="-1" role="dialog"
+     aria-labelledby="modalProviderPriceLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalProviderPriceLabel">Изменение региона</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalProviderPriceText" class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCreate" tabindex="-1" role="dialog"
+     aria-labelledby="modalCreateLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCreateLabel">Добавление детали</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalCreateText" class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalQuantity" tabindex="-1" role="dialog" aria-labelledby="modalQuantityLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalQuantityLabel">Изменение количества товара</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalQuantityText" class="modal-body">
+                <div class="alert d-none" id="modalQuantityAlert" role="alert">
+                    <p class="mb-0" id="modalQuantityAlertMessage"></p>
+                </div>
+                <table class="table table-sm table-bordered table-striped">
+                    <thead>
+                    <tr class="table-primary">
+                        <th>Номер</th>
+                        <th>Производитель</th>
+                        <th>Регион</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td id="modalQuantityNumber"></td>
+                        <td id="modalQuantityCreater"></td>
+                        <td id="modalQuantityLocation"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                {{ form_start(formQuantity, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'name': 'formQuantity', 'action': ''}) }}
+                <h3>Изменение количества</h3>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <a href="#"
+                                   onclick="changeQuantity1(this, -1)">
+                                    <i class="fas fa-minus py-2"></i>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                {{ form_widget(formQuantity.quantity, {'id': 'formQuantity_quantity'}) }}
+                            </div>
+                            <div class="col-4">
+                                <a href="#"
+                                   onclick="changeQuantity1(this, 1)">
+                                    <i class="fas fa-plus py-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <button type="submit" class="btn btn-primary">Изменить</button>
+                    </div>
+                </div>
+                {{ form_end(formQuantity) }}
+
+                {{ form_start(formQuantityChange, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'name': 'formQuantityChange', 'action': ''}) }}
+                <h3>Разделение количества</h3>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="row">
+                            <div class="col-4">
+                                {{ form_widget(formQuantityChange.quantity, {'id': 'formQuantityChange_quantity', 'attr': {'readonly': 'readonly'}}) }}
+                            </div>
+                            <div class="col-2">
+                                <a href="#"
+                                   onclick="changeQuantity(this, -1)">
+                                    <i class="fas fa-chevron-left py-2"></i>
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <a href="#"
+                                   onclick="changeQuantity(this, 1)">
+                                    <i class="fas fa-chevron-right py-2"></i>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                {{ form_widget(formQuantityChange.quantity_new, {'id': 'formQuantityChange_quantityNew', 'attr': {'readonly': 'readonly'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <button type="submit" class="btn btn-primary">Изменить</button>
+                    </div>
+                </div>
+                {{ form_end(formQuantityChange) }}
+
+                <div class="text-right mt-2">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function modalPriceChange(el) {
+        var goodID = el.dataset.goodid;
+        document.forms['formPrice'].action = '{{ path('order.goods.price', {'id': 'goodID'}) }}'.replace('goodID', goodID);
+        document.getElementById('modalPriceAlert').classList.remove("d-block");
+        document.getElementById('modalPriceAlert').classList.add('d-none');
+        document.getElementById('formPrice_price').value = (document.getElementById('good_price_' + goodID).dataset.value).replace(',', '.');
+        document.getElementById('formPrice_discount').value = (document.getElementById('good_discount_' + goodID).dataset.value).replace(',', '.');
+        modalPriceChangePrice(el);
+    }
+
+    function modalPriceChangePrice(el) {
+        // const goodID = el.dataset.goodid;
+        const price = +(document.getElementById('formPrice_price').value).replace(',', '.');
+        const discount = +(document.getElementById('formPrice_discount').value).replace(',', '.');
+        document.getElementById('formPrice_priceDiscount').innerText = (Math.round(price - price * discount / 100)).toString();
+    }
+
+    function modalNameChange(el) {
+        const goodID = el.dataset.goodid;
+        document.forms['formName'].action = '{{ path('order.goods.name', {'id': 'goodID'}) }}'.replace('goodID', goodID);
+        document.getElementById('modalNameAlert').classList.remove("d-block");
+        document.getElementById('modalNameAlert').classList.add("d-none");
+        document.getElementById('formName_zapGroupID').value = el.dataset.zapgroupid;
+        document.getElementById('formName_name').value = el.dataset.name;
+        document.getElementById('formName_description').value = el.dataset.description;
+        document.getElementById('formName_name_big').value = el.dataset.name_big;
+        document.getElementById('formName_nameEng').value = el.dataset.nameeng;
+    }
+
+    function modalQuantityChange(el) {
+        document.forms['formQuantity'].action = el.dataset.url;
+        document.forms['formQuantityChange'].action = el.dataset.urlchange;
+        document.getElementById('modalQuantityAlert').classList.remove("d-block");
+        document.getElementById('modalQuantityAlert').classList.add("d-none");
+        document.getElementById('modalQuantityNumber').innerText = el.dataset.number;
+        document.getElementById('modalQuantityCreater').innerText = el.dataset.creater;
+        document.getElementById('modalQuantityLocation').innerText = el.dataset.location;
+        document.getElementById('formQuantity_quantity').value = el.dataset.quantity;
+        document.getElementById('formQuantityChange_quantity').value = el.dataset.quantity;
+    }
+
+    function changeQuantity(el, q) {
+        event.preventDefault();
+        const quantity_from = document.getElementById('formQuantityChange_quantity');
+        const quantity_till = document.getElementById('formQuantityChange_quantityNew');
+
+        if (+quantity_from.value - q > 0 && +quantity_till.value + q >= 0) {
+            quantity_from.value = +quantity_from.value - q;
+            quantity_till.value = +quantity_till.value + q;
+        }
+
+        if (+quantity_till.value === 0) quantity_till.value = '';
+    }
+
+    function changeQuantity1(el, q) {
+        event.preventDefault();
+        const quantity = document.getElementById('formQuantity_quantity');
+
+        quantity.value = +quantity.value + q;
+
+        if (+quantity.value < 1) {
+            quantity.value = 1;
+        }
+    }
+</script>

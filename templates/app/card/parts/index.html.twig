@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Номенклатура{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ZapCard') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.parts.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                 title="Добавить деталь"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('card.parts', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-1">{{ form_widget(filter.auto_modelID) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.year) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.searchWholeNumber) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.showDeleted) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Менеджер', 'manager_nick') : 'Менеджер' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Тип', 'shop_type_name') : 'Тип' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Наименование', 'group_name') : 'Наименование' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Производитель', 'creater') : 'Производитель' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Номер', 'zc.number') : 'Номер' }}</th>
+            <th>Закупка</th>
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+            {% for sklad in sklads %}
+                <th>{{ sklad }}</th>
+            {% endfor %}
+            {% if is_granted('show', 'ZapCard') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.managerID) }}</th>
+            <th>{{ form_widget(filter.shop_typeID) }}</th>
+            <th>{{ form_widget(filter.zapGroupID) }}</th>
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            {% for opt in opts %}
+                <th></th>
+            {% endfor %}
+            {% for sklad in sklads %}
+                <th></th>
+            {% endfor %}
+            {% if is_granted('show', 'ZapCard') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Задайте фильтр</td>
+                </tr>
+            {% elseif pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for zapCard in pagination %}
+                <tr class="{{ zapCard.isDeleted ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': zapCard.zapCardID} only %}
+                    {% endif %}
+                    <td>{{ zapCard.manager_nick }}</td>
+                    <td>{{ zapCard.shop_type_name }}</td>
+                    <td>{{ zapCard.detail_name }}</td>
+                    <td>{{ zapCard.creater }}</td>
+                    <td><a href="{{ path('card.parts.history', {'id': zapCard.zapCardID}) }}" target="_blank" title="История продаж">{{ zapCard.number }}</a></td>
+                    <td class="text-right">{{ zapCard.price|number_format(2, ',', ' ') }}</td>
+                    {% for opt in opts %}
+                        <td class="text-right">{{ attribute(zapCard.optPrices, opt.id)|number_format(0, ',', ' ') }}</td>
+                    {% endfor %}
+                    {% for skladID, sklad in sklads %}
+                        <td>
+                            {% if quantityInWarehouse[zapCard.zapCardID]|default(null)  %}
+                                {{ quantityInWarehouse[zapCard.zapCardID][skladID]|default(0) }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    {% if is_granted('show', 'ZapCard') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'ZapCard') %}
+                                    <a href="{{ path('card.parts.show', {'id': zapCard.zapCardID}) }}"
+                                       title="В карточку детали">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                    <a href="{{ path('card.parts.prices', {'id': zapCard.zapCardID}) }}"
+                                       title="Цены">
+                                        <i class="fas fa-ruble-sign"></i>
+                                    </a>
+                                    <a href="{{ path('card.parts.sklad', {'id': zapCard.zapCardID}) }}"
+                                       title="Склады">
+                                        <i class="fas fa-warehouse"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {% if pagination is not null %}
+                {{ parent() }}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

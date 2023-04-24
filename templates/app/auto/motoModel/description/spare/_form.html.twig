@@ -1,0 +1,9 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.spare) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('auto.moto.model.show', {'auto_markaID': autoMarka.id, 'id': motoModel.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

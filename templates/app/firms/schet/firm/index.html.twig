@@ -1,0 +1,27 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Счет от</h3>
+        <div class="block-options">
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Организация: </strong>
+        {% if is_granted('edit', 'Firm') %}
+            <a href="{{ path('firms.edit', {'id': schet.firm.id}) }}">{{ schet.firm.getNameWithInnAndKpp }}</a>
+        {% else %}
+            {{ schet.firm.getNameWithInnAndKpp }}
+        {% endif %}
+    </p>
+    {% if schet.firmContact %}
+        <p><strong>Контакт: </strong>
+            {{ schet.firmContact.getFullAddressWithPhones }}
+        </p>
+    {% endif %}
+    {% if schet.firmBeznal %}
+        <p><strong>Реквизит: </strong>
+            {{ schet.firmBeznal.getFullRequisiteWithBik }}
+        </p>
+    {% endif %}
+{% endblock %}

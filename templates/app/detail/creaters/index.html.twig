@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Производители{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Creater') %}
+                <li class="nav-item">
+                    <a href="{{ path('creaters.create') }}" class="nav-link"><i class="fas fa-plus" title="Добавить производителя"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('creaters', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'По-русски', 'name_rus') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Оригинал', 'isOriginal') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Таблица', 'tableName') }}</th>
+            <th>Альтернатива</th>
+            <th>Альтернативные названия для прайсов</th>
+            {% if is_granted('show', 'Creater') or is_granted('delete', 'Creater') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.name) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.isOriginal) }}</th>
+            <th>{{ form_widget(filter.tableName) }}</th>
+            <th></th>
+            {% if is_granted('show', 'Creater') or is_granted('delete', 'Creater') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for creater in pagination %}
+                <tr class="{{ creater.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': creater.createrID} only %}
+                    {% endif %}
+                    <td>{{ creater.name }}</td>
+                    <td>{{ creater.name_rus }}</td>
+                    <td>{{ boolean_status(creater.isOriginal) }}</td>
+                    <td>{{ creater.tableName }}</td>
+                    <td>{{ creater.alt_name }}</td>
+                    <td>{{ creater.alt_names }}</td>
+                    {% if is_granted('edit', 'Creater') or is_granted('delete', 'Creater') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'Creater') %}
+                                    <a href="{{ path('creaters.show', {'id': creater.createrID}) }}"
+                                       title="Просмотр производителя">
+                                        <i class="fas fa-industry"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Creater') %}
+                                    <a href="{{ path('creaters.delete', {'id': creater.createrID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить производителя?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить производителя">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {{ parent() }}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

@@ -1,0 +1,352 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Счет фактура №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-size: 10px;
+            font-family: Arial, serif;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .border2 {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .border2-top {
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border2-bottom {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border, .border-bottom, .border-top {
+            border-color: #000000 !important;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .font-size-9 {
+            font-size: 9px;
+        }
+
+        .font-size-13, .font-size-13 strong {
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 10px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+
+    <table>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td colspan="13" class="text-right font-size-9">Приложение № 1<br>к постановлению
+                            Правительства<br>Российской
+                            Федерации<br>от 26 декабря 2011 г. № 1137<br>(в ред. Постановления Правительства РФ от
+                            02.04.2021 № 534)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="15%"><h2>СЧЕТ-ФАКТУРА №</h2></td>
+                        <td colspan="11" class="border-bottom" width="80%"><h2>{{ document_num }}
+                                от {{ document_date|date('d.m.Y') }}</h2></td>
+
+                    </tr>
+                    <tr>
+                        <td>ИСПРАВЛЕНИЕ №</td>
+                        <td colspan="11">________________-_________ от "_________" ________________-_________</td>
+
+                    </tr>
+                    <tr>
+                        <td>Продавец</td>
+                        <td colspan="11" class="border-bottom">
+                            <strong>{{ schetFakPrint.from.name }}</strong></td>
+
+                    </tr>
+                    <tr>
+                        <td>Адрес</td>
+                        <td colspan="11" class="border-bottom">{{ schetFakPrint.from.address }}</td>
+
+                    </tr>
+                    <tr>
+                        <td>ИНН / КПП продавца</td>
+                        <td colspan="11"
+                            class="border-bottom">{{ 'ИНН ' ~ schetFakPrint.from.inn ~ ' КПП ' ~ schetFakPrint.from.kpp }}</td>
+
+                    </tr>
+                    <tr>
+                        <td>Грузоотправитель и его адрес</td>
+                        <td colspan="11"
+                            class="border-bottom">{{ schetFakPrint.fromGruz.gruzName is not empty ? schetFakPrint.fromGruz.gruzName ~ ' ' ~ schetFakPrint.fromGruz.gruzAddress : schetFakPrint.from.name ~ ' ' ~ schetFakPrint.from.address }}</td>
+
+                    </tr>
+                    <tr>
+                        <td>Грузополучатель и его адрес</td>
+                        <td colspan="11"
+                            class="border-bottom">{{ schetFakPrint.toGruz.gruzName ~ ' ' ~ schetFakPrint.toGruz.addressGruz }}</td>
+
+                    </tr>
+                    <tr>
+                        <td nowrap>К платежно-расчетному документу №</td>
+                        <td colspan="11" class="border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;от&nbsp;</td>
+
+                    </tr>
+                    <tr>
+                        <td nowrap>Документ об отгрузке № п/п</td>
+                        <td colspan="11" class="border-bottom">&nbsp;&nbsp;1 - {{ orderGoods|length }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;№&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ expense_document_num }}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;от&nbsp;{{ expense_document_date|date('d.m.Y') }}</td>
+
+                    </tr>
+                    <tr>
+                        <td>Покупатель</td>
+                        <td colspan="11" class="border-bottom"><strong>{{ schetFakPrint.toCash.cashName }}</strong></td>
+
+                    </tr>
+                    <tr>
+                        <td>Адрес</td>
+                        <td colspan="11" class="border-bottom">{{ schetFakPrint.toCash.addressCash }}</td>
+
+                    </tr>
+                    <tr>
+                        <td>ИНН / КПП покупателя</td>
+                        <td colspan="11" class="border-bottom">
+                            {{ schetFakPrint.toCash.innCash ? 'ИНН ' ~ schetFakPrint.toCash.innCash : '' }}
+                            {{ schetFakPrint.toCash.kppCash ? ' / КПП ' ~ schetFakPrint.toCash.kppCash : '' }}
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>Валюта:</td>
+                        <td colspan="11" class="border-bottom">код 643 наименование Российский рубль</td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="12">Идентификатор государственного контракта, договора (соглашения) (при наличии)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1"><br><br></td>
+                        <td colspan="11" class="border-top"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table-goods">
+                    <tr>
+                        <th rowspan="2" width="20%">Наименование товара (описание выполненных работ, оказанных услуг), имущественного
+                            права
+                        </th>
+                        <th rowspan="2" width="5%">Код вида товара</th>
+                        <th colspan="2" width="5%">Единица измерения</th>
+                        <th rowspan="2" width="5%">Коли-<br>чество</th>
+                        <th rowspan="2" width="7%">Цена (тариф) за единицу измерения</th>
+                        <th rowspan="2" width="7%">Стоимость товаров (работ, услуг), имущественных прав, без налога - всего</th>
+                        <th rowspan="2" width="5%">В том числе сумма акциза</th>
+                        <th rowspan="2" width="5%">Налого-<br>вая ставка</th>
+                        <th rowspan="2" width="7%">Сумма налога, предъяв-<br>ляемая покупателю</th>
+                        <th rowspan="2" width="7%">Стоимость товаров (работ, услуг), имущественных прав, с налогом - всего</th>
+                        <th colspan="2" width="7%">Страна происхождения</th>
+                        <th rowspan="2" width="7%">Регистрационный номер таможенной декларации</th>
+                        <th colspan="2" width="6%">Количественная единица измерения товара, используемая в целях осуществления
+                            прослеживаемости
+                        </th>
+                        <th rowspan="2" width="7%">Количество товара, подлежащего прослеживаемости, в количественной единице измерения
+                            товара, используемой в целях осуществления прослеживаемости
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Код</th>
+                        <th>Условное<br>обозначение<br>(национальное)</th>
+                        <th>Цифро<br>вой<br>код</th>
+                        <th>Краткое<br>наимено-<br>вание</th>
+                        <th>Код</th>
+                        <th>Условное обозначение</th>
+                    </tr>
+                    <tr>
+                        <th>1</th>
+                        <th>1а</th>
+                        <th>2</th>
+                        <th>2а</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>8</th>
+                        <th>9</th>
+                        <th>10</th>
+                        <th>10а</th>
+                        <th>11</th>
+                        <th>12</th>
+                        <th>12а</th>
+                        <th>13</th>
+                    </tr>
+                    {% for index, orderGood in orderGoods %}
+                        <tr>
+                            <td>{{ orderGood.detail_name }}</td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">{{ orderGood.okei }}</td>
+                            <td class="text-center">{{ orderGood.ed_izm }}</td>
+                            <td class="text-center">{{ orderGood.quantity }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.priceWithoutNds|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.sumWithoutNds|number_format(2, ',', ' ') }}</td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">{{ nalogNds.nds == 0 ? '-' : nalogNds.nds|number_format(0, '', '') ~ '%' }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.ndsSum|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right" nowrap>{{ orderGood.sum|number_format(2, ',', ' ') }}</td>
+                            <td class="text-center">{{ orderGood.country_code }}</td>
+                            <td class="text-center">{{ orderGood.country_name }}</td>
+                            <td class="text-center">{{ orderGood.gtd|default('') }}</td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                        </tr>
+
+                    {% endfor %}
+                    <tr>
+                        <td><strong>Всего к оплате</strong></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td class="text-right" nowrap><strong>{{ sum.priceWithoutNds|number_format(2, ',', ' ') }}</strong></td>
+                        <td class="text-right" nowrap><strong>{{ sum.sumWithoutNds|number_format(2, ',', ' ') }}</strong></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td class="text-right" nowrap><strong>{{ sum.ndsSum|number_format(2, ',', ' ') }}</strong></td>
+                        <td class="text-right" nowrap><strong>{{ sum.sum|number_format(2, ',', ' ') }}</strong></td>
+                        <td style="border-bottom: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">&nbsp;</td>
+                        <td style="border-bottom: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><br><br><br></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table cellpadding="3" cellspacing="0">
+                    <tr>
+                        <td valign="top" width="50%">
+                            <table cellpadding="0" cellspacing="2" width="100%">
+                                <tr>
+                                    <td width="45%" nowrap>Руководитель организации<br>или иное уполномоченное лицо</td>
+                                    <td class="border-bottom" width="30%">&nbsp;</td>
+                                    <td class="border-bottom" width="25%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>или иное уполномоченное лицо</td>
+                                    <td class="text-center" valign="top">(подпись)</td>
+                                    <td class="text-center" valign="top">(ф.и.о.)</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"><br></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td valign="top" width="50%">
+                            <table cellpadding="0" cellspacing="2" width="100%">
+                                <tr>
+                                    <td width="45%" nowrap>Главный бухгалтер</td>
+                                    <td class="border-bottom" width="30%">&nbsp;</td>
+                                    <td class="border-bottom" width="25%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>или иное уполномоченное лицо</td>
+                                    <td class="text-center" valign="top">(подпись)</td>
+                                    <td class="text-center" valign="top">(ф.и.о.)</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"><br></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top" width="50%">
+                            <table cellpadding="0" cellspacing="2" width="100%">
+                                <tr>
+                                    <td width="45%" nowrap>Индивидуальный предприниматель</td>
+                                    <td class="border-bottom" width="30%">&nbsp;</td>
+                                    <td class="border-bottom" width="25%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>или иное уполномоченное лицо</td>
+                                    <td class="text-center" valign="top">(подпись)</td>
+                                    <td class="text-center" valign="top">(ф.и.о.)</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td valign="top" width="50%">
+                            <table cellpadding="0" cellspacing="2" width="100%">
+                                <tr>
+                                    <td class="border-bottom" colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center" valign="top" colspan="3">(реквизиты свидетельства о
+                                        государственной
+                                        регистрации индивидуального предпринимателя)
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <div>ПРИМЕЧАНИЕ. 1. Первый экземпляр - покупателю, второй экземпляр - продавцу<br>
+        2. При составлении организацией счета-фактуры в электронном виде показатель "Главный бухгалтер (подпись)
+        (ФИО)" не формируется.
+    </div>
+
+{% endblock %}

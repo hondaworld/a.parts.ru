@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение региона страны {{ country.name }}{% endblock %}
+{% block header %}Изменение региона страны {{ country.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('countries') }}">Страны</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('townRegions', {'countryID': country.id, 'page': app.session.get('page/townRegions')|default(1)}) }}">{{ country.name }}</a>
+    </li>
+    <li class="breadcrumb-item">{{ region.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/contacts/regions/_form_edit.html.twig') }}
+{% endblock %}

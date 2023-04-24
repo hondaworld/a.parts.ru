@@ -1,0 +1,52 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение колонок прайс-листа'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+
+    {% if (maxCol >= 0) %}
+        <table class="table table-bordered table-responsive border-0">
+            {% if (priceCols) %}
+                {% for line in priceCols %}
+                    <tr>
+                    {% for item in line %}
+                        <td>{{ item }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            <tr>
+                {% for col in 0..maxColForm %}
+                    <td>{{ form_widget(form.children['field_' ~ col]) }}</td>
+                {% endfor %}
+                <td>
+                    <button type="button" class="btn btn-primary"
+                            onclick="this.form.elements['form[maxCols]'].value = +this.form.elements['form[maxCols]'].value + 3; this.form.elements['form[isCols]'].value = 1; this.form.submit();">
+                        <i class="fas fa-plus"></i></button>
+                </td>
+            </tr>
+        </table>
+    {% endif %}
+
+    <button type="submit" onclick="this.form.elements['form[isCols]'].value = 0;" class="btn btn-primary">Сохранить
+    </button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.prices.show', {'id': providerPrice.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+    {{ form_start(formPrice, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="row mt-3">
+        <div class="col">{{ form_widget(formPrice.file) }}{{ form_errors(formPrice.file) }}</div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Загрузить</button>
+        </div>
+    </div>
+
+    {{ form_end(formPrice) }}
+
+{% endblock %}

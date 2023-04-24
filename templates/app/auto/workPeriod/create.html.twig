@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление ТО модификации {{ autoModification.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.model', {'auto_markaID': autoModification.autoGeneration.model.marka.id}) }}">{{ autoModification.autoGeneration.model.marka.name }}</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.model.show', {'auto_markaID': autoModification.autoGeneration.model.marka.id, 'id': autoModification.autoGeneration.model.id}) }}">{{ autoModification.autoGeneration.model.name }}</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.generation.show', {'auto_modelID': autoModification.autoGeneration.model.id, 'id': autoModification.autoGeneration.id}) }}">{{ autoModification.autoGeneration.name }}</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('auto.work.period', {'auto_modificationID': autoModification.id}) }}">{{ autoModification.name }}</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/auto/workPeriod/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

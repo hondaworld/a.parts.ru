@@ -1,0 +1,167 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Бланк заказа{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block body %}
+
+    <div class="d-flex justify-content-between">
+        <div>
+            <img src="/images/logo_pa.png" width="150" height="32" alt="">
+            <img src="/images/logo_hw.gif" width="114" height="30" alt="">
+        </div>
+        <div>
+            <strong>+7 (495) 660-3630</strong><br>
+            <strong>+7 (812) 407-2835</strong>
+        </div>
+    </div>
+    <hr style="width:100%; border-bottom : 2px solid #000000;">
+    <hr style="width:100%; border-bottom : 2px solid #000000;">
+
+    <h2 class="text-center">Бланк заказа</h2>
+    <hr style="width:100%; border-bottom : 2px solid #000000;">
+
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 100%">
+                <table style="width: 100%">
+                    <tr>
+                        <td class="pb-1">Поставщик:&nbsp;</td>
+                        <td class="w-100"><strong>&nbsp;</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="pb-1">Покупатель:&nbsp;</td>
+                        <td><strong>{{ expenseDocument.user.fullNameWithPhoneMobile }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="border: 2px solid #000;" class="table table-sm table-bordered">
+                    <tr>
+                        <th width="5%">№</th>
+                        <th>Товар</th>
+                        <th width="15%">Номер</th>
+                        <th width="10%">Производитель</th>
+                        {% if isShowSrok %}
+                            <th width="10%">Срок</th>
+                        {% endif %}
+                        <th width="5%">Кол-во</th>
+                        <th width="5%">Ед.</th>
+                        <th width="10%">Цена</th>
+                        {% if discount > 0 %}
+                            <th width="5%">Скидка</th>
+                            <th width="10%">Цена со скидкой</th>
+                        {% endif %}
+                        <th width="10%">Сумма</th>
+                    </tr>
+                    {% for index, expense in expenses %}
+                        <tr>
+                            <td valign=top align="center">{{ index + 1 }}</td>
+                            <td valign=top>
+                                {% if expense.zapCard and expense.zapCard.detailName %}
+                                    {{ expense.zapCard.detailName }}
+                                {% endif %}
+                            </td>
+                            <td valign=top nowrap>{{ expense.number }}</td>
+                            <td valign=top nowrap>{{ expense.creater_name }}</td>
+                            {% if isShowSrok %}
+                                <td>{{ expense.srok ? expense.srok : 'наличие' }}</td>
+                            {% endif %}
+                            <td valign=top align="center">{{ expense.quantity }}</td>
+                            <td valign=top align="center">шт</td>
+                            <td valign=top align="right" nowrap>{{ expense.price|number_format(2, ',', ' ') }}</td>
+                            {% if discount > 0 %}
+                                <td valign=top align="center">{{ expense.discount|number_format(2, ',', ' ') }}%</td>
+                                <td valign=top align="right"
+                                    nowrap>{{ expense.priceDiscount|number_format(2, ',', ' ') }}</td>
+                            {% endif %}
+                            <td valign=top align="right"
+                                nowrap>{{ (expense.priceDiscount * expense.quantity)|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table table-sm table-borderless">
+                    {% if discount > 0 %}
+                        <tr>
+                            <td align="right"><strong>Скидка:</strong></td>
+                            <td align="right"><strong>{{ discount|number_format(2, ',', ' ') }}</strong></td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td width="90%" align="right"><strong>Итого:</strong></td>
+                        <td width="10%" align="right"><strong>{{ sumDiscount|number_format(2, ',', ' ') }}</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>Оплачено:</strong></td>
+                        <td align="right"><strong>{{ user.balance|number_format(2, ',', ' ') }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td align="right"><strong>К оплате:</strong></td>
+                        <td align="right"><strong>{{ (sumDiscount - user.balance < 0 ? 0 : sumDiscount - user.balance)|number_format(2, ',', ' ') }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    1. При сроке поставки более 40 дней, продавец обязуется выплатить покупателю пени в размере 0,2% от
+                    стоимости товара за каждый день просрочки, если увеличение срока не было согласовано с
+                    клиентом.</font>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    2. При отказе покупателя от заказанного товара внесенная ранее предоплата не возвращается.</font>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    3. Если заказанный товар не получен покупателем в течении 3 -х рабочих дней после его уведомления о
+                    приходе товара, начиная с 4-ого дня взимается пени в размере 0,2% за каждый день хранения
+                    товара.</font>
+            </td>
+        </tr>
+        <tr>
+            <td><font style="font-size: 12px;">
+                    4. При невозможности поставки заказанного товара предоплата возвращается в полном размере.</font>
+            </td>
+        </tr>
+        <tr>
+            <td width="100%"><br>
+                <hr style="width:100%; border-bottom : 2px solid #000000;">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="3" cellspacing="1" width="100%">
+                    <tr>
+                        <td width="35%"><strong>Заказчик с условиями поставки согласен</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>______________</td>
+                        <td width="15%"></td>
+                        <td width="15%"><strong>Заказ принят</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td>______________</td>
+                        <td width="35%"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td align="center"><sup>подпись</sup></td>
+                        <td></td>
+                        <td></td>
+                        <td align="center"><sup>подпись</sup></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+{% endblock %}

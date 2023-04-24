@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление группы товаров в категорию {{ zapCategory.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('card.categories') }}">Категории товаров</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('card.categories.groups', {'zapCategoryID': zapCategory.id}) }}">{{ zapCategory.name }}</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/card/groups/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

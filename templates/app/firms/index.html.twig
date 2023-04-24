@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Организации{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Firm') %}
+                <li class="nav-item">
+                    <a href="{{ path('firms.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                             title="Добавить организацию"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'Firm') %}
+                <li class="nav-item">
+                    <a href="{{ path('firms.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные организации?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'Firm') %}
+                <li class="nav-item">
+                    <a href="{{ path('firms.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные организации?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Кратко', 'name_short') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Имя', 'name') }}</th>
+            {% if is_granted('edit', 'Firm') or is_granted('delete', 'Firm') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for firm in pagination %}
+                <tr class="{{ firm.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': firm.firmID} only %}
+                    {% endif %}
+                    <td>{{ firm.name_short }}</td>
+                    <td>{{ firm.name }}</td>
+                    {% if is_granted('edit', 'Firm') or is_granted('delete', 'Firm') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('firm_balance', 'Firm') %}
+                                    <a href="{{ path('firms.balance.history', {'firmID': firm.firmID}) }}"
+                                       title="Взаиморасчеты организации">
+                                        <i class="fas fa-receipt"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('edit', 'Firm') %}
+                                    <a href="{{ path('firms.edit', {'id': firm.firmID}) }}"
+                                       title="Изменить организацию">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Firm') %}
+                                    <a href="{{ path('firms.delete', {'id': firm.firmID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить организацию?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить организацию">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

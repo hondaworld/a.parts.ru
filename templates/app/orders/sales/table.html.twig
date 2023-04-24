@@ -1,0 +1,28 @@
+<h1>Статистика продаж за {{ dateText }}</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th>ABC МСК</th>
+        <th>ABC СПБ</th>
+        <th>ABC СПБ2</th>
+        <th>Производитель</th>
+        <th>Наименование</th>
+        <th>Номер детали</th>
+        <th>Кол</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for zapCardID, zapCard in zapCards %}
+        <tr>
+            <td>{{ zapCard.zapCardAbc(1) }}</td>
+            <td>{{ zapCard.zapCardAbc(5) }}</td>
+            <td>{{ zapCard.zapCardAbc(6) }}</td>
+            <td>{{ zapCard.creater.name }}</td>
+            <td>{{ zapCard.detailName }}</td>
+            <td>{{ zapCard.number.value }}</td>
+            <td class="text-right">{{ sales[zapCardID]|default(0) }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение склада {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ zapSklad.nameShort }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads') }}">Склады</a></li>
+    <li class="breadcrumb-item">{{ zapSklad.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/sklads/_form.html.twig') }}
+{% endblock %}

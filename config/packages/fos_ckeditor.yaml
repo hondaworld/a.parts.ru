@@ -1,0 +1,23 @@
+# Read the documentation: https://symfony.com/doc/current/bundles/FOSCKEditorBundle/index.html
+
+twig:
+    form_themes:
+        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+
+fos_ck_editor:
+    default_config: default
+    configs:
+        default:
+            toolbar: [[ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'Find', 'Replace', '-', 'SelectAll', '-', 'SpellChecker', 'Link', 'Unlink', 'Anchor', 'lightbox', 'Image', 'Youtube', 'Html5audio', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Maximize', 'ShowBlocks', '-', 'Source'], '/', ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Styles', 'Format', 'Font', 'FontSize', 'TextColor', 'BGColor']]
+            extraAllowedContent: 'a[data-lightbox,data-title,data-lightbox-saved];iframe[*];ol[start];div(*);p(*);table(*)'
+            disableNativeSpellChecker: false
+            height: "600px"
+            removeButtons: 'Underline,Subscript,Superscript,Styles'
+            filebrowserBrowseRoute: elfinder
+            filebrowserBrowseRouteParameters: []
+        small:
+            toolbar: [[ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo', 'Find', 'Replace', '-', 'SelectAll', '-', 'SpellChecker', 'Link', 'Unlink', 'Anchor', 'SpecialChar', 'PageBreak', 'Maximize', 'ShowBlocks', '-', 'Source'], '/', ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Styles', 'Format', 'Font', 'FontSize']]
+            extraAllowedContent: 'a[data-lightbox,data-title,data-lightbox-saved];iframe[*];ol[start];div(*);p(*);table(*)'
+            disableNativeSpellChecker: false
+            height: "200px"
+            removeButtons: 'Underline,Subscript,Superscript,Styles'

@@ -1,0 +1,48 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Опт</th>
+            <th>Доход</th>
+            <th>Прибыль</th>
+            <th>МСК Доход</th>
+            <th>МСК Прибыль</th>
+            <th>МСК Доход сервис</th>
+            <th>МСК Прибыль сервис</th>
+            <th>СПБ Доход</th>
+            <th>СПБ Прибыль</th>
+            <th>СПБ Доход сервис</th>
+            <th>СПБ Прибыль сервис</th>
+            <th>Доход сервис</th>
+            <th>Прибыль сервис</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% endif %}
+            {% for optID, opt in opts %}
+                <tr>
+                    <td>{{ opt }}</td>
+                    <td class="text-right">{{ profits[optID].income.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].profit.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].mskIncome.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].mskProfit.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].mskServiceIncome.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].mskServiceProfit.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].spbIncome.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].spbProfit.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].spbServiceIncome.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].spbServiceProfit.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].serviceIncome.value|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ profits[optID].serviceProfit.value|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

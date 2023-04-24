@@ -1,0 +1,19 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% if (stockNumber|default(false)) %}
+        <p><strong>Производитель:</strong> {{ stockNumber.creater.name }}</p>
+        <p><strong>Номер:</strong> {{ stockNumber.number.value }}</p>
+        {{ form_row(form.stockID) }}
+    {% else %}
+        {{ form_row(form.createrID) }}
+        {{ form_row(form.numbers) }}
+    {% endif %}
+
+    {{ form_row(form.price_stock) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('card.stocks.numbers', {'stockID': stock.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

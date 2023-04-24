@@ -1,0 +1,29 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('income.change.document.create') }) }}
+
+<div class="row">
+    <div class="col-6">{{ form_row(form.document_prefix) }}</div>
+    <div class="col-6">{{ form_row(form.document_sufix) }}</div>
+</div>
+
+
+{{ form_row(form.firmID) }}
+{{ form_row(form.providerID, {'attr': {'onchange': "onChangeParentForm(this, '" ~ path('api.provider.contact') ~ "', 'providerUserContactID')"}}) }}
+{{ form_row(form.user_contactID, {'id': 'providerUserContactID'}) }}
+{{ form_row(form.osn_nakladnaya) }}
+{{ form_row(form.osn_schet) }}
+{{ form_row(form.is_priceZak) }}
+
+<div class="row">
+    <div class="col-6">{{ form_row(form.balance) }}</div>
+    <div class="col-6">{{ form_row(form.balance_nds) }}</div>
+</div>
+
+{{ form_row(form.description) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

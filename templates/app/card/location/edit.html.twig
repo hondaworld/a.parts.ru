@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение склада {{ zapSkladLocation.zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('card.parts.sklad', {'id': zapCard.id}) }}">Склады {{ zapCard.number.value }}</a></li>
+
+    <li class="breadcrumb-item">Изменение</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/card/parts/_tabs.html.twig') %}
+
+    {{ include('app/card/location/_form.html.twig') }}
+{% endblock %}

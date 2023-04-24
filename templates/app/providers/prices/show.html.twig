@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прайс-лист {{ providerPrice.name }} - {{ providerPrice.description }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('providers.prices', {'page' : app.session.get('page/providerPrices')|default(1)}) }}">Прайс-листы</a>
+    </li>
+    <li class="breadcrumb-item">{{ providerPrice.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% if (edit == 'main') %}
+        {{ include('app/providers/prices/main/edit.html.twig') }}
+    {% elseif (edit == 'num') %}
+        {{ include('app/providers/prices/num/edit.html.twig') }}
+    {% elseif (edit == 'price') %}
+        {{ include('app/providers/prices/num/price.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/providers/prices/main/index.html.twig') }}
+            {{ include('app/providers/prices/creaters/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/providers/prices/num/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

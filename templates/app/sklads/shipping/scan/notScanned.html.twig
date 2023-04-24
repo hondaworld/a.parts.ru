@@ -1,0 +1,23 @@
+<table class="table table-striped border">
+    <tr>
+        <th>Производитель</th>
+        <th>Номер</th>
+        <th>Куда</th>
+        <th>Ячейка</th>
+        <th>Всего</th>
+        <th>Собрано</th>
+    </tr>
+
+    {% for expenseSklad in expenseSklads %}
+        {% if (expenseSklad.quantity != expenseSklad.quantityPicking) %}
+        <tr>
+            <td>{{ expenseSklad.creater_name }}</td>
+            <td>{{ expenseSklad.number }}</td>
+            <td>{{ expenseSklad.zapSklad_to }}</td>
+            <td>{{ expenseSklad.location|nl2br }}</td>
+            <td>{{ expenseSklad.quantity }}</td>
+            <td>{{ expenseSklad.quantityPicking }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>

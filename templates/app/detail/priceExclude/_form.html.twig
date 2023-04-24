@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.createrID) }}
+    {{ form_row(form.number) }}
+    {{ form_row(form.providerPriceID) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('exclude.prices', {'page' : app.session.get('page/priceExclude')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,23 @@
+<table class="table table-striped border">
+    <tr>
+        <th>Производитель</th>
+        <th>Номер</th>
+        <th>Откуда</th>
+        <th>Ячейка</th>
+        <th>Всего</th>
+        <th>Оприходовано</th>
+    </tr>
+
+    {% for expenseSklad in expenseSklads %}
+        {% if (expenseSklad.quantity != expenseSklad.quantityIncome) %}
+        <tr>
+            <td>{{ expenseSklad.creater_name }}</td>
+            <td>{{ expenseSklad.number }}</td>
+            <td>{{ expenseSklad.zapSklad }}</td>
+            <td>{{ expenseSklad.location|nl2br }}</td>
+            <td>{{ expenseSklad.quantity }}</td>
+            <td>{{ expenseSklad.quantityIncome }}</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>

@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Виды оплаты{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'FinanceType') %}
+                <li class="nav-item">
+                    <a href="{{ path('finance.types.create') }}" class="nav-link" title="Добавить вид оплаты"><i class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'FinanceType') %}
+                <li class="nav-item">
+                    <a href="{{ path('finance.types.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные виды оплаты?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'FinanceType') %}
+                <li class="nav-item">
+                    <a href="{{ path('finance.types.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные виды оплаты?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Название</th>
+            <th>Связанное предприятие</th>
+            {% if is_granted('edit', 'FinanceType') or is_granted('ROLE_SUPER_ADMIN') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if financeTypes is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for financeType in financeTypes %}
+                <tr class="{{ financeType.isHide ? ' text-muted' : '' }}{{ financeType.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': financeType.finance_typeID} only %}
+                    {% endif %}
+                    <td>{{ financeType.name }}</td>
+                    <td>{{ financeType.firm }}</td>
+                    {% if is_granted('edit', 'FinanceType') or is_granted('ROLE_SUPER_ADMIN') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'FinanceType') %}
+                                    <a href="{{ path('finance.types.edit', {'id': financeType.finance_typeID}) }}"
+                                       title="Изменить вид оплаты">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('ROLE_SUPER_ADMIN') and not financeType.noneDelete %}
+                                    <a href="{{ path('finance.types.delete', {'id': financeType.finance_typeID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить вид оплаты?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить вид оплаты">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

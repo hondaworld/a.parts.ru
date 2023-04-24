@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Статистика продаж{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Статистика продаж</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+
+        {% block header %}{% endblock %}
+
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'target': '_blank'}, 'action': path('analytics.statSale.print')}) }}
+
+{#            {{ form_row(form.nelikvid) }}#}
+            {{ form_row(form.zapSkladID) }}
+            {{ form_row(form.dateofreport) }}
+
+            <button type="submit" class="btn btn-primary">{{ buttonName|default('Показать') }}</button>
+
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

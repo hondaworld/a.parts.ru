@@ -1,0 +1,30 @@
+{% for zapCardID, item in arr %}
+    {% if item['quantity'] != item['quantityUnPack'] %}
+        <h3>Веса</h3>
+        <table class="table table-striped border">
+            <tr>
+                <th>Производитель</th>
+                <th>Номер</th>
+                <th>Вес</th>
+            </tr>
+            <tr>
+                <td>{{ item.zapCard.creater.name }}</td>
+                <td>{{ item.zapCard.number.value }}</td>
+                <td>
+                    {% if item['weights'] and item['weights']['weightIsReal'] %}
+                        <span class="text-success">{{ item['weights']['weight'] }}</span>
+                    {% else %}
+                        {{ form_start(item['formWeight'], {'action': path('income.unpack.weight', {'providerID': provider.id, 'id': zapCardID, 'searchNumber': searchNumber})}) }}
+                        <div class="row">
+                            <div class="col">{{ form_widget(item['formWeight'].weight) }}</div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary">&gt;&gt;</button>
+                            </div>
+                        </div>
+                        {{ form_end(item['formWeight']) }}
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,42 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Грузополучатель</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.getter', {'id': user.id}) }}"
+               title="Изменить клиента"><i class="fas fa-user"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.getterFirmContr', {'id': user.id}) }}"
+               title="Изменить контрагента"><i class="far fa-building"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Клиент: </strong>
+        {% if (user.gruzUser|default(false)) %}
+            {{ user.gruzUser.nameWithPhoneMobile }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+    {% if (user.gruzUser|default(false)) %}
+        <p><strong>Адрес: </strong>
+        {% if (user.gruzUserContact|default(false)) %}
+            {{ user.gruzUserContact.fullAddress }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+        <p><strong>Реквизит: </strong>
+        {% if (user.gruzUserBeznal|default(false)) %}
+            {{ user.gruzUserBeznal.fullRequisite }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    {% endif %}
+    <p><strong>Контрагент: </strong>
+        {% if (user.gruzFirmContr|default(false)) %}
+            {{ user.gruzFirmContr.ur.organization }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+{% endblock %}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="{{ "now"|date('c') }}">
+    <shop>
+        <name>HondaWorld</name>
+        <company>HondaWorld</company>
+        <url>https://www.hondaworld.ru</url>
+        <currencies>
+            <currency id="RUR" rate="1"/>
+        </currencies>
+        <categories>
+            {% for id, type in types %}
+                <category id="{{ id }}">{{ type }}</category>
+            {% endfor %}
+        </categories>
+        <offers>
+            {% for part in parts %}
+                <offer id="{{ part.zapCardID }}">
+                    <name>{{ part.name }}</name>
+                    <vendor>{{ part.createrName }}</vendor>
+                    <vendorCode>{{ part.number }}</vendorCode>
+                    <url>https://www.hondaworld.ru/detail_number.htm?number={{ part.number }}</url>
+                    <price>{{ part.price1 }}</price>
+                    <currencyId>RUR</currencyId>
+                    <categoryId>{{ part.shop_typeID }}</categoryId>
+                    {% if photos[part.zapCardID]|default(null) %}
+                        <picture>{{ zap_card_photo_folder ~ photos[part.zapCardID] }}</picture>
+                    {% endif %}
+                </offer>
+            {% endfor %}
+        </offers>
+    </shop>
+</yml_catalog>
+

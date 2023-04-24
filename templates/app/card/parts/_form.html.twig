@@ -1,0 +1,15 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.number) }}
+    {{ form_row(form.createrID) }}
+    {{ form_row(form.shop_typeID) }}
+    {{ form_row(form.zapGroupID) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.price_groupID) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

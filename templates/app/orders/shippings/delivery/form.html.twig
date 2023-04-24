@@ -1,0 +1,19 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Транспортная компания'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.dateofadded) }}
+    {{ form_row(form.delivery_tkID) }}
+    {{ form_row(form.tracknumber) }}
+    {{ form_row(form.pay_type) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('shippings.show', {'id': shipping.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.porog) }}
+    <div class="row">
+        <div class="col-sm-6">{{ form_row(form.x1) }}</div>
+        <div class="col-sm-6">{{ form_row(form.isPercent1) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">{{ form_row(form.x2) }}</div>
+        <div class="col-sm-6">{{ form_row(form.isPercent2) }}</div>
+    </div>
+    {{ form_row(form.isTK) }}
+    {{ form_row(form.isOwnDelivery) }}
+    {{ form_row(form.isMain) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('shop.delivery') }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

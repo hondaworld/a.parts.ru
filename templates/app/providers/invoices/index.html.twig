@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Инвойсы{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('providers.invoices', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Поставщик', 'providerName') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.providerID) }}</th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for invoice in pagination %}
+                <tr class="{{ invoice.isDone ? 'text-success' : 'text-danger' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': invoice.logInvoiceAllID} only %}
+                    {% endif %}
+                    <td>{{ invoice.providerName }}</td>
+                    <td>{{ invoice.dateofadded|date('d.m.Y') }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            {% if is_granted('show', 'ProviderPrice') %}
+                                <a href="{{ path('providers.invoices.show', {'id': invoice.logInvoiceAllID}) }}"
+                                   title="Логи инвойса">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </a>
+                            {% endif %}
+                            {% if is_granted('delete', 'ProviderPrice') %}
+                                <a href="{{ path('providers.invoices.delete', {'id': invoice.logInvoiceAllID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить инвойс?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить инвойс">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

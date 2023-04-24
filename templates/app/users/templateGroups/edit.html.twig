@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение группы шаблонов {{ templateGroup.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('template.groups') }}">Группы шаблонов</a></li>
+    <li class="breadcrumb-item">{{ templateGroup.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/users/templateGroups/_form.html.twig') }}
+{% endblock %}

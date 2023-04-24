@@ -1,0 +1,32 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Проценка</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('users.excludeProviders', {'id': user.id}) }}"
+               title="Изменить исключенных поставщиков при проценке"><i class="fas fa-truck"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('users.showHidePrices', {'id': user.id}) }}"
+               title="Изменить показ скрытых прайсов при проценке"><i class="fas fa-file-csv"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p>
+        <strong>Исключенные поставщики: </strong>
+        {% if user.excludeProviderNames is empty %}
+            <span class="text-muted font-italic">нет</span>
+        {% else %}
+            {{ user.excludeProviderNames|join(', ') }}
+        {% endif %}
+    </p>
+    <p>
+        <strong>Показывать скрытые прайсы: </strong>
+        {% if user.showHidePriceNames is empty %}
+            <span class="text-muted font-italic">нет</span>
+        {% else %}
+            {{ user.showHidePriceNames|join(', ') }}
+        {% endif %}
+    </p>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление инвойса поставщика {{ provider.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('providers', {'page' : app.session.get('page/provider')|default(1)}) }}">Поставщики</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('providers.invoice', {'providerID': provider.id}) }}">Инвойсы</a>
+    </li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/providers/providerInvoices/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

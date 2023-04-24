@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Комментарии клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Комментарии клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">Комментарии клиента</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    {{ include('app/orders/userComments/_formCreate.html.twig', {'buttonName': 'Добавить'}) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}{% endblock %}
+
+        {% block table_body %}
+            {% if comments is empty %}
+                <tbody>
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+                </tbody>
+            {% endif %}
+            {% for year, year_comments in comments %}
+                <tbody class="js-table-sections-header{{ year == "now"|date('Y') ? ' show' : '' }}">
+                <tr class="table-primary">
+                    <th colspan="50" class="w-100" style="min-width: 600px;">{{ year }} год</th>
+                </tr>
+                </tbody>
+                <tbody>
+                {% for comment in year_comments %}
+                    <tr>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <div class="font-weight-bold">{{ comment.dateofadded|date('d.m.Y H:i') }}</div>
+                                <div>
+                                    <div class="d-inline-flex">
+                                        <div class="text-muted">{{ check_empty(comment.manager_name|default(''), 'Системное сообщение') }}</div>
+                                        <div class="btn-group">
+                                            {% if is_granted('edit', 'Order') %}
+                                                <a href="{{ path('order.user.comments.edit', {'id': comment.commentID, 'userID': comment.userID}) }}"
+                                                   title="Изменить комментарий">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if is_granted('delete', 'Order') %}
+                                                <a href="{{ path('order.user.comments.delete', {'id': comment.commentID}) }}"
+                                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить комментарий?')"
+                                                   data-toggle="modal"
+                                                   data-target="#modalConfirm"
+                                                   class="text-danger"
+                                                   title="Удалить комментарий">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-2 font-italic">{{ comment.comment|nl2br }}</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

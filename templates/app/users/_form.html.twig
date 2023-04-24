@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.optID) }}
+    {{ form_row(form.phonemob) }}
+    {{ form_row(form.town) }}
+    {{ form_row(form.firstname) }}
+    {{ form_row(form.lastname) }}
+    {{ form_row(form.middlename) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('users', {'page' : app.session.get('page/users')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

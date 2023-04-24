@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Данные заказа #{{ order.id }} от {{ order.dateofadded|date('d.m.Y H:i') }}{% endblock %}
+{% block header %}
+    Данные заказа #{{ order.id }} от {{ order.dateofadded|date('d.m.Y H:i') }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.goods', {'id': user.id}) }}">Товары</a>
+    </li>
+    <li class="breadcrumb-item">{{ order.id }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/orders/order/view/delivery/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/orders/order/view/pay/index.html.twig') }}
+        </div>
+    </div>
+
+    {{ include('app/orders/order/view/goods/index.html.twig') }}
+
+
+{% endblock %}

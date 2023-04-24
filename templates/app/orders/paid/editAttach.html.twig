@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прикрепить платежку {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.paids', {'id': user.id}) }}">Платежи</a></li>
+    <li class="breadcrumb-item">Платежка</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/orders/paid/_formAttach.html.twig') }}
+{% endblock %}

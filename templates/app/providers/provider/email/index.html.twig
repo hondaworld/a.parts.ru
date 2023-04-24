@@ -1,0 +1,36 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Данные для обработки приходов</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('providers.email', {'id': provider.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Первый номер заказа: </strong> {{ provider.incomeOrderNumber }}</p>
+    <p><strong>Тема письма: </strong> {{ check_empty(provider.incomeOrderSubject) }}</p>
+    <p><strong>Текст письма: </strong>
+    {% if (provider.incomeOrderText is empty) %}
+        <span class="text-muted font-italic">не задан</span>
+    {% else %}
+        <div class="border rounded p-2">
+            {{ provider.incomeOrderText|raw }}
+        </div>
+    {% endif %}
+    </p>
+    <p><strong>Тема письма СПБ: </strong> {{ check_empty(provider.incomeOrderSubject5) }}</p>
+    <p><strong>Текст письма СПБ: </strong>
+    {% if (provider.incomeOrderText5 is empty) %}
+        <span class="text-muted font-italic">не задан</span>
+    {% else %}
+        <div class="border rounded p-2">
+            {{ provider.incomeOrderText5|raw }}
+        </div>
+    {% endif %}
+    </p>
+    <p><strong>E-mail: </strong> {{ check_empty(provider.incomeOrderEmail) }}</p>
+    <p><strong>Обрабатывать: </strong> {{ boolean_status(provider.isIncomeOrder) }} (если нет, то по кнопке "Обработать" ничего не произойдет)</p>
+{% endblock %}

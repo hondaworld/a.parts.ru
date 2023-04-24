@@ -1,0 +1,56 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение Коэффициентов колонок прайсов'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <table class="table table-striped">
+        <tr>
+            <th>Прайс</th>
+            {% for optID, opt in opts %}
+                <th>
+                    {{ opt }}
+                </th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>
+                <div class="d-flex">
+                    <div class="col">
+                        {{ form_widget(form.children['profit_0']) }}
+                    </div>
+                    <button type="button" class="col-auto btn btn-sm btn-alt-primary"
+                            onclick="fillProviderPrice()"><i
+                                class="fas fa-chevron-right"></i></button>
+                </div>
+                {{ priceList.name }}
+            </th>
+            {% for optID, opt in opts %}
+                <td>{{ form_widget(form.children['profit_' ~ optID]) }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('price.list.price.lists.show', {'id': priceList.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+
+    <script>
+        function fillProviderPrice() {
+            var form = document.forms['form'];
+            form.elements.forEach(function (el) {
+                if (el.id && el.id.match('form_profit_(\\d+)')) {
+                    var matches = el.id.match('form_profit_(\\d+)');
+                    if (+matches[1] !== 0) {
+                        document.getElementById('form_profit_' + +matches[1]).value = document.getElementById('form_profit_0').value;
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

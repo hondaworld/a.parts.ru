@@ -1,0 +1,9 @@
+{% if 'location' not in hideCols %}
+    <td>
+        {% if locations[income.zapCardID]|default(null) %}
+            {% for zapSkladID, location in locations[income.zapCardID] %}
+                <div>{{ location.sklad_name }}: {{ location.location }}</div>
+            {% endfor %}
+        {% endif %}
+    </td>
+{% endif %}

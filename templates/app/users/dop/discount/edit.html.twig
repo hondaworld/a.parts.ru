@@ -1,0 +1,19 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Принадлежность'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.schetDays) }}
+    {{ form_row(form.discountParts) }}
+    {{ form_row(form.discountService) }}
+    {{ form_row(form.is_not_update_discount) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('users.dop', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

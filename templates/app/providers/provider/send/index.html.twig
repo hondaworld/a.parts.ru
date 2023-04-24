@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Автоматическая рассылка заказов приходов</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('providers.send', {'id': provider.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Автоматически рассылать заказы: </strong> {{ boolean_status(provider.isIncomeOrderAutoSend) }}</p>
+    <p><strong>Дни недели: </strong> {{ check_empty(provider.incomeOrderWeekDaysValues|join(', ')) }}</p>
+    <p><strong>Время: </strong> {{ provider.incomeOrderTime }}</p>
+{% endblock %}

@@ -1,0 +1,198 @@
+//
+// Custom Main
+//
+// Add your own styles or override existing ones
+//
+// This file is included last, so you have access
+// to all Bootstrap and OneUI functions/mixins/styles etc
+// --------------------------------------------------
+
+// If you have many custom styles, you can create and import additional files
+// For example you can create _component1.scss and include it as follows:
+// @import 'component1';
+
+.date-group {
+  width: auto;
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.ui-autocomplete {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.col-form-label {
+  font-weight: 600;
+}
+
+#main-container {
+  margin-bottom: 1rem;
+}
+
+.block-options {
+  padding-left: 0;
+}
+
+td.sortable {
+  cursor: move;
+}
+
+.cols-sortable {
+  label {
+    span {
+      cursor: move;
+    }
+  }
+}
+
+.dataTables_wrapper {
+  .btn-group {
+    a {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+
+}
+
+.dataTables_length {
+  .nav {
+    .nav-item {
+      .nav-link {
+        padding: 0.5rem;
+        i {
+          font-size: $font-size-base * 1.2;
+        }
+      }
+    }
+  }
+}
+
+.dataTables_filter {
+  .nav {
+    .nav-item {
+      .form-group {
+        margin: 0 0 0 0.5rem;
+
+
+        input {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+.js-table-checkable tbody tr,
+.js-table-sections-header > tr {
+  cursor: default;
+}
+
+#prices_log, #prices_log_all, #prices_log_files_bad, #prices_log_files_archive {
+
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: auto;
+  width: auto;
+
+  thead {
+    tr {
+      th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+    }
+  }
+}
+
+.abc_block {
+  display: flex;
+  margin-bottom: 4px;
+
+  .title {
+    width: 80px;
+    font-weight: bold;
+  }
+
+  ul {
+    overflow: auto;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      float: left;
+      margin-right: 2px;
+      padding: 5px;
+      border: 1px solid $border-color;
+      color: $gray-600;
+      cursor: pointer;
+
+      &:hover {
+        color: darken($gray-600, 15%);
+      }
+
+      &.active {
+        background: $red;
+        color: white;
+      }
+    }
+  }
+}
+
+.html-text-block {
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: $border-radius;
+  border: $border-width solid $border-color;
+  padding: 0.5rem;
+}
+
+.brand_group {
+  cursor: pointer;
+}
+
+.filter-header {
+  width: 300px;
+
+  >div {
+    padding: 0.5rem;
+  }
+
+  input {
+    margin-left: 0 !important;
+  }
+}
+
+.text-danger-lighter {
+  color: lighten($danger, 15%);
+}
+
+.modalSpinner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.7;
+  background: white;
+  z-index: 999999;
+
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.nav-main-link {
+  font-size: $font-size-base;
+}

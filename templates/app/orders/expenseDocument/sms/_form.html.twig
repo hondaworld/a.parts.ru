@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.sms_code) }}
+
+    <button type="submit" class="btn btn-primary">Проверить</button>
+    <a class="ml-3 btn btn-info" href="{{ path('order.expenseDocument.sendSms', {'id': user.id}) }}">Выслать SMS код повторно</a>
+    <a class="ml-3 btn btn-secondary" href="{{ path('order.expenseDocument', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Склады{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Склады</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Марка</th>
+            {% for skladID, skladName in sklads %}
+                <th>{{ skladName }} из приходов</th>
+                <th>{{ skladName }} из закупки</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for createrID, createrName in creaters %}
+                {% if profits[createrID]|default(null) %}
+                    <tr>
+                        <td>{{ createrName }}</td>
+                        {% for skladID, skladName in sklads %}
+                            <td class="text-right">
+                                {% if profits[createrID][skladID]['template']|default(null) %}
+                                    <a href="#"
+                                       onclick="showProviderPriceTemplate({{ createrID }}, {{ skladID }}, '{{ createrName }}', '{{ skladName }}')"
+                                       data-toggle="modal"
+                                       data-target="#modalProviderPrices">
+                                        {{ profits[createrID][skladID]|default(null) ?  profits[createrID][skladID]['sum_income']|number_format(2, ',', ' ') : 0 }}
+                                    </a>
+                                {% else %}
+                                    {{ profits[createrID][skladID]|default(null) ?  profits[createrID][skladID]['sum_income']|number_format(2, ',', ' ') : 0 }}
+                                {% endif %}
+                            </td>
+                            <td class="text-right">{{ profits[createrID][skladID]|default(null) ?  profits[createrID][skladID]['sum_card']|number_format(2, ',', ' ') : 0 }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        {% block table_footer %}
+            <tr>
+                <th>Итого:</th>
+                {% for skladID, skladName in sklads %}
+                    <td class="text-right">{{ sum[skladID]|default(null) ?  sum[skladID]['sum_income']|number_format(2, ',', ' ') : 0 }}</td>
+                    <td class="text-right">{{ sum[skladID]|default(null) ?  sum[skladID]['sum_card']|number_format(2, ',', ' ') : 0 }}</td>
+                {% endfor %}
+            </tr>
+        {% endblock %}
+    {% endembed %}
+
+
+    {% for createrID, creaters in profits %}
+        {% for zapSkladID, zapSklads in creaters %}
+            {% if zapSklads['template']|default(null) %}
+                <div id="providerPriceTemplate{{ createrID }}_{{ zapSkladID }}" class="d-none">
+                    {{ zapSklads['template']|raw }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    <div class="modal fade" id="modalProviderPrices" tabindex="-1" role="dialog"
+         aria-labelledby="modalProviderPricesLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProviderPricesLabel">Поставщики</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalProviderPricesText" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showProviderPriceTemplate(createrID, zapSkladID, createrName, skladName) {
+            document.getElementById('modalProviderPricesLabel').innerHTML = 'Поставщики ' + createrName + ' на ' + skladName;
+            document.getElementById('modalProviderPricesText').innerHTML = document.getElementById('providerPriceTemplate' + createrID + '_' + zapSkladID).innerHTML;
+        }
+
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.sklads.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.sklads.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+{% endblock %}

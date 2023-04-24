@@ -1,0 +1,16 @@
+<div class="bg-white p-3 push">
+    <div class="d-lg-none">
+
+        <button type="button"
+                class="btn btn-block btn-light d-flex justify-content-between align-items-center"
+                data-toggle="class-toggle" data-target="#horizontal-navigation-hover-normal" data-class="d-none">
+            Меню менеджера
+            <i class="fa fa-bars"></i>
+        </button>
+    </div>
+
+    <div id="horizontal-navigation-hover-normal" class="d-lg-block mt-2 mt-lg-0 d-none">
+        {% set menu = knp_menu_get('manager', [], {'managerID': manager.id} ) %}
+        {{ knp_menu_render(menu, {'currentClass': 'active'}) }}
+    </div>
+</div>

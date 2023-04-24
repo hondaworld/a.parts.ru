@@ -1,0 +1,45 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Плательщик</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.cashier', {'id': user.id}) }}"
+               title="Изменить клиента"><i class="fas fa-user"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.cashierFirmContr', {'id': user.id}) }}"
+               title="Изменить контрагента"><i class="far fa-building"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.cashierSchetFak', {'id': user.id}) }}"
+               title="Изменить настройки с/ф"><i class="fas fa-file-invoice-dollar"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Клиент: </strong>
+        {% if (user.cashUser|default(false)) %}
+            {{ user.cashUser.nameWithPhoneMobile }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+    {% if (user.cashUser|default(false)) %}
+        <p><strong>Адрес: </strong>
+        {% if (user.cashUserContact|default(false)) %}
+            {{ user.cashUserContact.fullAddress }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+        <p><strong>Реквизит: </strong>
+        {% if (user.cashUserBeznal|default(false)) %}
+            {{ user.cashUserBeznal.fullRequisite }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    {% endif %}
+    <p><strong>Контрагент: </strong>
+        {% if (user.cashFirmContr|default(false)) %}
+            {{ user.cashFirmContr.ur.organization }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+    <p><strong>В с/ф в ИНН/КПП показывать данные грузополучателя: </strong> {{ boolean_status(user.isGruzInnKpp) }}</p>
+{% endblock %}

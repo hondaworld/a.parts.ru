@@ -1,0 +1,59 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('order.goods.documentReturn.create', {'returning': returning}) }) }}
+
+<p>В поле "Количество" укажите количество возвращаемых товаров. Может быть возвращена только отгруженная деталь. Если количество будет превышать максимально отгруженное, то оно уменьшится до максимального.</p>
+<p>Если возврат осуществляется нескольких товаров, то они должны быть от одной расходной накладной.</p>
+
+<div class="row">
+    <div class="col-6">{{ form_row(form.document_prefix) }}</div>
+    <div class="col-6">{{ form_row(form.document_sufix) }}</div>
+</div>
+
+{{ form_row(form.returning_reason) }}
+
+{{ form_row(form.zapSkladD) }}
+
+{% if orderGoods %}
+    <div style="height: 300px; overflow-y: auto">
+        <table class="table table-sm table-bordered table-striped">
+            <thead>
+            <tr class="table-primary">
+                <th>Деталь</th>
+                <th>Регион</th>
+                <th>Цена</th>
+                <th>Кол.</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for orderGood in orderGoods %}
+                <tr>
+                    <td>{{ orderGood.number.value }}<br>{{ orderGood.creater.name }}</td>
+                    <td>
+                        {% if orderGood.zapSklad %}
+                            {{ orderGood.zapSklad.nameShort }}
+                        {% else %}
+                            {{ orderGood.providerPrice.description }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ orderGood.discountPrice|number_format(2, ',', ' ') }}</td>
+                    <td>
+                        <div class="d-flex align-content-center">
+                            <div class="mr-2">{{ orderGood.quantity - orderGood.quantityReturn }}</div>
+                            <div class="ml-auto"
+                                 style="width: 50px;">{{ form_widget(form.children['goods_' ~ orderGood.id]) }}</div>
+                        </div>
+                    </td>
+                    {# <td class="text-center"><a class="btn btn-primary" href="{{ path('orderGood.providerPrice.update', {'id': orderGood.id, 'providerPriceID': price.providerPriceID}) }}">&gt;&gt;</a></td> #}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

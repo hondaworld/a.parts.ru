@@ -1,0 +1,113 @@
+{% if is_granted('create', 'Income') %}
+    <li class="nav-item">
+        <a href="{{ path('income.create') }}" class="nav-link">
+            <i class="fas fa-plus" title="Добавить приход"></i>
+        </a>
+    </li>
+{% endif %}
+<li class="nav-item">
+    <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+</li>
+{% if is_granted('delete', 'Income') %}
+    <li class="nav-item">
+        <a href="{{ path('income.deleteSelected') }}" class="nav-link text-danger" data-toggle="modal"
+           data-target="#modalConfirm" title="Удалить выделенные"
+           onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить выделенные приходы?')">
+            <i class="far fa-trash-alt"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_status', 'Income') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('income.change.status') }}"
+           data-check-selected-item="true"
+           data-title="Изменение статуса выделенных приходов" class="nav-link ajax-modal-html">
+            <i class="fas fa-cog" title="Изменить статус"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_zapSklad', 'Income') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('income.change.zapSklad') }}"
+           data-check-selected-item="true"
+           data-title="Изменение склада выделенных приходов" class="nav-link ajax-modal-html">
+            <i class="fas fa-warehouse text-warning" title="Изменить склад"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_check_price', 'Income') %}
+    <li class="nav-item">
+        <a href="{{ path('income.checkPrice') }}" data-toggle="modal" data-target="#modalConfirm"
+           onclick='confirmModal(this, "Вы уверены, что хотите проверить цены? Все цены приходов со статусом \"Заказать\" будут пересчитаны.")'
+           data-title="Проверить цены у деталей в статусе Заказать" class="nav-link">
+            <i class="fas fa-dollar-sign text-info" title="Пересчитать цены"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('edit', 'Income') %}
+    <li class="nav-item">
+        <a href="{{ path('income.priceSelected') }}" class="nav-link text-info" data-toggle="modal"
+           data-target="#modalConfirm" title="Пересчитать рублевые цены"
+           onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите пересчитать рублевые цены у выделенных приходов?')">
+            <i class="fas fa-ruble-sign"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_unpack', 'Income') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm" data-url="{{ path('income.unpack') }}"
+           data-title="Разложить детали" class="nav-link ajax-modal-html">
+            <i class="fas fa-box-open text-success" title="Разложить детали"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_insert_document', 'Income') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('income.change.document') }}"
+           data-title="Оприходование"
+           class="nav-link ajax-modal-html">
+            <i class="fas fa-clipboard-check text-success" title="Оприходовать"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_return_document', 'Income') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('income.change.documentReturn', {'returning': arReturning}) }}"
+           data-title="Возврат"
+           class="nav-link ajax-modal-html">
+            <i class="fas fa-file-upload text-danger" title="Возвратить"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_writeoff_document', 'Income') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('income.change.documentWriteOff', {'returning': arReturning}) }}"
+           data-title="Списание"
+           class="nav-link ajax-modal-html">
+            <i class="fas fa-trash text-danger" title="Списать"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('income_labels', 'Income') %}
+    <li class="nav-item">
+        <a href="{{ path('income.labels', {'form': app.request.query.get('form')}) }}"
+           class="nav-link">
+            <i class="fas fa-tags" title="Наклейки"></i>
+        </a>
+    </li>
+{% endif %}
+{% if is_granted('create', 'IncomeOrder') %}
+    <li class="nav-item">
+        <a href="" data-toggle="modal" data-target="#modalForm"
+           data-url="{{ path('income.orders.createForm') }}"
+           data-check-selected-item="true"
+           data-title="Обработка приходов" class="nav-link ajax-modal-html">
+            <i class="fas fa-shopping-cart" title="Обработать приходы"></i>
+        </a>
+    </li>
+{% endif %}

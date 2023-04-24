@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Заказы приходов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('income', {'page' : app.session.get('page/income')|default(1)}) }}">Приходы</a>
+    </li>
+    <li class="breadcrumb-item">Заказы приходов</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('income.orders', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, '#', 'document_num') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Поставщик', 'provider') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Склад', 'sklad') }}</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.document_num) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.providerID) }}</th>
+            <th>{{ form_widget(filter.zapSkladID) }}</th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for incomeOrder in pagination %}
+                <tr class="{{ incomeOrder.isOrdered == 1 ? 'text-muted' : (incomeOrder.isOrdered == 2 ? 'text-danger' : '') }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': incomeOrder.incomeOrderID} only %}
+                    {% endif %}
+                    <td>{{ incomeOrder.document_num }}</td>
+                    <td>{{ incomeOrder.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ incomeOrder.provider }}</td>
+                    <td>{{ incomeOrder.sklad }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('income.orders.incomes', {'id': incomeOrder.incomeOrderID}) }}"
+                               title="Приходы">
+                                <i class="nav-main-link-icon fas fa-dolly"></i>
+                            </a>
+                            <a href="{{ path('income.orders.excel', {'id': incomeOrder.incomeOrderID}) }}"
+                               title="Заказ в Excel">
+                                <i class="far fa-file-excel"></i>
+                            </a>
+                            <a href="{{ path('income.orders.mail', {'id': incomeOrder.incomeOrderID}) }}"
+                               onclick="confirmModalAndRedirectToUrl(this, 'Вы уверены, что хотите отправить заказ и поменять статус на Заказано?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               title="Отправить заказ">
+                                <i class="far fa-envelope"></i>
+                            </a>
+                            {% if is_granted('delete', 'IncomeOrder') %}
+                                <a href="{{ path('income.orders.delete', {'id': incomeOrder.incomeOrderID}) }}"
+                                   onclick="deleteItemWithCheckbox(this, 'Вы уверены, что хотите удалить заказ?<br><br><div class=\'custom-control custom-checkbox custom-control-inline\'><input type=checkbox id=isDeleteIncome class=\'custom-control-input\' checked><label class=\'custom-control-label\' for=\'isDeleteIncome\'> удалить приходы</label></div>', 'isDeleteIncome')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить заказ">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

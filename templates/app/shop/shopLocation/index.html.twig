@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Складские ячейки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ShopLocation') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.locations.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                      title="Добавить складскую ячейку"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('shop.locations', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-1">{{ form_widget(filter.number) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.isEmpty) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.showHidden) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Кратко', 'name_short') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            {% for skladID, sklad in sklads %}
+                <th>{{ sklad }}</th>
+            {% endfor %}
+            {% if is_granted('edit', 'ShopLocation') or is_granted('delete', 'ShopLocation') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.name_short) }}</th>
+            <th>{{ form_widget(filter.name) }}</th>
+            {% for skladID, sklad in sklads %}
+                <th></th>
+            {% endfor %}
+            {% if is_granted('edit', 'ShopLocation') or is_granted('delete', 'ShopLocation') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for location in pagination %}
+                <tr class="{{ location.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': location.locationID} only %}
+                    {% endif %}
+                    <td>{{ location.name_short }}</td>
+                    <td>{{ location.name }}</td>
+                    {% for skladID, sklad in sklads %}
+                        <td>
+                            {% if location.numbers[skladID]|default(null) %}
+                                {% for number in location.numbers[skladID] %}
+                                    {% if is_granted('edit', 'ShopLocation') %}
+                                        <a class="pr-1" href="{{ path('card.parts.show', {'id': number.zapCardID}) }}">{{ number.number }}</a>
+                                    {% else %}
+                                        <span class="pr-1">{{ number.number }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    {% if is_granted('edit', 'ShopLocation') or is_granted('delete', 'ShopLocation') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'ShopLocation') %}
+                                    <a href="{{ path('shop.locations.edit', {'id': location.locationID}) }}"
+                                       title="Изменить складскую ячейку">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'ShopLocation') %}
+                                    <a href="{{ path('shop.locations.delete', {'id': location.locationID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить складскую ячейку?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить складскую ячейку">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

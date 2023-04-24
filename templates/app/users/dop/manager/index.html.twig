@@ -1,0 +1,19 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Принадлежность</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.manager', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Менеджер: </strong>
+        {% if (user.owner) %}
+            {{ user.owner.name }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+{% endblock %}

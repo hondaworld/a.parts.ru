@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Применимость {{ zapCard.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item">Применимость {{ zapCard.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/parts/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('edit', 'ZapCard') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.parts.auto.create', {'id': zapCard.id}) }}" class="nav-link"><i
+                                class="fas fa-plus" title="Добавить применимость"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('card.parts.auto.deleteSelected', {'zapCardID': zapCard.id}) }}" class="nav-link text-danger"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Удалить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить выделенные применимости?')">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Автомобиль/мотоцикл</th>
+            <th>Год</th>
+            {% if is_granted('edit', 'ZapCard') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for auto in all %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': auto.zapCard_autoID} only %}
+                    {% endif %}
+                    <td>{{ auto.moto_model ? auto.moto_model : auto.auto_model }}</td>
+                    <td>{{ auto.year }}</td>
+                    {% if is_granted('edit', 'ZapCard') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('card.parts.auto.delete', {'zapCardID': zapCard.id, 'id': auto.zapCard_autoID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить применимость?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить применимость">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

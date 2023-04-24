@@ -1,0 +1,17 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.bik) }}
+    {{ form_row(form.korschet) }}
+    {{ form_row(form.address) }}
+    {{ form_row(form.description) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary"
+       href="{{ path('finance.banks', {'page' : app.session.get('page/bank')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

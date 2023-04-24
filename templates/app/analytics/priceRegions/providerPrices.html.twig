@@ -1,0 +1,36 @@
+{% if prices is not empty %}
+    <p>Жирным выделен текущий регион. Если жирным не выделено ничего, значит текущий регион не входит в состав возможных регионов.</p>
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr class="table-primary">
+            <th>Бренд</th>
+            <th>Поставщик</th>
+            <th>Цена, руб.</th>
+            <th>% поставки</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for price in prices %}
+            <tr class="{{ price.providerPriceID == zapCard.currencyProviderPrice.id ? 'font-weight-bold' : '' }}">
+                <td>{{ price.createrName }}</td>
+                <td>{{ price.providerPriceName }}</td>
+                <td class="text-right">{{ price.priceWithDostRub|number_format(2, ',', ' ') }}</td>
+                <td class="text-center">{{ price.percentIncome }}</td>
+                <td class="text-center">
+                    <button class="btn btn-primary"
+                            data-dismiss="modal" onclick="tableColInputSubmit(this)"
+                            data-url-submit="{{ path('analytics.priceRegions.providerPrice.update', {'id': zapCard.id, 'providerPriceID': price.providerPriceID}) }}">
+                        &gt;&gt;
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+
+
+
+

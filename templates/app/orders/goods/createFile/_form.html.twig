@@ -1,0 +1,24 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.file) }}
+    <div class="row">
+        <div class="col-xl-6">{{ form_row(form.first_line) }}</div>
+        <div class="col-xl-6">{{ form_row(form.number_num) }}</div>
+
+        <div class="col-xl-6">{{ form_row(form.creater_num) }}</div>
+        <div class="col-xl-6">{{ form_row(form.createrID) }}</div>
+
+        <div class="col-xl-6">{{ form_row(form.quantity_num) }}</div>
+        <div class="col-xl-6">{{ form_row(form.price_num) }}</div>
+    </div>
+    {{ form_row(form.zapSkladID) }}
+    {{ form_row(form.providerPriceID) }}
+
+    <button type="submit" class="btn btn-primary">Загрузить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('order.goods', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

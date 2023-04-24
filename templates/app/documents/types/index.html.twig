@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Типы документов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Типы документов</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'DocumentType') %}
+                <li class="nav-item">
+                    <a href="{{ path('documents.types.create') }}" class="nav-link"
+                       title="Добавить тип документа"><i class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'DocumentType') %}
+                <li class="nav-item">
+                    <a href="{{ path('documents.types.hide') }}" class="nav-link"
+                       data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные типы документов?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'DocumentType') %}
+                <li class="nav-item">
+                    <a href="{{ path('documents.types.unHide') }}" class="nav-link"
+                       data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные типы документов?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Кратко</th>
+            <th>Наименование</th>
+            {% if is_granted('edit', 'DocumentType') or is_granted('delete', 'DocumentType') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if types is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for type in types %}
+                <tr class="{{ type.isHide ? ' text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': type.doc_typeID} only %}
+                    {% endif %}
+                    <td>{{ type.name_short }}</td>
+                    <td>{{ type.name }}</td>
+                    {% if is_granted('edit', 'DocumentType') or is_granted('delete', 'DocumentType') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'DocumentType') %}
+                                    <a href="{{ path('documents.types.edit', {'id': type.doc_typeID}) }}"
+                                       title="Изменить тип документов">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'DocumentType') %}
+                                    <a href="{{ path('documents.types.delete', {'id': type.doc_typeID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить тип документов?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить тип документов">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Оплата</h3>
+        <div class="block-options">
+            {% if is_granted('edit', 'Schet') and schet.isPayUrlNeed %}
+                <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('schets.payUrl', {'id': schet.id}) }}"
+                   title="Изменить ссылку на оплату"><i class="fas fa-link"></i></a>
+
+                <a type="button" class="btn btn-sm btn-alt-primary confirmModal"
+                   data-toggle="modal" data-target="#modalConfirm"
+                   href="{{ path('schets.generatePayUrl', {'id': schet.id}) }}"
+                   onclick="confirmModal(this, 'Вы уверены, что хотите сгенерить ссылку на оплату?')"
+                   title="Сгенерировать ссылку на оплату"><i class="fas fa-link"></i></a>
+
+                {% if is_granted('schet_sms_send', 'Schet') and schet.payUrl is not empty %}
+                    <a type="button" class="btn btn-sm btn-alt-primary confirmModal"
+                       data-toggle="modal" data-target="#modalConfirm"
+                       href="{{ path('schets.smsPayUrl', {'id': schet.id}) }}"
+                       onclick="confirmModal(this, 'Вы уверены, что хотите отправить SMS со ссылкой на оплату?')"
+                       title="Отправить ссылку на оплату по SMS"><i class="fas fa-sms"></i></a>
+                {% endif %}
+            {% endif %}
+            {% if is_granted('schet_email_send', 'Schet') %}
+                <a type="button" class="btn btn-sm btn-alt-primary confirmModal"
+                   data-toggle="modal" data-target="#modalConfirm"
+                   href="{{ path('schets.mail', {'id': schet.id}) }}"
+                   onclick="confirmModal(this, 'Вы уверены, что хотите отправить E-mail со ссылкой на счет?')"
+                   title="Отправить ссылку на счет по E-mail"><i class="far fa-envelope"></i></a>
+                {% if not schet.isPayUrlNeed %}
+                    <a type="button" class="btn btn-sm btn-alt-primary confirmModal"
+                       data-toggle="modal" data-target="#modalConfirm"
+                       href="{{ path('schets.mailPdf', {'id': schet.id}) }}"
+                       onclick="confirmModal(this, 'Вы уверены, что хотите отправить E-mail со счетом в PDF?')"
+                       title="Отправить E-mail со счетом в PDF"><i class="far fa-file-pdf"></i></a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Тип оплаты: </strong>
+        {{ schet.financeType.name }}
+    </p>
+    <p><strong>Статус: </strong>
+        <span class="{{ schet.getClassByStatus(schet.status) ? 'text-' ~ schet.getClassByStatus(schet.status) : '' }}">{{ statuses[schet.status] }}</span>
+        {% if schet.cancelReason is not empty %}
+            <br><strong>Причина отказа: </strong><span>{{ schet.cancelReason }}</span>
+        {% endif %}
+    </p>
+
+    <p><strong>Сумма счета: </strong>
+        {{ schet.summ|number_format(2, ',', ' ') }} руб.
+    </p>
+    <p><strong>Дата оплаты счета: </strong>
+        {% if schet.dateofpaid %}
+            {{ schet.dateofpaid|date('d.m.Y') }}
+        {% else %}
+            {{ check_empty('', 'счет не оплачен') }}
+        {% endif %}
+    </p>
+    <p><strong>Сумма товаров: </strong>
+        {{ schet.sumSchetGoods|number_format(2, ',', ' ') }} руб.
+    </p>
+    {% if schet.isPayUrlNeed %}
+        <p><strong>Ссылка на оплату: </strong>
+            <a href="{{ schet.payUrl }}">{{ schet.payUrl }}</a>
+        </p>
+    {% endif %}
+    {% if schet.isPayAllow and is_granted('schet_pay', 'Schet') %}
+        <a href="{{ path('schets.pay', {'id': schet.id}) }}" class="btn btn-success mb-2">Оплатить</a>
+    {% endif %}
+    {% if schet.isPayAllow and is_granted('schet_cancel', 'Schet') %}
+        <a href="{{ path('schets.cancel', {'id': schet.id}) }}" class="btn btn-danger mb-2">Отказ</a>
+    {% endif %}
+{% endblock %}

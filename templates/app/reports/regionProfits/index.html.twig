@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прибыль по регионам{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Прибыль по регионам</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if profits is not null %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('reports.regionProfits') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.dateofprev) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Регион</th>
+            <th>Доход</th>
+            <th>Прибыль</th>
+            <th>Чеки</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% endif %}
+
+            {% for region, regions in profits %}
+                {% for opt, opts in regions %}
+                    {% set regionName = region == 'msk' ? 'Москва' : (region == 'spb' ? 'СПБ' : (region == 'region' ? 'Регионы' : '')) %}
+                    {% set optName = opt == 'opt' ? 'опт' : (opt == 'notOpt' ? 'розница' : (opt == 'service' ? 'сервис' : resellers[opt]|default(''))) %}
+                    {# {% set skladName = isSklad == 'sklad' ? 'да' : 'нет' %} #}
+                    <tr>
+                        <td>{{ regionName }} {{ optName }}</td>
+                        <td class="text-right cursor-pointer" onclick="
+                                reloadGraph(
+                                '{{ regionName }} {{ optName }} - доход',
+                                profits_{{ region }}_{{ opt }}.income
+                        {% if prevProfits is not null %}, prev_profits_{{ region }}_{{ opt }}.income{% endif %})
+                                ">{{ profits[region][opt].income.value|number_format(2, ',', ' ') }}{{ profits[region][opt].income.percent|default(null) ? balance(profits[region][opt].income.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer" onclick="
+                                reloadGraph(
+                                '{{ regionName }} {{ optName }} - прибыль',
+                                profits_{{ region }}_{{ opt }}.profit
+                        {% if prevProfits is not null %}, prev_profits_{{ region }}_{{ opt }}.profit{% endif %})
+                                ">{{ profits[region][opt].profit.value|number_format(2, ',', ' ') }}{{ profits[region][opt].profit.percent|default(null) ? balance(profits[region][opt].profit.percent, '%') : '' }}</td>
+                        <td class="text-right cursor-pointer" onclick="
+                                reloadGraph(
+                                '{{ regionName }} {{ optName }} - чеки',
+                                profits_{{ region }}_{{ opt }}.checks
+                        {% if prevProfits is not null %}, prev_profits_{{ region }}_{{ opt }}.checks{% endif %})
+                                ">{{ profits[region][opt].checks.value }}{{ profits[region][opt].checks.percent|default(null) ? balance(profits[region][opt].checks.percent, '%') : '' }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <div class="block block-rounded">
+        <div class="block-content block-content-full text-center">
+            <div class="py-3" id="myChartCont" style="max-width: 1200px;">
+                <canvas id="myChart" class="js-chartjs-bars"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    {{ include('app/reports/regionProfits/_javascript_consts.html.twig') }}
+    {% if prevProfits is not null %}
+        {{ include('app/reports/regionProfits/_javascript_prev_consts.html.twig') }}
+    {% endif %}
+
+    <script>
+        function reloadGraph(label, data, prevData = null) {
+            event.preventDefault();
+            const datasets = [];
+            datasets.push({
+                label,
+                data,
+                backgroundColor,
+                borderColor,
+                borderWidth: 1
+            });
+            {% if prevProfits is not null %}
+            if (prevData) {
+                datasets.push({
+                    label: 'Предыдущий период',
+                    data: prevData,
+                    backgroundColor: prev_backgroundColor,
+                    borderColor: prev_borderColor,
+                    borderWidth: 1
+                });
+            }
+            {% endif %}
+            One.reloadGraph(datasets);
+        }
+
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.regionProfits.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.regionProfits.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+
+
+        {% if profits %}
+        const backgroundColor = ['rgba(54, 162, 235, 0.2)'];
+        const borderColor = ['rgba(54, 162, 235, 1)'];
+        const prev_backgroundColor = ['rgba(255, 99, 132, 0.2)'];
+        const prev_borderColor = ['rgba(255, 99, 132, 1)'];
+        const months = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
+        const chartType = 'bar';
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Москва розница - прибыль',
+                data: profits_msk_notOpt.profit,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        };
+        {% if prevProfits is not null %}
+        chartData.datasets.push({
+            label: 'Предыдущий период',
+            data: prev_profits_msk_notOpt.profit,
+            backgroundColor: prev_backgroundColor,
+            borderColor: prev_borderColor,
+            borderWidth: 1
+        });
+        {% endif %}
+        const chartOptions = {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            },
+        };
+        {% endif %}
+
+    </script>
+
+{% endblock %}

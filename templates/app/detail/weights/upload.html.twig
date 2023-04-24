@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Загрузка весов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">
+        <a href="{{ path('weights', {'page' : app.session.get('page/weight')|default(1)}) }}">Веса</a>
+    </li>
+    <li class="breadcrumb-item">Загрузка</li>
+{% endblock %}
+
+{% block body %}
+
+    {% if (edit == 'upload1') %}
+        {{ include('app/detail/weights/upload1/_form.html.twig') }}
+    {% elseif (edit == 'upload2') %}
+        {{ include('app/detail/weights/upload2/_form.html.twig') }}
+    {% endif %}
+
+    {{ include('app/detail/weights/_upload.html.twig') }}
+
+{% endblock %}

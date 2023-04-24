@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Документы сотрудника {{ manager.name }}{% endblock %}
+{% block header %}Документы сотрудника {{ manager.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers') }}">Сотрудники</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('managers.edit', {'id': manager.id}) }}">{{ manager.name }}</a></li>
+    <li class="breadcrumb-item">Документы</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/managers/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('documents_change', manager) %}
+                <li class="nav-item">
+                    <a href="{{ path('managers.documents.create', {'managerID': manager.id}) }}"
+                       title="Добавить документ менеджера" class="nav-link"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('managers.documents.hide', {'managerID': manager.id}) }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные документы менеджера?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('managers.documents.unHide', {'managerID': manager.id}) }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные документы менеджера?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Документ</th>
+            <th>Номер</th>
+            {% if is_granted('documents_change', manager) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if documents is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for document in documents %}
+                <tr class="{{ document.isHide ? ' text-muted' : '' }}{{ document.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': document.documentID} only %}
+                    {% endif %}
+                    <td>{{ document.document_identification }}</td>
+                    <td>{{ document.number }}</td>
+                    {% if is_granted('documents_change', manager) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('managers.documents.edit', {'managerID': manager.id, 'id': document.documentID}) }}"
+                                   title="Изменить документ менеджера">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('managers.documents.delete', {'managerID': manager.id, 'id': document.documentID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить документ менеджера?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить документ менеджера">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

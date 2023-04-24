@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прайс-лист {{ priceList.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('price.list.price.lists') }}">Прайс-листы</a>
+    </li>
+    <li class="breadcrumb-item">{{ priceList.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% if (edit == 'main') %}
+        {{ include('app/sklads/priceList/main/edit.html.twig') }}
+    {% elseif (edit == 'opt') %}
+        {{ include('app/sklads/priceList/opt/edit.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/sklads/priceList/main/index.html.twig') }}
+            {% if (edit is empty) %}
+                {{ include('app/sklads/priceList/opt/index.html.twig') }}
+            {% endif %}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/sklads/priceGroups/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

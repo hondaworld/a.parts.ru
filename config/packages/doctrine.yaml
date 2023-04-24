@@ -1,0 +1,157 @@
+doctrine:
+    dbal:
+        driver: 'pdo_mysql'
+        server_version: '5.7'
+        charset: utf8mb4
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
+
+        url: '%env(resolve:DATABASE_URL)%'
+
+        types:
+            manager_email: 'App\Model\Manager\Entity\Manager\EmailType'
+            manager_phonemob: 'App\Model\Manager\Entity\Manager\PhonemobType'
+            contact_phonemob: 'App\Model\Contact\Entity\Contact\PhonemobType'
+            user_phonemob: 'App\Model\User\Entity\User\PhonemobType'
+            detail_number: 'App\Model\DetailNumberType'
+            koef: 'App\Model\KoefType'
+            auto_number: 'App\Model\Auto\Entity\Auto\AutoNumberType'
+            vin: 'App\Model\Auto\Entity\Auto\VinType'
+            gtd: 'App\Model\Shop\Entity\Gtd\GtdType'
+
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        #server_version: '5.7'
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+#        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        mappings:
+            App:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App
+            Manager:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Manager/Entity'
+                prefix: 'App\Model\Manager\Entity'
+                alias: Manager
+            Menu:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Menu/Entity'
+                prefix: 'App\Model\Menu\Entity'
+                alias: Menu
+            Finance:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Finance/Entity'
+                prefix: 'App\Model\Finance\Entity'
+                alias: Finance
+            Contact:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Contact/Entity'
+                prefix: 'App\Model\Contact\Entity'
+                alias: Contact
+            Beznal:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Beznal/Entity'
+                prefix: 'App\Model\Beznal\Entity'
+                alias: Beznal
+            Document:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Document/Entity'
+                prefix: 'App\Model\Document\Entity'
+                alias: Document
+            Firm:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Firm/Entity'
+                prefix: 'App\Model\Firm\Entity'
+                alias: Firm
+            User:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/User/Entity'
+                prefix: 'App\Model\User\Entity'
+                alias: User
+            Sklad:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Sklad/Entity'
+                prefix: 'App\Model\Sklad\Entity'
+                alias: Sklad
+            Provider:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Provider/Entity'
+                prefix: 'App\Model\Provider\Entity'
+                alias: Provider
+            Detail:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Detail/Entity'
+                prefix: 'App\Model\Detail\Entity'
+                alias: Detail
+            Shop:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Shop/Entity'
+                prefix: 'App\Model\Shop\Entity'
+                alias: Shop
+            Card:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Card/Entity'
+                prefix: 'App\Model\Card\Entity'
+                alias: Card
+            Auto:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Auto/Entity'
+                prefix: 'App\Model\Auto\Entity'
+                alias: Auto
+            Income:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Income/Entity'
+                prefix: 'App\Model\Income\Entity'
+                alias: Income
+            Expense:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Expense/Entity'
+                prefix: 'App\Model\Expense\Entity'
+                alias: Expense
+            Order:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Order/Entity'
+                prefix: 'App\Model\Order\Entity'
+                alias: Order
+            Ticket:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Ticket/Entity'
+                prefix: 'App\Model\Ticket\Entity'
+                alias: Ticket
+            Work:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Work/Entity'
+                prefix: 'App\Model\Work\Entity'
+                alias: Work
+            Reseller:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Model/Reseller/Entity'
+                prefix: 'App\Model\Reseller\Entity'
+                alias: Reseller

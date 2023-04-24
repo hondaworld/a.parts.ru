@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение места в сборку клиенту {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.pick.scan', {'id': user.id}) }}">Сборка</a></li>
+    <li class="breadcrumb-item">Место №{{ shippingPlace.number }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/orders/order/pick/shippingPlaces/_form.html.twig') }}
+{% endblock %}

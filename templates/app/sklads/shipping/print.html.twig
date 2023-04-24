@@ -1,0 +1,64 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Текущая отгрузка со склада {{ zapSklad.nameShort }}{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header %}{% endblock %}
+
+        {% block table_header %}
+            <th>Сборщик</th>
+            <th>Собрано</th>
+            <th>Производитель</th>
+            <th>Наименование</th>
+            <th>Номер</th>
+            <th>Куда</th>
+            <th>Откуда взять</th>
+            <th>Заказ</th>
+            <th>Вес</th>
+            <th>Кол</th>
+            <th>Приход</th>
+            <th>В приходе</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for expenseSklad in pagination %}
+                <tr class="{{ expenseSklad.status == 3 ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': expenseSklad.zapCardID ~ '_' ~ expenseSklad.zapSkladID_to} only %}
+                    {% endif %}
+                    <td>{{ expenseSklad.manager|default('')|nl2br }}</td>
+                    <td class="text-center">{% if expenseSklad.quantity == expenseSklad.quantityPicking %}<i
+                                class="fas fa-check text-success"></i>{% endif %}</td>
+                    <td>{{ expenseSklad.creater_name }}</td>
+                    <td>{{ zapCards[expenseSklad.zapCardID]|default(null) ? zapCards[expenseSklad.zapCardID].detailName : '' }}</td>
+                    <td>{{ expenseSklad.number }}</td>
+                    <td>{{ expenseSklad.zapSklad_to }}</td>
+                    <td>{{ expenseSklad.location|nl2br }}</td>
+                    <td>{{ expenseSklad.order|default('')|nl2br }}</td>
+                    <td class="{{ expenseSklad.weight|default(null) and expenseSklad.weight.weightIsReal ? ' text-success' : '' }}">{{ expenseSklad.weight|default(null) ? expenseSklad.weight.weight : '' }}</td>
+                    <td>{{ expenseSklad.quantity }}</td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.zapCardID] %}
+                            <div>{{ expense.incomeID }}</div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.zapCardID] %}
+                            <div>{{ expense.quantity }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+    {% endembed %}
+
+{% endblock %}

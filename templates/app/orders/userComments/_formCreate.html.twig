@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="row">
+        <div class="col">{{ form_widget(form.comment) }}</div>
+        <div class="col-auto"><button type="submit" class="btn btn-primary">{{ buttonName|default('Добавить') }}</button></div>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

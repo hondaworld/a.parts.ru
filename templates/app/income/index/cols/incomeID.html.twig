@@ -1,0 +1,11 @@
+{% if 'incomeID' not in hideCols %}
+    <td
+            class="ajax-modal-html"
+            onclick="modalIncomeChange(this, {{ income.incomeID }})"
+            data-toggle="modal"
+            data-target="#modalIncomeHistory"
+            data-url="{{ path('income.incomeHistory', {'id': income.incomeID}) }}"
+            style="cursor: pointer;"
+            title="История изменения прихода"
+    >{{ income.incomeID }}</td>
+{% endif %}

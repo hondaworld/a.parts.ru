@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Идентификационные документы{% endblock %}
+{% block header %}Идентификационные документы{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Идентификационные документы</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'DocumentIdentification') %}
+                <li class="nav-item">
+                    <a href="{{ path('documents.identifications.create') }}" class="nav-link"
+                       title="Добавить идентификационный документ"><i class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'DocumentIdentification') %}
+                <li class="nav-item">
+                    <a href="{{ path('documents.identifications.hide') }}" class="nav-link"
+                       data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные документы?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'DocumentIdentification') %}
+                <li class="nav-item">
+                    <a href="{{ path('documents.identifications.unHide') }}" class="nav-link"
+                       data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные документы?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            {% if is_granted('edit', 'DocumentIdentification') or is_granted('delete', 'DocumentIdentification') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if identifications is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for identification in identifications %}
+                <tr class="{{ identification.isHide ? ' text-muted' : '' }}{{ identification.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': identification.doc_identID} only %}
+                    {% endif %}
+                    <td>{{ identification.name }}</td>
+                    {% if is_granted('edit', 'DocumentIdentification') or is_granted('delete', 'DocumentIdentification') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'DocumentIdentification') %}
+                                    <a href="{{ path('documents.identifications.edit', {'id': identification.doc_identID}) }}"
+                                       title="Изменить группу менеджеров">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'DocumentIdentification') %}
+                                    <a href="{{ path('documents.identifications.delete', {'id': identification.doc_identID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу сотрудников?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить группу менеджеров">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

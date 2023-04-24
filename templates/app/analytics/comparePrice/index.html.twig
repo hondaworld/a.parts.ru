@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сравнение цен{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Сравнение цен</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+
+        {% block header %}{% endblock %}
+
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'target': '_blank'}, 'action': path('analytics.comparePrice.print')}) }}
+
+            {{ form_row(form.isExcel) }}
+            {{ form_row(form.providerPriceID) }}
+            {{ form_row(form.profit) }}
+            {{ form_row(form.file) }}
+            {{ form_row(form.days) }}
+
+            <button type="submit" class="btn btn-primary" onclick="document.getElementById('form_isExcel').value = 0;">{{ buttonName|default('Показать') }}</button>
+            <button type="button" class="ml-3 btn btn-primary" onclick="document.getElementById('form_isExcel').value = 1; this.form.submit();">Excel</button>
+
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

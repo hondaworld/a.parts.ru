@@ -1,0 +1,28 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Вес</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.weight', {'id': zapCard.id}) }}"
+               title="Изменить вес"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p>
+        <strong>Вес: </strong>
+        {% if weight is not null %}
+            {{ weight.weight|number_format(4, ',', '') }} кг
+
+            {% if weight.weightIsReal %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> Вес проверен</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> Вес не проверен</span>
+            {% endif %}
+
+        {% else %}
+            {{ check_empty('', 'не задан') }}
+        {% endif %}
+    </p>
+{% endblock %}

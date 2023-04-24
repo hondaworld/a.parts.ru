@@ -1,0 +1,75 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Поколения</h3>
+    </div>
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('auto.generation.create', {'auto_modelID': autoModel.id}) }}"
+                   class="nav-link" title="Добавить поколение"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.generation.hide', {'auto_modelID': autoModel.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные поколения?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.generation.unHide', {'auto_modelID': autoModel.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить поколения?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>По-русски</th>
+            <th>Год</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if generations is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for generation in generations %}
+                <tr class="{{ generation.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': generation.auto_generationID} only %}
+                    {% endif %}
+                    <td>{{ generation.name }}</td>
+                    <td>{{ generation.name_rus }}</td>
+                    <td>{{ generation.yearfrom }} - {{ generation.yearto is empty ? 'н.в.' : generation.yearto }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('auto.generation.show', {'auto_modelID': autoModel.id, 'id': generation.auto_generationID}) }}"
+                               title="Изменить поколение">
+                                <i class="fas fa-car-alt"></i>
+                            </a>
+                            <a href="{{ path('auto.generation.delete', {'auto_modelID': autoModel.id, 'id': generation.auto_generationID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить поколение?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить поколение">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

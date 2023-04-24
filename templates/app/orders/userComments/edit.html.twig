@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение комментария клиента {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.user.comments', {'id': user.id}) }}">Комментарии</a></li>
+    <li class="breadcrumb-item">Изменение комментария</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/orders/order/_tabs.html.twig') %}
+    {{ include('app/orders/userComments/_form.html.twig') }}
+{% endblock %}

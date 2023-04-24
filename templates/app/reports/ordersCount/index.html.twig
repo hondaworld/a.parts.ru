@@ -1,0 +1,234 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Количество заказов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Количество заказов</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if profits is not null %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('reports.ordersCount') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Дата</th>
+            {% for managerID, managerName in managers %}
+                <th>{{ managerName|slice(0, 3) }} офис</th>
+                <th>{{ managerName|slice(0, 3) }} тел</th>
+                <th>{{ managerName|slice(0, 3) }} сумма</th>
+            {% endfor %}
+            <th>Роз</th>
+            <th>Опт</th>
+            <th>Отказ</th>
+            <th>Детали отказ</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% else %}
+                {% for dateofadded, profit in profits %}
+                    <tr>
+                        <td>{{ profit.date|date('d.m.Y') }}</td>
+                        {% for managerID, managerName in managers %}
+                            <td class="text-center">
+                                {% if profit.managers[managerID]|default(null) %}
+                                    {% if profit.managers[managerID].reasons[1]|default(null) %}
+                                        <a href="#" onclick="showOrderTemplate('{{ dateofadded }}', {{ managerID }}, 1)"
+                                           data-toggle="modal"
+                                           data-target="#modalOrders">{{ profit.managers[managerID].reasons[1]|length }}</a>
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if profit.managers[managerID]|default(null) %}
+                                    {% if profit.managers[managerID].reasons[2]|default(null) %}
+                                        <a href="#" onclick="showOrderTemplate('{{ dateofadded }}', {{ managerID }}, 2)"
+                                           data-toggle="modal"
+                                           data-target="#modalOrders">{{ profit.managers[managerID].reasons[2]|length }}</a>
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </td>
+                            <td class="text-right">{{ profit.managers[managerID]|default(null) ? profit.managers[managerID].sum|number_format(2, ',', ' ') : 0 }}</td>
+                        {% endfor %}
+                        <td class="text-center">
+                            {% if profit.countNotOpt|length > 0 %}
+                                <a href="#" onclick="showCountNotOptTemplate('{{ dateofadded }}')"
+                                   data-toggle="modal"
+                                   data-target="#modalOrders">{{ profit.countNotOpt|length }}</a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if profit.countOpt|length > 0 %}
+                                <a href="#" onclick="showCountOptTemplate('{{ dateofadded }}')"
+                                   data-toggle="modal"
+                                   data-target="#modalOrders">{{ profit.countOpt|length }}</a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {{ profit.countDeleted|length }}
+                        </td>
+                        <td class="text-center">
+                            {% if profit.countDeleted|length > 0 %}
+                                {% set count = 0 %}
+                                {% for orders in profit.countDeleted %}
+                                    {% set count = count + orders|length %}
+                                {% endfor %}
+                                <a href="#" onclick="showCountDeletedTemplate('{{ dateofadded }}')"
+                                   data-toggle="modal"
+                                   data-target="#modalDeletedNumbers">{{ count }}</a>
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+
+    {% if profits is not null %}
+        {% for dateofadded, managers in templates.managers %}
+            {% for managerID, manager in managers %}
+                {% for reasonID, template in manager %}
+                    <div id="template_{{ dateofadded }}_{{ managerID }}_{{ reasonID }}" class="d-none">
+                        {{ template|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+        {% for dateofadded, template in templates.countNotOpt %}
+            <div id="template_countNotOpt_{{ dateofadded }}" class="d-none">
+                {{ template|raw }}
+            </div>
+        {% endfor %}
+
+        {% for dateofadded, template in templates.countOpt %}
+            <div id="template_countOpt_{{ dateofadded }}" class="d-none">
+                {{ template|raw }}
+            </div>
+        {% endfor %}
+
+        {% for dateofadded, template in templates.countDeleted %}
+            <div id="template_countDeleted_{{ dateofadded }}" class="d-none">
+                {{ template|raw }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="modal fade" id="modalOrders" tabindex="-1" role="dialog" aria-labelledby="modalOrdersLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalOrdersLabel">Заказы</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalOrdersText" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDeletedNumbers" tabindex="-1" role="dialog"
+         aria-labelledby="modalDeletedNumbersLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDeletedNumbersLabel">Отказные детали</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalDeletedNumbersText" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showOrderTemplate(dateofadded, managerID, reasonID) {
+            document.getElementById('modalOrdersText').innerHTML = document.getElementById('template_' + dateofadded + '_' + managerID + '_' + reasonID).innerHTML;
+        }
+
+        function showCountNotOptTemplate(dateofadded) {
+            document.getElementById('modalOrdersText').innerHTML = document.getElementById('template_countNotOpt_' + dateofadded).innerHTML;
+        }
+
+        function showCountOptTemplate(dateofadded) {
+            document.getElementById('modalOrdersText').innerHTML = document.getElementById('template_countOpt_' + dateofadded).innerHTML;
+        }
+
+        function showCountDeletedTemplate(dateofadded) {
+            document.getElementById('modalDeletedNumbersText').innerHTML = document.getElementById('template_countDeleted_' + dateofadded).innerHTML;
+        }
+
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.ordersCount.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.ordersCount.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+
+    </script>
+
+{% endblock %}

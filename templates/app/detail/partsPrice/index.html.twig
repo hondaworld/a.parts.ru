@@ -1,0 +1,345 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Проценка{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ShopZamena') %}
+                <li class="nav-item">
+                    <a href="{{ path('zamena.create', {'number': searchNumber}) }}" class="nav-link" target="_blank">
+                        <i class="fas fa-plus" title="Добавить замену"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('zamena.upload') }}" class="nav-link" target="_blank">
+                        <i class="fas fa-upload" title="Загрузить замены"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('parts.price', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.number) }}</li>
+            {% if is_granted('part_price_change_opt', 'PartPrice') %}
+                <li class="nav-item">{{ form_widget(filter.optID) }}</li>
+            {% endif %}
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Наименование</th>
+            <th>Вес</th>
+            {% if is_granted('part_price_show_price_zak', 'PartPrice') %}
+                <th>{{ include("override/sortable_link.html.twig", {'options': sortOptions.price.options, 'sorted': sortOptions.price.sorted, 'direction': sortOptions.price.direction, 'title': 'Закупка'}) }}</th>
+            {% endif %}
+            <th>Дилер</th>
+            <th>{{ include("override/sortable_link.html.twig", {'options': sortOptions.price1.options, 'sorted': sortOptions.price1.sorted, 'direction': sortOptions.price1.direction, 'title': 'Цена'}) }}</th>
+            <th>{{ include("override/sortable_link.html.twig", {'options': sortOptions.profit.options, 'sorted': sortOptions.profit.sorted, 'direction': sortOptions.profit.direction, 'title': 'Наценка'}) }}</th>
+            <th>Срок</th>
+            <th>Ср. поставка</th>
+            <th>%</th>
+            {# {% if is_granted('part_price_show_provider_price_description', 'PartPrice') %} #}
+            <th>Регион</th>
+            {# {% endif %} #}
+            {% if is_granted('part_price_show_date_price', 'PartPrice') %}
+                <th>Обновлено</th>
+            {% endif %}
+            <th>Кол</th>
+            <th>В пути</th>
+            {% if is_granted('delete', 'PartPrice') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if arPartsSort is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Введите номер</td>
+                </tr>
+            {% elseif arPartsSort is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Ничего не найдено</td>
+                </tr>
+            {% endif %}
+
+            {% set createrIDPred = 0 %}
+            {% set isZamenaTitleShow = false %}
+            {% set isZamenaTitleAbcpShow = false %}
+
+            {% for zamena, parts in arPartsSort %}
+                {% if zamena >= 1 and zamena < 20 and not isZamenaTitleShow %}
+                    {% set isZamenaTitleShow = true %}
+                    <tr>
+                        <th colspan="50" class="table-success">Замены</th>
+                    </tr>
+                {% elseif zamena >= 21 and not isZamenaTitleAbcpShow %}
+                    {% set isZamenaTitleAbcpShow = true %}
+                    <tr>
+                        <th colspan="50" class="table-success">Замены ABCP</th>
+                    </tr>
+                {% endif %}
+
+                {% if zamena == 2 or zamena == 22 %}
+                    <tr>
+                        <td colspan="50" class="table-primary p-0" height="5"></td>
+                    </tr>
+                {% endif %}
+
+                {% for part in parts %}
+
+                    {% if (zamena == 2 or zamena == 22) and createrIDPred != part.createrID %}
+                        {% set createrIDPred = part.createrID %}
+                        <tr class="table-primary brand_group" data-creater="{{ part.createrID }}"
+                            data-zamena="{{ zamena }}">
+                            <td>{{ arCreaterData[zamena - 1][part.createrID]["createrName"] }}</td>
+                            <td colspan="5"></td>
+                            <td>от {{ arCreaterData[zamena - 1][part.createrID]["price"] }}</td>
+                            <td></td>
+                            <td>от {{ arCreaterData[zamena - 1][part.createrID]["srok"] }}дн</td>
+                            <td colspan="7"></td>
+                        </tr>
+                    {% endif %}
+
+
+                    <tr
+                            class="
+                    {% if zamena == 2 or zamena == 22 %} d-none{% endif %}
+                    {% if part.zapSkladID|default(null) is not null %} font-weight-bold{% elseif part.quantity > 0 %} text-success{% endif %}
+                    {% if part.price is null %} text-muted{% endif %}
+                    {% if part.profit is not null and part.profit < 0 %} text-danger{% endif %}
+                    "
+                            data-creater="{{ part.createrID }}" data-zamena="{{ zamena }}"
+                    >
+                        <td>{{ part.createrName }}</td>
+                        <td>{{ part.number }}</td>
+                        <td>{{ part.name }}</td>
+                        <td
+                                class="{{ part.weightIsReal|default(false) ? 'text-success' : '' }}"
+                                {% if not part.weightIsReal|default(false) %}
+                                    title="Изменить вес"
+                                    style="cursor: pointer"
+                                    data-toggle="modal"
+                                    data-target="#modalWeight"
+                                    onclick="modalWeightChange('{{ part.number }}', '{{ part.createrID }}', '{{ part.createrName }}', '{{ part.weight|default('') }}', '{{ part.weightIsReal|default(false) }}')"
+                                {% endif %}
+                        >{{ part.weight|default('') }}</td>
+                        {% if is_granted('part_price_show_price_zak', 'PartPrice') %}
+                            <td
+                                    class="text-right text-nowrap"
+                                    {% if part.providerPriceID|default(false) %}
+                                        title="Изменить закупочную цену"
+                                        style="cursor: pointer"
+                                        data-toggle="modal"
+                                        data-target="#modalPrice"
+                                        onclick="modalPriceChange('{{ part.number }}', '{{ part.createrID }}', '{{ part.createrName }}', '{{ part.providerPriceID }}', '{{ part.postavkaName }}', '{{ part.priceZak|default('') }}', '{{ part.price|default('') }}')"
+                                    {% endif %}
+                            >{{ part.price is null ? '-' : part.price|number_format(2, ',', ' ') }}</td>
+                        {% endif %}
+                        <td class="text-right text-nowrap">{{ part.priceDealer|default(0)|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right text-nowrap{{ part.stockID|default(false) ? ' text-danger' : '' }}"
+                            title="{{ part.stockID|default(false) ? part.stock_name : '' }}">
+                            {{ part.price1 is null ? '-' : part.price1|number_format(2, ',', ' ') }}
+                            {% if part.stockID|default(false) %}
+                                <span class="text-danger">*</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ part.profit is null ? '-' : part.profit }}</td>
+                        <td>{{ part.srok }}</td>
+                        <td class="text-center">{{ part.averageIncome|default(null) is not null ? part.averageIncome : '' }}</td>
+                        <td class="text-center">{{ part.percentIncome|default(null) is not null ? part.percentIncome : '' }}</td>
+                        <td>{{ is_granted('part_price_show_provider_price_description', 'PartPrice') ? part.postavka ~ ' - ' ~ part.postavkaName : part.postavkaName }}</td>
+                        {% if is_granted('part_price_show_date_price', 'PartPrice') %}
+                            <td class="{{ part.class_dateofchanged|default('') is not empty ? part.class_dateofchanged : '' }}">{{ part.dateofchanged is not null ? part.dateofchanged|date('d.m.Y') : '' }}</td>
+                        {% endif %}
+                        <td class="text-right">{{ part.price is null ? 'Не поставляется' : part.quantity }}</td>
+                        <td>
+                            {% if part.inPath|default(0) > 0 %}
+                                <div>Всего - {{ part.inPath }}</div>
+                                {% for plan in part.dateofinplan %}
+                                    <div>{{ plan.dateofinplan|date('d.m.Y') }} - {{ plan.quantityPath }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        {% if is_granted('delete', 'PartPrice') %}
+                            <td class="text-left">
+                                <div class="btn-group">
+                                    {# {% if is_granted('edit', 'ProviderPriceSearch') %} #}
+                                    {# <a href="{{ path('providers.prices.search.editSearch', {'providerPriceID': part.providerPriceID, 'createrID': part.createrID, 'part': part.part}) }}" #}
+                                    {# title="Изменить деталь"> #}
+                                    {# <i class="fas fa-edit"></i> #}
+                                    {# </a> #}
+                                    {# {% endif %} #}
+                                    {% if part.providerPriceID|default(null) is not null %}
+                                        <a href="{{ path('parts.price.delete', {'providerPriceID': part.providerPriceID, 'createrID': part.createrID, 'number': part.number}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить деталь из прайс-листа?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Удалить деталь">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if part.providerID|default(null) is not null %}
+                                        <a href="{{ path('parts.price.exclude', {'providerID': part.providerID, 'createrID': part.createrID, 'number': part.number}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите исключить деталь из региона {{ providers[part.providerID]|default('') }}?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Исключить деталь">
+                                            <s>{{ providers[part.providerID]|default('') }}</s>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    {% embed 'blocks/block_container_full.html.twig' %}
+
+        {% block content %}
+
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <td><strong>Средняя поставка</strong> -</td>
+                    <td>средняя разница даты прихода и даты заказа</td>
+                </tr>
+                <tr>
+                    <td><strong>% поставки</strong> -</td>
+                    <td>
+                        c1 = количество приходов со статусом "На складе"<br>
+                        c2 = количество приходов со статусами "Отказ поставщика", "Нет в наличии"<br>
+                        % поставки = c1 / (c1 + c2) * 100
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Цены "*"</strong> -</td>
+                    <td>детали в данном регионе продаются по акции. На данные детали скидка невозможна!!!</td>
+                </tr>
+                </tbody>
+            </table>
+
+        {% endblock %}
+    {% endembed %}
+
+    <script>
+        function modalWeightChange(number, createrID, createrName, weight, weightIsReal) {
+            document.getElementById('modalWeightNumber').innerText = number;
+            document.getElementById('modalWeightCreater').innerText = createrName;
+            document.getElementById('formWeight_number').value = number;
+            document.getElementById('formWeight_createrID').value = createrID;
+            document.getElementById('formWeight_weight').value = weight;
+            document.getElementById('formWeight_weightIsReal').checked = false;
+            document.getElementById('modalWeightAlertMessage').innerHTML = '';
+            document.getElementById('modalWeightAlert').style.display = 'none';
+        }
+
+        function modalPriceChange(number, createrID, createrName, providerPriceID, postavkaName, priceZak, price) {
+            document.getElementById('modalPriceNumber').innerText = number;
+            document.getElementById('modalPriceCreater').innerText = createrName;
+            document.getElementById('modalPriceProviderPrice').innerText = postavkaName;
+            document.getElementById('modalPricePrice').innerText = price;
+            document.getElementById('formPrice_number').value = number;
+            document.getElementById('formPrice_createrID').value = createrID;
+            document.getElementById('formPrice_providerPriceID').value = providerPriceID;
+            document.getElementById('formPrice_price').value = priceZak;
+            document.getElementById('modalPriceAlertMessage').innerHTML = '';
+            document.getElementById('modalPriceAlert').style.display = 'none';
+        }
+    </script>
+
+    <div class="modal fade" id="modalWeight" tabindex="-1" role="dialog" aria-labelledby="modalWeightLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            {{ form_start(formWeight, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'full_name': 'formWeight', 'action': path('parts.price.weight')}) }}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalWeightLabel">Изменение веса</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalWeightText" class="modal-body">
+                    <div class="alert" id="modalWeightAlert" role="alert">
+                        <p class="mb-0" id="modalWeightAlertMessage"></p>
+                    </div>
+                    <p><strong>Номер: </strong><span id="modalWeightNumber"></span></p>
+                    <p><strong>Производитель: </strong><span id="modalWeightCreater"></span></p>
+                    {{ form_widget(formWeight.number, {'id': 'formWeight_number'}) }}
+                    {{ form_row(formWeight.createrID, {'id': 'formWeight_createrID'}) }}
+
+                    {{ form_row(formWeight.weight, {'id': 'formWeight_weight'}) }}
+                    {{ form_row(formWeight.weightIsReal, {'id': 'formWeight_weightIsReal'}) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="modalWeightButton" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+            {{ form_end(formWeight) }}
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPrice" tabindex="-1" role="dialog" aria-labelledby="modalPriceLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            {{ form_start(formPrice, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'full_name': 'formPrice', 'action': path('parts.price.price')}) }}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPriceLabel">Изменение закупочной цены</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalPriceText" class="modal-body">
+                    <div class="alert" id="modalPriceAlert" role="alert">
+                        <p class="mb-0" id="modalPriceAlertMessage"></p>
+                    </div>
+                    <p><strong>Номер: </strong><span id="modalPriceNumber"></span></p>
+                    <p><strong>Производитель: </strong><span id="modalPriceCreater"></span></p>
+                    <p><strong>Поставщик: </strong><span id="modalPriceProviderPrice"></span></p>
+                    <p><strong>Цена в руб. с учетом доставки: </strong><span id="modalPricePrice"></span></p>
+                    {{ form_widget(formPrice.number, {'id': 'formPrice_number'}) }}
+                    {{ form_row(formPrice.createrID, {'id': 'formPrice_createrID'}) }}
+                    {{ form_row(formPrice.providerPriceID, {'id': 'formPrice_providerPriceID'}) }}
+
+                    {{ form_row(formPrice.price, {'id': 'formPrice_price'}) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="modalPriceButton" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+            {{ form_end(formPrice) }}
+        </div>
+    </div>
+
+{% endblock %}

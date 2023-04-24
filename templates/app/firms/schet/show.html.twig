@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Счет №{{ schet.document.schetNum }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('schets', {'page' : app.session.get('page/schet')|default(1)}) }}">Счета</a>
+    </li>
+    <li class="breadcrumb-item">Счет №{{ schet.document.schetNum }}</li>
+{% endblock %}
+
+{% block body %}
+
+     {% if (edit == 'documentNum') %}
+     {{ include('app/firms/schet/documentNum/form.html.twig') }}
+     {% elseif (edit == 'pay') %}
+     {{ include('app/firms/schet/pay/pay.html.twig') }}
+     {% elseif (edit == 'payUrl') %}
+     {{ include('app/firms/schet/pay/payUrl.html.twig') }}
+     {% elseif (edit == 'cancel') %}
+     {{ include('app/firms/schet/pay/cancel.html.twig') }}
+     {% elseif (edit == 'userContact') %}
+     {{ include('app/firms/schet/userContact/form.html.twig') }}
+     {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/firms/schet/pay/index.html.twig') }}
+            {{ include('app/firms/schet/user/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/firms/schet/documentNum/index.html.twig') }}
+            {{ include('app/firms/schet/firm/index.html.twig') }}
+        </div>
+    </div>
+
+
+{% endblock %}

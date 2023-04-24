@@ -1,0 +1,35 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Данные накладной</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.expenseDocument.data', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+            {% if expenseDocument.expenseType|default(null) and expenseDocument.expenseType.isSms and not expenseDocument.isSmsCheck and expenseDocument.smsCode != '' %}
+                <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.expenseDocument.sms', {'id': user.id}) }}"
+                   title="Выслать SMS"><i class="fas fa-sms"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Вид платежа: </strong> {{ check_empty(expenseDocument.financeType.name|default(''), 'не задан') }}</p>
+    <p>
+        <strong>Тип отгрузки: </strong> {{ check_empty(expenseDocument.expenseType.name|default(''), 'не задан') }}
+        {% if expenseDocument.expenseType|default(null) and expenseDocument.expenseType.isSms %}
+            {% if expenseDocument.isSmsCheck %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> SMS проверен</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> SMS не проверен</span>
+
+                <a href="{{ path('order.expenseDocument.sendSms', {'id': user.id}) }}" class="btn btn-primary ml-2">{{ expenseDocument.smsCode == '' ? 'Выслать SMS код' : 'Выслать SMS код повторно' }}</a>
+
+            {% endif %}
+        {% endif %}
+
+    </p>
+    <p>
+        <strong>Реселлер: </strong> {{ check_empty(expenseDocument.reseller.name|default(''), 'не задан') }}
+    </p>
+
+{% endblock %}

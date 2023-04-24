@@ -1,0 +1,191 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Отгрузки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Отгрузки</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Shipping') %}
+                <li class="nav-item">
+                    <a href="{{ path('shippings.create') }}" class="nav-link">
+                        <i class="fas fa-plus" title="Добавить отгрузку"></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('edit', 'Shipping') %}
+                <li class="nav-item">
+                    <a href="" data-toggle="modal" data-target="#modalForm"
+                       data-url="{{ path('shippings.status') }}"
+                       data-check-selected-item="true"
+                       data-title="Изменение статуса выделенных отгрузок" class="nav-link ajax-modal-html">
+                        <i class="fas fa-cog" title="Изменить статус"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('shippings', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item pr-1">{{ form_widget(filter.dateofadded) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>#</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Клиент', 'user_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Получатель', 'gruz_user_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Отправитель', 'gruz_firm_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Город', 'gruz_user_town') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Оплатил', 'pay_type_name') }}</th>
+            <th>Место</th>
+            <th>Длина, см</th>
+            <th>Ширина, см</th>
+            <th>Высота, см</th>
+            <th>Вес, кг</th>
+            <th>Объем, куб.см</th>
+            <th>{{ knp_pagination_sortable(pagination, 'ТК', 'delivery_tk') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Трекинг номер', 'tracknumber') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th><i class="fas fa-paperclip"></i></th>
+            <th>{{ knp_pagination_sortable(pagination, 'Статус', 'status_name') }}</th>
+            {% if is_granted('show', 'Shipping') or is_granted('edit', 'Shipping') or is_granted('delete', 'Shipping') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <td></td>
+            <td>{{ form_widget(filter.user_name) }}</td>
+            <td></td>
+            <td>{{ form_widget(filter.gruz_firm_name) }}</td>
+            <td>{{ form_widget(filter.gruz_user_town) }}</td>
+            <td>{{ form_widget(filter.pay_type_name) }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ form_widget(filter.delivery_tkID) }}</td>
+            <td>{{ form_widget(filter.tracknumber) }}</td>
+            <td></td>
+            <td></td>
+            <td>{{ form_widget(filter.status) }}</td>
+            {% if is_granted('show', 'Shipping') or is_granted('edit', 'Shipping') or is_granted('delete', 'Shipping') %}
+                <td></td>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for shipping in pagination %}
+                <tr class="{{ (shipping.status == 4 ? 'text-warning' : (shipping.status == 5 ? 'text-success' : (shipping.status == 6 ? 'text-muted' : ''))) }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': shipping.id} only %}
+                    {% endif %}
+                    <td>{{ shipping.id }}</td>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': shipping.userID}) }}">{{ shipping.user_name }}</a>
+                        {% else %}
+                            {{ shipping.user_name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ shipping.gruz_user_name }}</td>
+                    <td>{{ shipping.gruz_firm_name }}</td>
+                    <td>{{ shipping.gruz_user_town }}</td>
+                    <td>{{ shipping.pay_type_name }}</td>
+                    <td class="text-center">
+                        {% for place in shipping.places %}
+                            {{ place.number }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.length|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.width|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.height|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.weight|number_format(4, ',', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ (place.length * place.width * place.height)|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ shipping.delivery_tk }}</td>
+                    <td>{{ shipping.tracknumber }}</td>
+                    <td>{{ shipping.dateofadded|date('d.m.Y') }}</td>
+                    <td>
+                        {% if (shipping.nakladnaya is not empty) %}
+                            <a href="{{ user_shipping_attach_folder ~ shipping.nakladnaya }}" target="_blank"><i
+                                        class="fas fa-paperclip"></i></a>
+                        {% endif %}
+                    </td>
+                    <td>{{ shipping.status_name }}</td>
+                    {% if is_granted('show', 'Shipping') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'Shipping') or is_granted('edit', 'Shipping') or is_granted('delete', 'Shipping') %}
+                                    {% if is_granted('show', 'Shipping') %}
+                                        <a href="{{ path('shippings.show', {'id': shipping.id}) }}"
+                                           title="Просмотр отгрузки">
+                                            <i class="fas fa-truck"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if is_granted('edit', 'Shipping') %}
+                                        <a type="button" class="confirmModal"
+                                           data-toggle="modal" data-target="#modalConfirm"
+                                           href="{{ path('shippings.mail', {'id': shipping.id}) }}"
+                                           onclick="confirmModal(this, 'Вы уверены, что хотите отправить данные по E-mail и SMS?')"
+                                           title="Отправить данные по E-mail и SMS"><i class="far fa-envelope"></i></a>
+
+                                    {% endif %}
+                                    {% if is_granted('delete', 'Shipping') %}
+                                        <a href="{{ path('shippings.delete', {'id': shipping.id}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить отгрузку?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Удалить отгрузку">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+
+{% endblock %}

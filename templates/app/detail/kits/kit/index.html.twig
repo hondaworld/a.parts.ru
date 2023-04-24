@@ -1,0 +1,45 @@
+<tr id="part_block_{{ workGroupID ~ '_' ~ group.number }}">
+    <td class="text-center" style="width: 50px; background-color: white">
+        <div class="custom-control custom-checkbox d-inline-block">
+            <input type="checkbox" class="custom-control-input"
+                   id="part_{{ workGroupID ~ '_' ~ group.number }}" name="check-item[]"
+                   value="{{ group.quantity }}"
+                   data-price="{{ group.parts[0].price1 }}"
+                   data-quantity="{{ group.quantity }}"
+                   data-provider="{{ group.parts[0].providerPriceID|default('') }}"
+                   data-sklad="{{ group.parts[0].zapSkladID|default('') }}"
+                   data-number="{{ group.parts[0].number }}"
+                   data-creater="{{ group.parts[0].createrID }}"
+                   {{ isNotChecked|default(false) ? '' : 'checked' }}
+                   onclick="sumWorks()"
+            >
+            <label class="custom-control-label"
+                   for="part_{{ workGroupID ~ '_' ~ group.number }}"></label>
+        </div>
+    </td>
+    <td style="background-color: white">{{ group.parts[0].name }}</td>
+    <td style="background-color: white" class='part-creater'>{{ group.parts[0].createrName }}</td>
+    <td style="background-color: white" class='part-number'>{{ group.parts[0].number }}</td>
+    <td style="background-color: white" class=''><a href="#" onclick="partProviders(this, event)" class="part-postavka">{{ group.parts[0].postavka }}</a></td>
+    <td style="background-color: white" class='part-srok'>{{ group.parts[0].srok }}</td>
+    <td style="background-color: white" class='part-price text-right'>{{ (group.quantity > 1 ? group.quantity ~ ' x ' : '') ~ group.parts[0].price1 ~ ' р.' }}</td>
+</tr>
+{% for k, part in group.parts %}
+    <tr
+            data-price="{{ part.price1 }}"
+            data-provider="{{ part.providerPriceID|default('') }}"
+            data-sklad="{{ part.zapSkladID|default('') }}"
+            data-number="{{ part.number }}"
+            data-creater="{{ part.createrID }}"
+            class="part_block_{{ workGroupID ~ '_' ~ group.number }}{{ k == 0 ? ' table-primary' : '' }}"
+            style="cursor: pointer; display: none;{{ part.zapSkladID|default(null) ?  ' font-weight: bold;' : '' }}"
+            onclick="changeProvider(this)"
+    >
+        <td colspan="2"></td>
+        <td>{{ part.createrName }}</td>
+        <td>{{ part.number }}</td>
+        <td>{{ part.postavka }}</td>
+        <td>{{ part.srok }}</td>
+        <td class="text-right">{{ part.price1|number_format(0, ' ', '') }} р.</td>
+    </tr>
+{% endfor %}

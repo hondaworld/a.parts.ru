@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление валюты{% endblock %}
+{% block header %}Добавление валюты{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('currency') }}">Валюта</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/finance/currency/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

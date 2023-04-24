@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Категории товаров{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ZapCategory') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.categories.create') }}" class="nav-link"
+                       title="Добавить категорию товаров"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Сортировка</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if categories is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for category in categories %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ category.zapCategoryID : '') }}>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': category.zapCategoryID} only %}
+                    {% endif %}
+                    <td>{{ category.name }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('card.categories.sort', {'id': category.zapCategoryID}) }}"
+                        data-direction="asc">{{ category.number }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('card.categories.groups', {'zapCategoryID': category.zapCategoryID}) }}"
+                               title="Группы товаров">
+                                <i class="fas fa-box"></i>
+                            </a>
+                            {% if is_granted('edit', 'ZapCategory') or is_granted('delete', 'ZapCategory') %}
+                                {% if is_granted('edit', 'ZapCategory') %}
+                                    <a href="{{ path('card.categories.edit', {'id': category.zapCategoryID}) }}"
+                                       title="Изменить категорию товаров">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if (is_granted('delete', 'ZapCategory')) %}
+                                    <a href="{{ path('card.categories.delete', {'id': category.zapCategoryID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить категорию товаров?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить категорию товаров">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

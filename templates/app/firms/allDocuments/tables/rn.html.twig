@@ -1,0 +1,46 @@
+<tr>
+    {% if isShowDocType|default(false) %}
+        <td>РН</td>
+    {% endif %}
+    <td>{{ doc.document_num }}</td>
+    <td>{{ doc.dateofadded|date('d.m.Y') }}</td>
+    <td>
+        {% if is_granted('edit', 'Firm') %}
+            <a href="{{ path('firms.edit', {'id': doc.firmID}) }}">{{ doc.from_name }}</a>
+        {% else %}
+            {{ doc.from_name }}
+        {% endif %}
+    </td>
+    <td>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': doc.userID}) }}">{{ doc.to_name }}</a>
+        {% else %}
+            {{ doc.to_name }}
+        {% endif %}
+    </td>
+    <td class="text-right">{{ doc.sum|number_format(2, ',', ' ') }}</td>
+    <td class="text-left">
+        <div class="btn-group">
+            {% if is_granted('show', 'Order') %}
+                <a href="{{ path('order.goods', {'id': doc.userID, 'form': {'expenseDocumentNumber': doc.document_num, 'isShowAllGoods': 1}}) }}"
+                   title="Товары клиента">
+                    <i class="fas fa-cogs"></i>
+                </a>
+            {% endif %}
+            <a href="{{ path('nakladnaya.php', {'id': doc.id}) }}"
+               title="Печать накладной ТОРГ-12" target="_blank">
+                <i class="fas fa-print"></i>
+            </a>
+            <a href="{{ path('nakladnaya_excel.php', {'id': doc.id}) }}"
+               title="Печать накладной ТОРГ-12 в Excel" target="_blank">
+                <i class="far fa-file-excel"></i>
+            </a>
+            {% if doc.edo %}
+                <a href="{{ path('nakladnaya_xml.php', {'id': doc.id}) }}" download="{{ doc.to_name }}_накладная.xml"
+                   title="Печать накладной ТОРГ-12 в XML" target="_blank">
+                    <i class="far fa-file-code"></i>
+                </a>
+            {% endif %}
+        </div>
+    </td>
+</tr>

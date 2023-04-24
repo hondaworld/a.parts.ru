@@ -1,0 +1,18 @@
+{% extends 'mail.html.twig' %}
+
+{% block title %}{% endblock %}
+
+
+{% block body %}
+    <div style="padding: 20px 0 0 20px;">
+        <img src="cid:logo">
+
+        <br><br>
+        {{ text|raw }}
+        <br><br>
+        <div>
+            <a href="https://api.whatsapp.com/send?phone=74956603630"><img src="cid:whatsapp" border="0"></a><a href="viber://chat?number=74956603630"><img src="cid:viber" border="0"></a><a href="https://vk.com/hondaworld"><img src="cid:vk" border="0"></a><a href="https://www.facebook.com/hondaworldru/"><img src="cid:fb" border="0"></a>
+        </div>
+    </div>
+
+{% endblock %}

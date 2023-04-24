@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение подразделения {{ orgGroup.name }}{% endblock %}
+{% block header %}{{ orgGroup.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('org.groups') }}">Подразделения</a></li>
+    <li class="breadcrumb-item">{{ orgGroup.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/firms/orgGroups/_form.html.twig') }}
+{% endblock %}

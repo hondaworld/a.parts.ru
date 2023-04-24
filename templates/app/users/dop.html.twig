@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Дополнительные данные клиента {{ user.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users', {'page' : app.session.get('page/users')|default(1)}) }}">Клиенты</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item">Дополнительно</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/users/_tabs.html.twig') %}
+
+    {% if (edit == 'excludeProviders') %}
+        {{ include('app/users/dop/provider/excludeProviders.html.twig') }}
+    {% elseif (edit == 'showHidePrices') %}
+        {{ include('app/users/dop/provider/showHidePrices.twig') }}
+    {% elseif (edit == 'manager') %}
+        {{ include('app/users/dop/manager/edit.html.twig') }}
+    {% elseif (edit == 'emailPrice') %}
+        {{ include('app/users/dop/emailPrice/edit.html.twig') }}
+    {% elseif (edit == 'discount') %}
+        {{ include('app/users/dop/discount/edit.html.twig') }}
+    {% elseif (edit == 'debt') %}
+        {{ include('app/users/dop/debt/edit.html.twig') }}
+    {% elseif (edit == 'review') %}
+        {{ include('app/users/dop/review/edit.html.twig') }}
+    {% elseif (edit == 'apiType') %}
+        {{ include('app/users/dop/apiType/edit.html.twig') }}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/users/dop/discount/index.html.twig') }}
+            {{ include('app/users/dop/debt/index.html.twig') }}
+            {{ include('app/users/dop/emailPrice/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/users/dop/manager/index.html.twig') }}
+            {{ include('app/users/dop/review/index.html.twig') }}
+            {{ include('app/users/dop/provider/index.html.twig') }}
+            {{ include('app/users/dop/apiType/index.html.twig') }}
+        </div>
+    </div>
+
+{% endblock %}

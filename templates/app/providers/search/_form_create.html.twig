@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.providerPriceID) }}
+    {{ form_row(form.number) }}
+    {{ form_row(form.createrID) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.quantity) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.prices.search', {'form' : {'number' : number }}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.summ) }}
+    {{ form_row(form.discount_spare) }}
+    {{ form_row(form.discount_service) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('discounts') }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

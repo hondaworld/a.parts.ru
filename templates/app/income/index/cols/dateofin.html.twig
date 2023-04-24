@@ -1,0 +1,14 @@
+{% if 'dateofin' not in hideCols %}
+    <td
+            {% if income.dateofin %}
+                title="Изменить дату прихода"
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#modalDateOfIn"
+                data-incomeid="{{ income.incomeID }}"
+                data-dateofin="{{ income.dateofin ? income.dateofin|date('d.m.Y') : '' }}"
+                data-ident="dateofin"
+                onclick="modalDateOfInChange(this)"
+            {% endif %}
+    >{{ income.dateofin ? income.dateofin|date('d.m.Y') : '' }}</td>
+{% endif %}

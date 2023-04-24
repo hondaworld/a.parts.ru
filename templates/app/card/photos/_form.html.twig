@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    <form class="dropzone" id="zapCardPhotoDropzone"
+          action="{{ path('card.parts.photos.upload', {'id': zapCard.id}) }}">
+        <div class="dz-message" data-dz-message><span>Перетащите сюда фотографии или нажмите для их выбора</span></div>
+    </form>
+    <div class="text-center">
+        <a class="mt-3 btn btn-primary" href="{{ path('card.parts.photos', {'id': zapCard.id }) }}">К фотографиям</a>
+    </div>
+
+{% endblock %}
+

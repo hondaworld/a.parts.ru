@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+{% block title %}ZZap - Сравнение цен{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('resellers.zzap.comparePrice') }}">Выбор файла</a></li>
+    <li class="breadcrumb-item">ZZap - Сравнение цен</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter, {'attr' : {'onsubmit' : 'onSubmitFilter()'}}) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_form %}{% endblock %}
+        {% block table_header %}
+            <th>ABC</th>
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Наименование</th>
+            <th>Цена по файлу</th>
+            <th>Закупка</th>
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+            <th>Группа</th>
+            <th></th>
+            {% for item in lineHeaders|slice(6) %}
+                {% if item != '*' %}
+                    <th>{{ item }}</th>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.abc) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            {% for opt in opts %}
+                <th></th>
+            {% endfor %}
+            <th></th>
+            <th></th>
+            {% for item in lineHeaders|slice(6) %}
+                {% if item != '*' %}
+                    <th></th>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% for i, line in lines %}
+                <tr>
+                    <td data-id="abc">
+                        {% for sklad_name, abc_name in line.abc %}
+                            <div data-abc="{{ abc_name }}">{{ sklad_name ~ ' - ' ~ abc_name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td>{{ line.creater_name }}</td>
+                    <td><a href="{{ path('card.parts.prices', {'id' : line.zapCard.id}) }}"
+                           target="_blank" title='В кароточку детали - раздел "Цены"'>{{ line.number }}</a></td>
+                    <td style="max-width: 250px;" class="text-nowrap overflow-hidden"
+                        title="{{ line.name }}">{{ line.name }}</td>
+                    <td class="text-right">{{ line.price|number_format(0, ',', ' ') }}</td>
+                    <td class="text-right font-weight-bold">{{ line.zapCard.price|number_format(2, ',', ' ') }}</td>
+                    {% for opt in opts %}
+                        <td>
+                            <div class="d-flex">
+                                <input
+                                        type="text"
+                                        class="js-convert-float form-control form-control-sm form-control-alt form-not-submit"
+                                        style="min-width: 70px; max-width: 70px;"
+                                        data-old="{{ line.prices['optPrice' ~ opt.id] }}"
+                                        id="optPrice{{ opt.id }}_{{ line.zapCard.id }}"
+                                        name="opt[]"
+                                        value="{{ line.prices['optPrice' ~ opt.id] }}"
+                                >
+                                {% if opt.id == constant('App\\Model\\User\\Entity\\Opt\\Opt::DEFAULT_OPT_ID') %}
+                                    <button class="btn btn-sm btn-primary" type="button" title="Пересчитать Опт"
+                                            onclick="reCalculate({{ line.zapCard.id }})">&gt;
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endfor %}
+                    <td>
+                        <div class="text-nowrap" id="isClearPriceGroup_{{ line.zapCard.id }}_block">
+                            {% if line.prices.priceGroup %}
+                                {{ line.prices.priceGroup }}
+                                <div class="custom-control custom-checkbox d-inline-block">
+                                    <input
+                                            type="checkbox"
+                                            class="custom-control-input form-not-submit"
+                                            id="isClearPriceGroup_{{ line.zapCard.id }}"
+                                            name="isClearPriceGroup"
+                                            value="1"
+                                            checked
+                                    ><label class="custom-control-label" for="isClearPriceGroup_{{ line.zapCard.id }}">
+                                        сбросить</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" type="button" name="submit"
+                                data-url-submit="{{ path('sklads.prices.price', {'id': line.zapCard.id}) }}"
+                                onclick="price(this, {{ line.zapCard.id }})">&gt;&gt;
+                        </button>
+                    </td>
+                    {% for key, item in line.line|slice(6) %}
+                        {% if lineHeaders|slice(6)[key]|default(null) %}
+                            {% if lineHeaders|slice(6)[key] != '*' %}
+                                {% if item matches '/^\\d+$/' %}
+                                    <td class="text-right">
+                                        <a href="#"
+                                           title="Скопировать в розницу"
+                                           onclick="reCalculateRozn(event, {{ item }}, {{ line.zapCard.id }})">{{ item|number_format(0, ',', ' ') }}</a>
+                                    </td>
+                                {% else %}
+                                    <td>{{ item }}</td>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}
+            <p class="font-weight-bold">Всего: {{ lines|length }} записей</p>
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+    <script>
+        function price(el, zapCardID) {
+            var params = {};
+
+            {% for opt in opts %}
+            params['optPrice{{ opt.id }}'] = document.getElementById('optPrice{{ opt.id }}_' + zapCardID).value;
+            {% endfor %}
+
+            if (document.getElementById('isClearPriceGroup_' + zapCardID) && document.getElementById('isClearPriceGroup_' + zapCardID).checked) {
+                params['isClearPriceGroup'] = 1;
+                document.getElementById('isClearPriceGroup_' + zapCardID + '_block').style.display = 'none';
+            }
+
+            el.classList.remove('btn-primary');
+            el.classList.add('btn-success');
+
+            tableColInputSubmit(el, params);
+        }
+
+        function reCalculate(zapCardID) {
+            var price = document.getElementById('optPrice1_' + zapCardID).value;
+            document.getElementById('optPrice4_' + zapCardID).value = Math.round(price * 0.9);
+            document.getElementById('optPrice6_' + zapCardID).value = Math.round(price * 1.2);
+        }
+
+        function reCalculateRozn(event, price, zapCardID) {
+            event.preventDefault();
+            document.getElementById('optPrice1_' + zapCardID).value = price;
+        }
+
+        function onSubmitFilter() {
+            document.querySelectorAll('.form-not-submit').forEach(function (el) {
+                el.disabled = true;
+            });
+        }
+
+        function changeAbc(el) {
+            var tbody = el.parentElement.parentElement.parentElement.parentElement.querySelector('tbody');
+            tbody.querySelectorAll('tr td:first-child').forEach(function (item) {
+                var isAbc = false;
+                if (item.querySelectorAll('div').length === 0 && el.value === 'blank' || el.value === '') {
+                    isAbc = true;
+                }
+                item.querySelectorAll('div').forEach(function (d) {
+                    if (d.dataset.abc === el.value || d.dataset.abc === '' && el.value === 'blank' || el.value === '') {
+                        isAbc = true;
+                    }
+                });
+                if (isAbc) {
+                    item.parentElement.style.display = 'table-row';
+                } else {
+                    item.parentElement.style.display = 'none';
+                }
+            });
+        }
+
+        changeAbc(document.getElementById('form_abc'));
+    </script>
+{% endblock %}

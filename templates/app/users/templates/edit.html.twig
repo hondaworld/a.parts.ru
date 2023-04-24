@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение шаблона {{ template.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('template.groups') }}">Группы шаблонов</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('templates', {'id': templateGroup.id}) }}">Шаблоны</a></li>
+    <li class="breadcrumb-item">{{ template.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/users/templates/_form.html.twig') }}
+{% endblock %}

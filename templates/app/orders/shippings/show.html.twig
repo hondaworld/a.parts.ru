@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Отгрузка №{{ shipping.id }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shippings', {'page' : app.session.get('page/shippings')|default(1)}) }}">Отгрузки</a>
+    </li>
+    <li class="breadcrumb-item">Счет №{{ shipping.id }}</li>
+{% endblock %}
+
+{% block body %}
+
+     {% if (edit == 'delivery') %}
+     {{ include('app/orders/shippings/delivery/form.html.twig') }}
+     {% elseif (edit == 'attach') %}
+     {{ include('app/orders/shippings/delivery/attach.html.twig') }}
+     {% elseif (edit == 'editPlace') %}
+     {{ include('app/orders/shippings/places/form.html.twig') }}
+     {% elseif (edit == 'createPlace') %}
+     {{ include('app/orders/shippings/places/form.html.twig', {'buttonName': 'Добавить'}) }}
+     {% endif %}
+
+    <div class="row">
+        <div class="col-xl-6">
+            {{ include('app/orders/shippings/shipping/index.html.twig') }}
+        </div>
+        <div class="col-xl-6">
+            {{ include('app/orders/shippings/delivery/index.html.twig') }}
+        </div>
+        <div class="col-12">
+            {{ include('app/orders/shippings/places/index.html.twig') }}
+        </div>
+    </div>
+
+
+{% endblock %}

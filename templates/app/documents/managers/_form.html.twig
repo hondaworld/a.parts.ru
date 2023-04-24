@@ -1,0 +1,19 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.doc_identID) }}
+    <div class="row">
+        <div class="col-sm-4">{{ form_row(form.serial) }}</div>
+        <div class="col-sm-8">{{ form_row(form.number) }}</div>
+    </div>
+    {{ form_row(form.organization) }}
+    {{ form_row(form.dateofdoc) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.isMain) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('managers.documents', {'managerID': manager.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

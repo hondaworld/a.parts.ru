@@ -1,0 +1,20 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ include('blocks/block_header.html.twig', {'header': 'Стандартные операции'}) }}
+    {{ form_start(formAll) }}
+    {{ form_row(formAll.actions) }}
+    {% if (newActions|length == 0) %}
+        <p>Стандартные операции все добавлены</p>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Добавить стандартные операции</button>
+    {{ form_end(formAll) }}
+
+    {{ include('blocks/block_header.html.twig', {'header': 'Обычная операция'}) }}
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.label) }}
+    {{ form_row(form.icon) }}
+    <button type="submit" class="btn btn-primary">Добавить операцию</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('menu.actions', {'sectionID': section.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}

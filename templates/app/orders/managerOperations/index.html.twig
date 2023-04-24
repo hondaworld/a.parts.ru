@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}История операций менеджеров заказов клиента {{ user.name }}{% endblock %}
+{% block header %}
+    История операций менеджеров заказов клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">История операций менеджеров заказов клиента</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('order.manager.operations', {'id': user.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Менеджер', 'manager_name') }}</th>
+            <th>Описание</th>
+            <th>{{ knp_pagination_sortable(pagination, '# заказа', 'orderID') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер детали', 'number') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.managerID) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.orderID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for operation in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': operation.id} only %}
+                    {% endif %}
+                    <td>
+                        {% if is_granted('edit', 'Manager') %}
+                            <a href="{{ path('managers.edit', {'id': operation.managerID}) }}">{{ operation.manager_name }}</a>
+                        {% else %}
+                            {{ operation.manager_name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ operation.description }}</td>
+                    <td><a href="{{ path('order.goods', {'id': user.id, 'form': {'orderID': operation.orderID, 'isShowAllGoods': 1}}) }}">{{ operation.orderID }}</a></td>
+                    <td><a href="{{ path('order.goods', {'id': user.id, 'form': {'number': operation.number, 'isShowAllGoods': 1}}) }}">{{ operation.number }}</a></td>
+                    <td>{{ operation.dateofadded|date('d.m.Y H:i') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

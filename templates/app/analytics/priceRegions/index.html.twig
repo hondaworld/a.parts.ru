@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регионы закупок{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Регионы закупок</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('analytics.priceRegions') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.zapSkladID) }}</li>
+            <li class="nav-item">{{ form_widget(filter.abc) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Реальная закупка</th>
+            <th>Закупка</th>
+            <th>Регион</th>
+            <th>Новая закупка</th>
+            <th>Новый регион</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for item in all %}
+                <tr>
+                    <td>{{ item.creater_name }}</td>
+                    <td>{{ item.number }}</td>
+                    <td class="text-right">{{ item.realPrice|default(null) ? item.realPrice|number_format(2, ',', ' ') : '' }}</td>
+                    <td class="text-right" id="price_{{ item.zapCardID }}">{{ item.price|number_format(2, ',', ' ') }}</td>
+                    <td id="providerPrice_{{ item.zapCardID }}">{{ providerPrices[item.currency_providerPriceID]|default('') }}</td>
+                    <td class="text-right">{{ item.providerPricePrice_new|number_format(2, ',', ' ') }}</td>
+                    <td
+                            class="ajax-modal-html"
+                            data-toggle="modal"
+                            data-target="#modalFormBig"
+                            data-title="Изменение региона поставки {{ item.number }}"
+                            data-url="{{ path('analytics.priceRegions.providerPrices', {'id': item.zapCardID}) }}"
+                            style="cursor: pointer;"
+                    >{{ providerPrices[item.providerPriceID_new]|default('') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    <div>
+        <strong>Всего записей: {{ all|length }}</strong>
+    </div>
+
+    {{ form_end(filter) }}
+{% endblock %}

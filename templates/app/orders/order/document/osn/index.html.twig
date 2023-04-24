@@ -1,0 +1,25 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основание</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.osn', {'id': user.id}) }}"
+               title="Изменить основание"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Основание: </strong>
+        {{ check_empty(expenseDocument.osn.name, 'не задано (по-умолчанию "Основной договор")') }}
+    </p>
+    <p><strong>Документ: </strong>
+        {{ check_empty(expenseDocument.osn.number, 'номер не задан') }} от
+        {% if expenseDocument.osn.dateofadded %}
+            {{ expenseDocument.osn.dateofadded|date('d.m.Y') }}
+        {% else %}
+            <span class="text-muted font-italic">дата не задана</span>
+        {% endif %}
+        <br>
+        <span class="text-muted font-italic">Является приоритетным перед текстовым основанием</span>
+    </p>
+{% endblock %}

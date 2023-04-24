@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Прайс-листы{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'PriceList') %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.price.lists.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                              title="Добавить прайс-лист"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'PriceList') %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.price.lists.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенных прайс-лист?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'PriceList') %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.price.lists.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенных прайс-лист?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>% от дилера</th>
+            {% if is_granted('show', 'PriceList') or is_granted('delete', 'PriceList') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if priceLists is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for priceList in priceLists %}
+                <tr class="{{ priceList.isHide ? 'text-muted' : '' }}{{ priceList.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': priceList.price_listID} only %}
+                    {% endif %}
+                    <td>{{ priceList.name }}</td>
+                    <td>{{ priceList.koef_dealer }}</td>
+                    {% if is_granted('show', 'PriceList') or is_granted('delete', 'PriceList') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'PriceList') %}
+                                    <a href="{{ path('price.list.price.lists.show', {'id': priceList.price_listID}) }}"
+                                       title="Просмотр прайс-листа">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'PriceList') and not priceList.noneDelete %}
+                                    <a href="{{ path('price.list.price.lists.delete', {'id': priceList.price_listID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить прайс-лист?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить прайс-листа">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Типы населенных пунктов{% endblock %}
+{% block header %}Типы населенных пунктов{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Типы населенных пунктов</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('townTypes.create') }}" class="nav-link" title="Добавить тип населенного пункта"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Коротко</th>
+            <th>Наименование</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if types is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for type in types %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': type.id} only %}
+                    {% endif %}
+                    <td>{{ type.name_short }}</td>
+                    <td>{{ type.name }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('townTypes.edit', {'id': type.id}) }}"
+                               title="Изменить тип населенного пункта">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('townTypes.delete', {'id': type.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить тип населенного пункта?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить тип населенного пункта">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

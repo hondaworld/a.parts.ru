@@ -1,0 +1,34 @@
+<script>
+    const prev_labels = [
+        {% for date in prevDates %}
+        '{{ date|date('d.m') }}',
+        {% endfor %}
+    ];
+    {% for region, regions in prevProfits %}
+    {% for opt, opts in regions %}
+    const prev_profits_{{ region }}_{{ opt }} =
+        {
+            'income': [
+                {% for date in prevDates %}
+                '{{ prevProfits[region][opt].income.date[date|date('Y-m-d')]|default(0) }}',
+                {% endfor %}
+            ],
+            'profit': [
+                {% for date in prevDates %}
+                '{{ prevProfits[region][opt].profit.date[date|date('Y-m-d')]|default(0) }}',
+                {% endfor %}
+            ],
+            'checks': [
+                {% for date in prevDates %}
+                '{{ prevProfits[region][opt].checks.date[date|date('Y-m-d')]|default(0) }}',
+                {% endfor %}
+            ],
+            'checksAll': [
+                {% for date in prevDates %}
+                '{{ prevProfits[region][opt].checksAll.date[date|date('Y-m-d')]|default(0) }}',
+                {% endfor %}
+            ]
+        };
+    {% endfor %}
+    {% endfor %}
+</script>

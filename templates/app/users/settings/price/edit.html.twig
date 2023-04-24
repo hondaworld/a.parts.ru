@@ -1,0 +1,33 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Загрузка списка товаров в виде прайса'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.email_send) }}
+    {{ form_row(form.filename) }}
+    {{ form_row(form.first_line) }}
+
+    <div class="row">
+        <div class="col-xl-6">{{ form_row(form.line) }}</div>
+        <div class="col-xl-6">{{ form_row(form.zapSkladID) }}</div>
+
+        <div class="col-xl-6">{{ form_row(form.order_num) }}</div>
+        <div class="col-xl-6">{{ form_row(form.number_num) }}</div>
+
+        <div class="col-xl-6">{{ form_row(form.creater_num) }}</div>
+        <div class="col-xl-6">{{ form_row(form.createrID) }}</div>
+
+        <div class="col-xl-6">{{ form_row(form.quantity_num) }}</div>
+        <div class="col-xl-6">{{ form_row(form.price_num) }}</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('users.settings', {'id': user.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сотрудники{% endblock %}
+{% block header %}Сотрудники{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Сотрудники</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Manager') %}
+                <li class="nav-item">
+                    <a href="{{ path('managers.create') }}" class="nav-link"><i class="fas fa-plus" title="Добавить менеджера"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('managers', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Ник</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Логин', 'login') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Отображаемое имя', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Имя', 'user_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Моб. телефон', 'phonemob') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'E-mail', 'email') }}</th>
+            <th>Статус</th>
+            {% if is_granted('edit', 'Manager') or is_granted('delete', 'Manager') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th></th>
+            <th>{{ form_widget(filter.login) }}</th>
+            <th>{{ form_widget(filter.name) }}</th>
+            <th>{{ form_widget(filter.user_name) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.email) }}</th>
+            <th></th>
+            {% if is_granted('edit', 'Manager') or is_granted('delete', 'Manager') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for manager in pagination %}
+                <tr class="{{ manager.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': manager.managerID} only %}
+                    {% endif %}
+                    <td>{{ manager.nick }}</td>
+                    <td>{{ manager.login }}</td>
+                    <td>{{ manager.name }}</td>
+                    <td>{{ manager.user_name }}</td>
+                    <td>{{ phone_mobile(manager.phonemob) }}</td>
+                    <td><a href="mailto:{{ manager.email }}">{{ manager.email }}</a></td>
+                    <td>{{ manager_status(manager.isManager, manager.isAdmin) }}</td>
+                    {% if is_granted('edit', 'Manager') or is_granted('delete', 'Manager') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'Manager') %}
+                                    <a href="{{ path('managers.edit', {'id': manager.managerID}) }}"
+                                       title="Изменить менеджера">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Manager') %}
+                                    <a href="{{ path('managers.delete', {'id': manager.managerID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить менеджера?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить менеджера">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {{ parent() }}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

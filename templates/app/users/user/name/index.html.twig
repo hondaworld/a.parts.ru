@@ -1,0 +1,64 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.name', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.email', {'id': user.id}) }}"
+               title="Изменить e-mail и его настройки"><i class="fas fa-at"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Отображаемое имя: </strong> {{ user.name }}</p>
+    <p><strong>Имя: </strong> {{ user.userName.firstname }}</p>
+    <p>
+        <strong>Фамилия: </strong>
+        {{ check_empty(user.userName.lastname) }}
+    </p>
+    <p>
+        <strong>Отчество: </strong>
+        {{ check_empty(user.userName.middlename) }}
+    </p>
+    <p>
+        <strong>Город: </strong>
+        {% if not user.town %}
+            <span class="text-muted font-italic">на задан</span>
+        {% else %}
+            {{ town(user.town.name, user.town.region.name) }}
+        {% endif %}
+    </p>
+    <p>
+        <strong>E-mail для уведомлений: </strong>
+        {% if user.email.value is empty %}
+            <span class="text-muted font-italic">не задан</span>
+        {% else %}
+            <a href="mailto:{{ user.email.value }}">{{ user.email.value }}</a>
+            {% if user.email.active %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> Подтвержден</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> Не подтвержден</span>
+            {% endif %}
+            {% if user.email.notification %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> Рассылка разрешена</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> Рассылка не разрешена</span>
+            {% endif %}
+        {% endif %}
+    </p>
+    {% if (emailStatuses|default(false)) %}
+        <p>
+            <strong>Уведомления: </strong>
+        </p>
+        <p class="pl-3">
+            {% for status_id, status_name in emailStatuses %}
+                {% if status_id in user.excludeEmailStatusIds %}
+                    <span class="pl-3 text-danger"><i class="fas fa-times"></i> {{ status_name }}</span><br>
+                {% else %}
+                    <span class="pl-3 text-success"><i class="fas fa-check"></i> {{ status_name }}</span><br>
+                {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+{% endblock %}

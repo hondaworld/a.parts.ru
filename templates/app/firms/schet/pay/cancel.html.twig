@@ -1,0 +1,17 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Отказ'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.cancelReason) }}
+
+    <button type="submit" class="btn btn-primary">Отказать</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('schets.show', {'id': schet.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

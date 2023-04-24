@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="row mt-3">
+        <div class="col">{{ form_widget(form.file) }}{{ form_errors(form.file) }}</div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Загрузить</button>
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.createrID) }}
+
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.numNumber) }}</div>
+        <div class="col-md-6">{{ form_row(form.numPrice) }}</div>
+    </div>
+
+
+    {{ form_row(form.koef) }}
+    {{ form_row(form.file) }}
+    {{ form_row(form.isDelete) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Загрузить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('dealer.prices') }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

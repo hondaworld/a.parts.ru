@@ -1,0 +1,263 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'ru'
+    images_directory: '%kernel.project_dir%/public/images'
+    upload_directory: '%kernel.project_dir%/public/uploads'
+    user_documents_directory: '%kernel.project_dir%/public/uploads/userDocs'
+    manager_photo_directory: '%kernel.project_dir%/public/uploads/manager'
+    manager_photo_www: 'uploads/manager/'
+    user_ticket_attach_directory: '%kernel.project_dir%/public/uploads/ticket_attach'
+    user_ticket_attach_www: 'uploads/ticket_attach/'
+    price_directory: '%kernel.project_dir%/public/uploads/prices'
+    price_directory_www: 'uploads/prices/'
+    admin_site: 'http://admin.parts.ru/'
+    user_balance_attach: 'upload/ball_attach'
+    user_shipping_attach: 'upload/shippings'
+    zap_group_photo: 'upload/zapGroup'
+    zap_card_photo: 'upload/cards'
+    zap_card_fake_photo: 'upload/fake'
+    auto_photo: 'upload/zap'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Model/Manager/Entity/'
+            - '../src/Model/Menu/Entity/'
+            - '../src/Model/Finance/Entity/'
+            - '../src/Model/Contact/Entity/'
+            - '../src/Model/Beznal/Entity/'
+            - '../src/Model/Document/Entity/'
+            - '../src/Model/Firm/Entity/'
+            - '../src/Model/User/Entity/'
+            - '../src/Model/Sklad/Entity/'
+            - '../src/Model/Provider/Entity/'
+            - '../src/Model/Detail/Entity/'
+            - '../src/Model/Shop/Entity/'
+            - '../src/Model/Card/Entity/'
+            - '../src/Model/Auto/Entity/'
+            - '../src/Model/Income/Entity/'
+            - '../src/Model/Expense/Entity/'
+            - '../src/Model/Order/Entity/'
+            - '../src/Model/Ticket/Entity/'
+            - '../src/Model/Work/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    App\Model\Manager\Entity\Manager\ManagerRepository: ~
+    App\Model\Manager\Entity\Group\ManagerGroupRepository: ~
+    App\Model\Manager\Entity\Type\ManagerTypeRepository: ~
+    App\Model\Manager\Entity\Auth\ManagerAuthRepository: ~
+    App\Model\Manager\Entity\FavouriteMenu\FavouriteMenuRepository: ~
+    App\Model\Manager\Entity\NewsAdmin\NewsAdminRepository: ~
+
+    App\Model\Menu\Entity\Group\MenuGroupRepository: ~
+    App\Model\Menu\Entity\Section\MenuSectionRepository: ~
+    App\Model\Menu\Entity\Action\MenuActionRepository: ~
+
+    App\Model\Finance\Entity\Currency\CurrencyRepository: ~
+    App\Model\Finance\Entity\CurrencyRate\CurrencyRateRepository: ~
+    App\Model\Finance\Entity\Nalog\NalogRepository: ~
+    App\Model\Finance\Entity\NalogNds\NalogNdsRepository: ~
+    App\Model\Finance\Entity\FinanceType\FinanceTypeRepository: ~
+
+    App\Model\Contact\Entity\Contact\ContactRepository: ~
+    App\Model\Contact\Entity\Country\CountryRepository: ~
+    App\Model\Contact\Entity\Town\TownRepository: ~
+    App\Model\Contact\Entity\TownType\TownTypeRepository: ~
+    App\Model\Contact\Entity\TownRegion\TownRegionRepository: ~
+
+    App\Model\Beznal\Entity\Beznal\BeznalRepository: ~
+    App\Model\Beznal\Entity\Bank\BankRepository: ~
+
+    App\Model\Document\Entity\Document\DocumentRepository: ~
+    App\Model\Document\Entity\Identification\DocumentIdentificationRepository: ~
+    App\Model\Document\Entity\Type\DocumentTypeRepository: ~
+
+    App\Model\Firm\Entity\Firm\FirmRepository: ~
+    App\Model\Firm\Entity\OrgGroup\OrgGroupRepository: ~
+    App\Model\Firm\Entity\OrgJob\OrgJobRepository: ~
+    App\Model\Firm\Entity\ManagerFirm\ManagerFirmRepository: ~
+    App\Model\Firm\Entity\Schet\SchetRepository: ~
+    App\Model\Firm\Entity\SchetGood\SchetGoodRepository: ~
+    App\Model\Firm\Entity\BalanceHistory\FirmBalanceHistoryRepository: ~
+
+    App\Model\User\Entity\Opt\OptRepository: ~
+    App\Model\User\Entity\ShopPayType\ShopPayTypeRepository: ~
+    App\Model\User\Entity\User\UserRepository: ~
+    App\Model\User\Entity\EmailStatus\UserEmailStatusRepository: ~
+    App\Model\User\Entity\FirmContr\FirmContrRepository: ~
+    App\Model\User\Entity\BalanceHistory\UserBalanceHistoryRepository: ~
+    App\Model\User\Entity\Template\TemplateRepository: ~
+    App\Model\User\Entity\TemplateGroup\TemplateGroupRepository: ~
+    App\Model\User\Entity\Sms\UserSmsRepository: ~
+    App\Model\User\Entity\Comment\UserCommentRepository: ~
+
+    App\Model\Sklad\Entity\ZapSklad\ZapSkladRepository: ~
+    App\Model\Sklad\Entity\PriceList\PriceListRepository: ~
+    App\Model\Sklad\Entity\PriceGroup\PriceGroupRepository: ~
+    App\Model\Sklad\Entity\Opt\PriceListOptRepository: ~
+
+    App\Model\Provider\Entity\Provider\ProviderRepository: ~
+    App\Model\Provider\Entity\Price\ProviderPriceRepository: ~
+    App\Model\Provider\Entity\LogPrice\LogPriceRepository: ~
+    App\Model\Provider\Entity\LogPriceAll\LogPriceAllRepository: ~
+    App\Model\Provider\Entity\Opt\ProviderPriceOptRepository: ~
+    App\Model\Provider\Entity\Group\ProviderPriceGroupRepository: ~
+    App\Model\Provider\Entity\LogInvoice\LogInvoiceRepository: ~
+    App\Model\Provider\Entity\LogInvoiceAll\LogInvoiceAllRepository: ~
+    App\Model\Provider\Entity\ProviderInvoice\ProviderInvoiceRepository: ~
+
+    App\Model\Detail\Entity\Creater\CreaterRepository: ~
+    App\Model\Detail\Entity\Weight\WeightRepository: ~
+    App\Model\Detail\Entity\Zamena\ShopZamenaRepository: ~
+    App\Model\Detail\Entity\ZamenaAbcp\ShopZamenaAbcpRepository: ~
+    App\Model\Detail\Entity\PriceExclude\DetailProviderPriceExcludeRepository: ~
+    App\Model\Detail\Entity\ProviderExclude\DetailProviderExcludeRepository: ~
+    App\Model\Detail\Entity\Dealer\ShopPriceDealerRepository: ~
+    App\Model\Detail\Entity\Kit\ZapCardKitRepository: ~
+    App\Model\Detail\Entity\KitNumber\ZapCardKitNumberRepository: ~
+
+    App\Model\Shop\Entity\ShopPrice\ShopPrice1Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice2Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice3Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice4Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice5Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice6Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice7Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice8Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice9Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPrice10Repository: ~
+    App\Model\Shop\Entity\ShopPrice\ShopPriceNRepository: ~
+    App\Model\Shop\Entity\ShopType\ShopTypeRepository: ~
+    App\Model\Shop\Entity\Location\ShopLocationRepository: ~
+    App\Model\Shop\Entity\Delivery\DeliveryRepository: ~
+    App\Model\Shop\Entity\DeliveryTk\DeliveryTkRepository: ~
+    App\Model\Shop\Entity\DeleteReason\DeleteReasonRepository: ~
+    App\Model\Shop\Entity\PayMethod\PayMethodRepository: ~
+    App\Model\Shop\Entity\Gtd\ShopGtdRepository: ~
+    App\Model\Shop\Entity\Discount\DiscountRepository: ~
+    App\Model\Shop\Entity\Reseller\ResellerRepository: ~
+
+    App\Model\Card\Entity\Card\ZapCardRepository: ~
+    App\Model\Card\Entity\Category\ZapCategoryRepository: ~
+    App\Model\Card\Entity\Group\ZapGroupRepository: ~
+    App\Model\Card\Entity\Measure\EdIzmRepository: ~
+    App\Model\Card\Entity\Opt\ZapCardOptRepository: ~
+    App\Model\Card\Entity\Main\MainRepository: ~
+    App\Model\Card\Entity\Abc\AbcRepository: ~
+    App\Model\Card\Entity\Abc\ZapCardAbcRepository: ~
+    App\Model\Card\Entity\Abc\ZapCardAbcHistoryRepository: ~
+    App\Model\Card\Entity\Stock\ZapCardStockRepository: ~
+    App\Model\Card\Entity\StockNumber\ZapCardStockNumberRepository: ~
+    App\Model\Card\Entity\Photo\ZapCardPhotoRepository: ~
+    App\Model\Card\Entity\FakePhoto\ZapCardFakePhotoRepository: ~
+    App\Model\Card\Entity\Auto\ZapCardAutoRepository: ~
+    App\Model\Card\Entity\Location\ZapSkladLocationRepository: ~
+    App\Model\Card\Entity\Reserve\ZapCardReserveRepository: ~
+    App\Model\Card\Entity\ReserveSklad\ZapCardReserveSkladRepository: ~
+    App\Model\Card\Entity\Inventarization\InventarizationRepository: ~
+    App\Model\Card\Entity\Inventarization\InventarizationGoodRepository: ~
+
+    App\Model\Auto\Entity\Auto\AutoRepository: ~
+    App\Model\Auto\Entity\Marka\AutoMarkaRepository: ~
+    App\Model\Auto\Entity\Model\AutoModelRepository: ~
+    App\Model\Auto\Entity\Generation\AutoGenerationRepository: ~
+    App\Model\Auto\Entity\Modification\AutoModificationRepository: ~
+    App\Model\Auto\Entity\Engine\AutoEngineRepository: ~
+    App\Model\Auto\Entity\Moto\MotoRepository: ~
+    App\Model\Auto\Entity\MotoModel\MotoModelRepository: ~
+    App\Model\Auto\Entity\MotoGroup\MotoGroupRepository: ~
+
+    App\Model\Income\Entity\Income\IncomeRepository: ~
+    App\Model\Income\Entity\Document\IncomeDocumentRepository: ~
+    App\Model\Income\Entity\Sklad\IncomeSkladRepository: ~
+    App\Model\Income\Entity\Order\IncomeOrderRepository: ~
+    App\Model\Income\Entity\Status\IncomeStatusRepository: ~
+    App\Model\Income\Entity\StatusHistory\IncomeStatusHistoryRepository: ~
+    App\Model\Income\Entity\Good\IncomeGoodRepository: ~
+
+    App\Model\Expense\Entity\Document\ExpenseDocumentRepository: ~
+    App\Model\Expense\Entity\Type\ExpenseTypeRepository: ~
+    App\Model\Expense\Entity\Expense\ExpenseRepository: ~
+    App\Model\Expense\Entity\Sklad\ExpenseSkladRepository: ~
+    App\Model\Expense\Entity\SkladDocument\ExpenseSkladDocumentRepository: ~
+    App\Model\Expense\Entity\Shipping\ShippingRepository: ~
+    App\Model\Expense\Entity\ShippingStatus\ShippingStatusRepository: ~
+    App\Model\Expense\Entity\ShippingPlace\ShippingPlaceRepository: ~
+    App\Model\Expense\Entity\DocumentPrint\ExpenseDocumentPrintRepository: ~
+    App\Model\Expense\Entity\SchetFak\SchetFakRepository: ~
+    App\Model\Expense\Entity\SchetFakPrint\SchetFakPrintRepository: ~
+    App\Model\Expense\Entity\SchetFakKor\SchetFakKorRepository: ~
+
+    App\Model\Order\Entity\Order\OrderRepository: ~
+    App\Model\Order\Entity\AddReason\OrderAddReasonRepository: ~
+    App\Model\Order\Entity\Site\SiteRepository: ~
+    App\Model\Order\Entity\Good\OrderGoodRepository: ~
+    App\Model\Order\Entity\Alert\OrderAlertRepository: ~
+    App\Model\Order\Entity\AlertType\OrderAlertTypeRepository: ~
+    App\Model\Order\Entity\ManagerOperation\ManagerOrderOperationRepository: ~
+    App\Model\Order\Entity\Check\CheckRepository: ~
+
+    App\Model\Ticket\Entity\ClientTicketGroup\ClientTicketGroupRepository: ~
+    App\Model\Ticket\Entity\ClientTicketTemplate\ClientTicketTemplateRepository: ~
+    App\Model\Ticket\Entity\ClientTicket\ClientTicketRepository: ~
+    App\Model\Ticket\Entity\ClientTicketAnswer\ClientTicketAnswerRepository: ~
+    App\Model\Ticket\Entity\ClientTicketAttach\ClientTicketAttachRepository: ~
+
+    App\Model\Work\Entity\Category\WorkCategoryRepository: ~
+    App\Model\Work\Entity\Group\WorkGroupRepository: ~
+    App\Model\Work\Entity\Link\LinkWorkAutoRepository: ~
+    App\Model\Work\Entity\Link\LinkWorkNormaAutoRepository: ~
+    App\Model\Work\Entity\Link\LinkWorkPartsAutoRepository: ~
+    App\Model\Work\Entity\Period\WorkPeriodRepository: ~
+
+    App\Model\Reseller\Entity\Avito\AvitoNoticeRepository: ~
+
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\Widget\:
+        resource: '../src/Widget'
+        tags: [ 'twig.extension' ]
+
+    App\Menu\SidebarMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: sidebar } ]
+
+    App\Menu\ManagerMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: manager } ]
+
+    App\Menu\UserMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: user } ]
+
+    App\Menu\OrderMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: order } ]
+
+    App\Menu\FirmMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: firm } ]
+
+    App\Menu\ZapCardMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: card } ]
+
+    App\Menu\InventarizationMenu:
+        tags: [ { name: knp_menu.menu_builder, method: build, alias: inventarization } ]

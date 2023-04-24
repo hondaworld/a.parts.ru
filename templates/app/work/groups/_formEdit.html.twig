@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.workCategoryID) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.norma) }}
+    {{ form_row(form.isTO) }}
+    {{ form_row(form.sort) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('work.groups', {'workCategoryID': workCategory.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -1,0 +1,12 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)'}, 'action': path('sklads.shipping.pack.update', {'id': zapSklad.id}) }) }}
+
+{{ form_row(form.isDelete) }}
+{{ form_row(form.managerID) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary" onclick="this.form.elements['form[isDelete]'].value = 0;">Собрать</button>
+    <button type="submit" class="btn btn-primary" onclick="this.form.elements['form[isDelete]'].value = 1;">Удалить из сборки</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+

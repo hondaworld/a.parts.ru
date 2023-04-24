@@ -1,0 +1,16 @@
+<a{% for attr, value  in options %} {{ attr }}="{{ value }}"{% endfor %}>
+    <div class="d-flex justify-content-between">
+        <span style="color: black;">{{ title|raw }}</span>
+        <span class="pl-2 text-secondary">
+            {% if sorted %}
+                {% if direction == 'desc' %}
+                    <i class="fas fa-angle-up"></i>
+                {% else %}
+                    <i class="fas fa-angle-down"></i>
+                {% endif %}
+            {% else %}
+                <i class="fa fa-sort"></i>
+            {% endif %}
+        </span>
+    </div>
+</a>

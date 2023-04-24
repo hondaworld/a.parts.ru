@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Загрузка замен{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">
+        <a href="{{ path('creaters', {'page' : app.session.get('page/shopZamena')|default(1)}) }}">Замены</a>
+    </li>
+    <li class="breadcrumb-item">Загрузка</li>
+{% endblock %}
+
+{% block body %}
+
+    {% if (edit == 'upload1') %}
+        {{ include('app/detail/zamena/upload1/_form.html.twig') }}
+    {% elseif (edit == 'upload2') %}
+        {{ include('app/detail/zamena/upload2/_form.html.twig') }}
+    {% endif %}
+
+    {{ include('app/detail/zamena/_upload.html.twig') }}
+
+{% endblock %}

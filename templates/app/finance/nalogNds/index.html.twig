@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}НДС {{ nalog.name }}{% endblock %}
+{% block header %}НДС {{ nalog.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('nalog') }}">Налоговые схемы</a></li>
+    <li class="breadcrumb-item">НДС {{ nalog.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('nalog.nds.create', {'nalogID': nalog.id}) }}" class="nav-link" title="Добавить НДС"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Дата</th>
+            <th>Текущий НДС, %</th>
+            <th>Текущий НДС</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if nalogsNds is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for nds in nalogsNds %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': nds.nalogNdsID} only %}
+                    {% endif %}
+                    <td>{{ nds.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ nds.nds }}</td>
+                    <td>{{ nds.nds / (100 + nds.nds) }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('nalog.nds.edit', {'nalogID': nalog.id, 'id': nds.nalogNdsID}) }}"
+                               title="Изменить НДС">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('nalog.nds.delete', {'nalogID': nalog.id, 'id': nds.nalogNdsID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить НДС?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить налоговую схему">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

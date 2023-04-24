@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Тикеты{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Тикеты</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ClientTicket') %}
+                <li class="nav-item">
+                    <a href="{{ path('client-tickets.tickets.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                             title="Добавить тикет"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('client-tickets.tickets', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-2">{{ form_widget(filter.inPage) }}</li>
+            <li class="nav-item mr-2">{{ form_widget(filter.groupID) }}</li>
+            <li class="nav-item">{{ form_widget(filter.managerClosed) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofanswer) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>#</th>
+            <th>Тема</th>
+            <th><i class="fas fa-paperclip"></i></th>
+            <th>Ответил</th>
+            {% if is_granted('delete', 'ClientTicket') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.ticket_num) }}</th>
+            <th>{{ form_widget(filter.text) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.answered) }}</th>
+            {% if is_granted('delete', 'ClientTicket') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for ticket in pagination %}
+                <tr class="{{ ticket.dateofclosed ? 'text-muted' : '' }}{{ not ticket.isRead ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': ticket.ticketID} only %}
+                    {% endif %}
+                    <td class="text-nowrap">{{ ticket.ticket_num }} {{ ticket.site_name ? ticket.site_name : '' }}</td>
+                    <td class="cursor-pointer" onclick="window.location='{{ path('client-tickets.tickets.show', {'id': ticket.ticketID}) }}'">
+                        <div><strong>{{ ticket.user_subject }}</strong></div>
+                        <div class="overflow-hidden text-muted font-italic"
+                             style="height: 26px;">{{ ticket.text|striptags|raw }}</div>
+                        {% if ticket.dateofclosed %}
+                            <div>Закрыл {{ managers[ticket.managerofclosed]|default('Менеджер') }} {{ ticket.dateofclosed|date('d.m.Y H:i:s') }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if ticket.attach %}
+                            <i class="fas fa-paperclip"></i>
+                        {% endif %}
+                    </td>
+                    <td class="text-nowrap">
+                        <div>
+                        {% if ticket.answer == -1 %}
+                            {% if ticket.client_name %}
+                                {{ ticket.client_name }}
+                            {% else %}
+                                {% if ticket.user_email %}
+                                    {{ ticket.user_name != '' ? ticket.user_name ~ " <" ~ ticket.user_email ~ ">" : ticket.user_email }}
+                                {% else %}
+                                    {{ ticket.user_name != '' ? ticket.user_name : 'Клиент' }}
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {{ managers[ticket.answer]|default('Менеджер') }}
+                        {% endif %}
+                        </div>
+                        <div>{{ ticket.dateofanswer|date('d.m.Y H:i:s') }}</div>
+                    </td>
+                    {# <td>{{ ticket.dateofadded|date('d.m.Y H:i') }}</td> #}
+                    {# <td class="text-success text-right">{{ ticket.ticket > 0 ?  ticket.ticket|number_format(2, ',', ' ') : '' }}</td> #}
+                    {# <td class="text-danger text-right">{{ ticket.ticket < 0 ? (-ticket.ticket)|number_format(2, ',', ' ') : '' }}</td> #}
+                    {# <td>{{ ticket.finance_type }}</td> #}
+                    {# <td class="text-center"> #}
+                    {# {% if (ticket.attach is not empty) %} #}
+                    {# <a href="{{ user_ticket_attach_folder ~ ticket.attach }}" target="_blank"><i #}
+                    {# class="fas fa-paperclip"></i></a> #}
+                    {# {% endif %} #}
+                    {# </td> #}
+                    {# <td>{{ ticket.description }}</td> #}
+                    {% if is_granted('delete', 'ClientTicket') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('client-tickets.tickets.delete', {'id': ticket.ticketID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить тикет?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить тикет">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение складской ячейки {{ shopLocation.nameShort }}{% endblock %}
+{% block header %}{{ shopLocation.nameShort }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shop.locations') }}">Складские ячейки</a></li>
+    <li class="breadcrumb-item">{{ shopLocation.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/shop/shopLocation/_form.html.twig') }}
+{% endblock %}

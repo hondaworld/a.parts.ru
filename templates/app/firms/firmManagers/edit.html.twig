@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение сотрудника в организации {{ firm.nameShort }}{% endblock %}
+{% block header %}{{ manager.manager.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('firms.edit', {'id': firm.id}) }}">{{ firm.nameShort }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('firms.managers', {'firmID': firm.id}) }}">Сотрудники</a></li>
+    <li class="breadcrumb-item">{{ manager.manager.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/firms/firmManagers/_form.html.twig') }}
+{% endblock %}

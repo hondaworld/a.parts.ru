@@ -1,0 +1,10 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.number) }}
+    {{ form_row(form.quantity) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('card.kit.numbers', {'kitID': kit.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

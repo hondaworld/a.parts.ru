@@ -1,0 +1,13 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Оплата</h3>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if (order.payMethod) %}
+        <p>{{ order.payMethod.val }}</p>
+    {% else %}
+        <p class="text-muted font-italic">Оплата не указана</p>
+    {% endif %}
+{% endblock %}

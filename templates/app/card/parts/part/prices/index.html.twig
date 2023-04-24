@@ -1,0 +1,20 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Цены</h3>
+    </div>
+{% endblock %}
+{% block content %}
+    <table class="table table-striped">
+        <tr>
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for opt in opts %}
+                <td class="text-right">{{ optPrices[opt.id]|default('') }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock %}

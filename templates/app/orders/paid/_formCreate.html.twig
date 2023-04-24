@@ -1,0 +1,63 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    {% include 'blocks/block_header.html.twig' with {'header': 'Добавить оплату'} only %}
+{% endblock %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.finance_typeID) }}
+    {{ form_row(form.balance) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.isSend) }}
+    {{ form_row(form.schetID) }}
+    <div class="py-1">SMS
+        {% if user.isSms %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Принимает</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Не принимает</span>
+        {% endif %}
+    </div>
+
+    <div class="py-1">E-mail
+        {% if user.email.value is empty %}
+            <span class="text-danger">не задан</span>
+        {% else %}
+            {% if user.email.active %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> Подтвержден</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> Не подтвержден</span>
+            {% endif %}
+            {% if user.email.notification %}
+                <span class="pl-3 text-success"><i class="fas fa-check"></i> Рассылка разрешена</span>
+            {% else %}
+                <span class="pl-3 text-danger"><i class="fas fa-times"></i> Рассылка не разрешена</span>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div id="paySchet"></div>
+
+    <button type="submit" class="mt-3 btn btn-primary">{{ buttonName|default('Добавить') }}</button>
+
+    <a href="" data-toggle="modal" data-target="#modalForm"
+       data-url="{{ path('order.document.schet', {'id': user.id}) }}"
+       data-title="Выбрать счет" class="mt-3 ml-3 btn btn-info ajax-modal-html">
+        Выбрать счет
+    </a>
+    <button class="mt-3 ml-3 btn btn-secondary" onclick="clearSchet()">Очистить счет</button>
+    {{ form_end(form) }}
+
+    <script>
+        function formFromSchet(number, dateofadded, schetID, sum, firmName) {
+            document.getElementById('form_schetID').value = schetID;
+            document.getElementById('paySchet').innerText = '#' + number + ' от ' + dateofadded + ' ' + firmName + ' на сумму ' + sum + ' руб.';
+        }
+
+        function clearSchet() {
+            document.getElementById('form_schetID').value = '';
+            document.getElementById('paySchet').innerText = '';
+        }
+    </script>
+    {{ form_end(form) }}
+{% endblock %}
+

@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Автомобили{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Auto') %}
+                <li class="nav-item">
+                    <a href="{{ path('userAuto.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                                title="Добавить автомобиль"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'Auto') %}
+                <li class="nav-item">
+                    <a href="{{ path('userAuto.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные автомобили?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'Auto') %}
+                <li class="nav-item">
+                    <a href="{{ path('userAuto.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные автомобили?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('userAuto', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Модель', 'model_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Vin', 'vin') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>Год выпуска</th>
+            <th>Клиенты</th>
+            {% if is_granted('edit', 'Auto') or is_granted('delete', 'Auto') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th></th>
+            <th>{{ form_widget(filter.vin) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            <th></th>
+            {% if is_granted('edit', 'Auto') or is_granted('delete', 'Auto') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for auto in pagination %}
+                <tr class="{{ auto.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': auto.autoID} only %}
+                    {% endif %}
+                    <td>{{ auto.model_name }}</td>
+                    <td>{{ auto.vin }}</td>
+                    <td>{{ auto.number }}</td>
+                    <td>{{ auto.year == 0 ? '' : auto.year }}</td>
+                    <td>
+                        {% for user in auto.users %}
+                            <a href="{{ path('users.auto', {'userID': user.userID}) }}">{{ user.name }}</a>
+                        {% endfor %}
+                    </td>
+                    {% if is_granted('edit', 'Auto') or is_granted('delete', 'Auto') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'Auto') %}
+                                    <a href="{{ path('userAuto.edit', {'id': auto.autoID}) }}"
+                                       title="В карточку детали">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Auto') %}
+                                    <a href="{{ path('userAuto.delete', {'id': auto.autoID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить автомобиль?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить автомобиль">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

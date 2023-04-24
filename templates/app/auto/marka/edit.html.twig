@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение марки {{ autoMarka.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item">{{ autoMarka.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/auto/marka/_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Доставка</h3>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if (order.delivery) %}
+        <p><strong>Доставка: </strong>{{ order.delivery.name }}</p>
+        <p><strong>Стоимость: </strong>
+            {% if (order.deliverySum == 'client') %}
+                Оплачивается клиентом
+        {% elseif (order.deliverySum == 'free') %}
+            Бесплатно
+        {% else %}
+            {{ order.deliverySum }} руб.
+        {% endif %}
+        </p>
+    {% else %}
+        <p class="text-muted font-italic">Доставка не указана</p>
+    {% endif %}
+{% endblock %}

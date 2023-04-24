@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение цены и количества в прайс-листе{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('providers.prices.search', {'form' : {'number' : number }}) }}">Поиск по номеру {{ number }}</a>
+    </li>
+    <li class="breadcrumb-item">Изменение цены и количества</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/providers/search/_form.html.twig') }}
+{% endblock %}

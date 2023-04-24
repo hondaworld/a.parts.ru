@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.name) }}
+
+    {% if (stock|default(false)) %}
+        {{ form_row(form.dateofadded) }}
+    {% endif %}
+
+    {{ form_row(form.text) }}
+    {{ form_row(form.providers) }}
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('card.stocks') }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

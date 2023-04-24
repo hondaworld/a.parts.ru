@@ -1,0 +1,22 @@
+<table class="table table-sm table-bordered table-striped table-hover">
+    <thead>
+    <tr class="table-primary">
+        <th>Бренд</th>
+        <th>Номер</th>
+        <th>Доход</th>
+        <th>Прибыль</th>
+        <th>Кол</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in all %}
+        <tr>
+            <td>{{ item.creater_name }}</td>
+            <td>{{ item.number }}</td>
+            <td class="text-right">{{ item.income|number_format(2, ',', ' ') }}</td>
+            <td class="text-right">{{ item.profit|number_format(2, ',', ' ') }}</td>
+            <td class="text-right">{{ item.quantity }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение страны {{ country.name }}{% endblock %}
+{% block header %}{{ country.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('countries') }}">Страны</a></li>
+    <li class="breadcrumb-item">{{ country.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/contacts/countries/_form.html.twig') }}
+{% endblock %}

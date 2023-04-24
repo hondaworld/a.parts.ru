@@ -1,0 +1,76 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Возвратные накладные</h3>
+        <div class="block-options">
+            {% if is_granted('edit', 'ScheFakKor') %}
+                <a href="" data-toggle="modal" data-target="#modalFormBig"
+                   data-url="{{ path('schetFakKor.incomeDocument') }}"
+                   data-title="Добавить возвратную накладную по номеру" class="ml-3 btn btn-primary ajax-modal-html">
+                    Добавить возвратную накладную по номеру
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        function formFromIncomeDocument(id) {
+            let url = '{{ path('schetFakKor.incomeDocumentAdd', {'id': schetFakKor.id, 'incomeDocumentID': '*incomeDocumentID*'}) }}';
+            url = url.replace('*incomeDocumentID*', id);
+            window.location = url;
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <p>Данные по товарам в корректировочном счете фактуре формируются на основании данных возвратных накладных.</p>
+    <table class="table table-sm table-bordered table-striped table-hover">
+        <thead>
+        <tr class="table-primary">
+            <th>#</th>
+            <th>Дата</th>
+            <th>От кого</th>
+            <th>Кому</th>
+            <th>Сумма</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for incomeDocument in schetFakKor.incomeDocuments %}
+            <tr>
+                <td>{{ incomeDocument.document.num }}</td>
+                <td>{{ incomeDocument.dateofadded|date('d.m.Y') }}</td>
+                <td>
+                    {% if is_granted('edit', 'Firm') %}
+                        <a href="{{ path('firms.edit', {'id': incomeDocument.firm.id}) }}"
+                           target="_blank">{{ incomeDocument.firm.nameShort }}</a>
+                    {% else %}
+                        {{ incomeDocument.firm.nameShort }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if is_granted('show', 'User') %}
+                        <a href="{{ path('users.show', {'id': incomeDocument.user.id}) }}"
+                           target="_blank">{{ incomeDocument.user.name }}</a>
+                    {% else %}
+                        {{ incomeDocument.user.name }}
+                    {% endif %}
+                </td>
+                <td class="text-right">{{ incomeDocument.incomesSum|number_format(2, ',', ' ') }}</td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        {% if is_granted('edit', 'SchetFakKor') %}
+                            <a href="{{ path('schetFakKor.deleteIncomeDocument', {'id': schetFakKor.id, 'incomeDocumentID': incomeDocument.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить возвратную накладную?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить возвратную накладную">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

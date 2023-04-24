@@ -1,0 +1,29 @@
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th>Наименование</th>
+        <th>Производитель</th>
+        <th>Номер детали</th>
+        <th>Цена, руб</th>
+        <th>Кол</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for orderGood in orderGoods %}
+        <tr>
+            <td>{{ zapCards[orderGood.id]|default(null) }}</td>
+            <td>{{ orderGood.creater.name }}</td>
+            <td>{{ orderGood.number.value }}</td>
+            <td class="text-right">{{ orderGood.discountPrice|number_format(0, '', ' ') }}</td>
+            <td>{{ orderGood.quantity }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr class="table-primary">
+        <th colspan="3" class="text-right">Итого</th>
+        <th class="text-right">{{ sum_goods|number_format(0, '', ' ') }}</th>
+        <th></th>
+    </tr>
+    </tfoot>
+</table>

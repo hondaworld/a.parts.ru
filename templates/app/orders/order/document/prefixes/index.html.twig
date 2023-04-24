@@ -1,0 +1,18 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Префиксы</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.prefixes', {'id': user.id}) }}"
+               title="Изменить префиксы"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Префикс: </strong>
+            {{ check_empty(expenseDocument.document.prefix, 'не задан') }}
+    </p>
+    <p><strong>Суфикс: </strong>
+            {{ check_empty(expenseDocument.document.sufix, 'не задан') }}
+    </p>
+{% endblock %}

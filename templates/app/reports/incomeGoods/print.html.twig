@@ -1,0 +1,29 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Поставщик</th>
+            <th>Сумма</th>
+            {% for status, statusName in statuses %}
+                <th>{{ statusName }}</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% for provider in profits %}
+                <tr>
+                    <td>{{ provider.name }}</td>
+                    <td class="text-right">{{ provider.sum|number_format(2, ',', ' ') }}</td>
+                    {% for status, statusName in statuses %}
+                        <td class="text-right">
+                            {{ profitsStatuses[provider.providerID]['statuses'][status]|default(null) ? profitsStatuses[provider.providerID]['statuses'][status]|number_format(2, ',', ' ') : '' }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

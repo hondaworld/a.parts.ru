@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Поиск по номеру{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ProviderPriceSearch') %}
+                <li class="nav-item">
+                    <a href="{{ path('providers.prices.search.createSearch', {'number': app.request.get('form')['number']|default(null)}) }}" class="nav-link"><i class="fas fa-plus"
+                                                                                 title="Добавить деталь"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('providers.prices.search', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.number) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Наименование</th>
+            <th>Цена</th>
+            <th>Валюта</th>
+            <th>Поставщик</th>
+            <th>Вес</th>
+            <th>Кол</th>
+            {% if is_granted('edit', 'ProviderPriceSearch') or is_granted('delete', 'ProviderPriceSearch') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% if all is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Введите номер</td>
+                </tr>
+            {% elseif all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Ничего не найдено</td>
+                </tr>
+            {% endif %}
+            {% for number in all %}
+                <tr>
+                    <td>{{ number.creater }}</td>
+                    <td>{{ number.number }}</td>
+                    <td>{{ number.name }}</td>
+                    <td>{{ number.price }}</td>
+                    <td>{{ number.currency }}</td>
+                    <td>{{ number.provider }}</td>
+                    <td class="{{ number.weight.weightIsReal|default(false) ? 'text-success' : '' }}">{{ number.weight.weight|default('-') }}</td>
+                    <td>{{ number.quantity }}</td>
+                    {% if is_granted('edit', 'ProviderPriceSearch') or is_granted('delete', 'ProviderPriceSearch') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'ProviderPriceSearch') %}
+                                    <a href="{{ path('providers.prices.search.editSearch', {'providerPriceID': number.providerPriceID, 'createrID': number.createrID, 'number': number.number}) }}"
+                                       title="Изменить деталь">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'ProviderPriceSearch') %}
+                                    <a href="{{ path('providers.prices.search.deleteSearch', {'providerPriceID': number.providerPriceID, 'createrID': number.createrID, 'number': number.number}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить деталь?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить деталь">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

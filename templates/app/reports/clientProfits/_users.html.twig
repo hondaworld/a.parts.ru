@@ -1,0 +1,24 @@
+<table class="table table-sm table-bordered table-striped table-hover w-auto">
+    <thead>
+    <tr class="table-primary">
+        <th>Клиент</th>
+        <th>Доход</th>
+        <th>Прибыль</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>
+                {% if is_granted('show', 'User') %}
+                    <a href="{{ path('users.show', {'id': user.userID}) }}" target="_blank">{{ user.name }}</a>
+                {% else %}
+                    {{ user.name }}
+                {% endif %}
+            </td>
+            <td class="text-right">{{ user.income|number_format(2, ',', ' ') }}</td>
+            <td class="text-right">{{ user.profit|number_format(2, ',', ' ') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

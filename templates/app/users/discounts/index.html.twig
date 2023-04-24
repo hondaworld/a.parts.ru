@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Скидки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Скидки</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Discount') %}
+                <li class="nav-item">
+                    <a href="{{ path('discounts.create') }}" class="nav-link" title="Добавить скидку"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Сумма</th>
+            <th>Товары</th>
+            <th>Сервис</th>
+            {% if is_granted('edit', 'Discount') or is_granted('delete', 'Discount') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if discounts is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for discount in discounts %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': discount.discountID} only %}
+                    {% endif %}
+                    <td class="text-right">{{ discount.summ|number_format('2', ',', ' ') }}</td>
+                    <td class="text-right">{{ discount.discount_spare|number_format('2', ',', ' ') }}</td>
+                    <td class="text-right">{{ discount.discount_service|number_format('2', ',', ' ') }}</td>
+                    <td class="text-center">
+                        {% if is_granted('edit', 'Discount') or is_granted('delete', 'Discount') %}
+                            {% if is_granted('edit', 'Discount') %}
+                                <div class="btn-group">
+                                <a href="{{ path('discounts.edit', {'id': discount.discountID}) }}"
+                                   title="Изменить скидку">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            {% endif %}
+                            {% if is_granted('delete', 'Discount') %}
+                                <a href="{{ path('discounts.delete', {'id': discount.discountID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить скидку?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить скидку">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            {% endif %}
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

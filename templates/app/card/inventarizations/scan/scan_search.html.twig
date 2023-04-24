@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сканирование деталей инвентаризации №{{ inventarization.id }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('inventarizations', {'page' : app.session.get('page/inventarization')|default(1)}) }}">Инвентаризации</a>
+    </li>
+    <li class="breadcrumb-item">Сканирование деталей инвентаризации №{{ inventarization.id }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/inventarizations/_tabs.html.twig') %}
+    {{ include('app/card/inventarizations/scan/_search_form.html.twig') }}
+
+{% endblock %}

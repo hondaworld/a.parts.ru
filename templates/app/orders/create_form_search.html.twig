@@ -1,0 +1,18 @@
+{% if form %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('orders.create.action') }) }}
+
+    <h2>{{ user ? 'Клиент' : 'Новый клиент' }}</h2>
+
+    {{ form_row(form.phonemob) }}
+    {{ form_row(form.firstname) }}
+    {{ form_row(form.lastname) }}
+
+    <div class="text-right">
+        <button type="submit" class="btn btn-primary">{{ user ? 'Сохранить и перейти в заказы' : 'Добавить клиента и перейти в заказы' }}</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% else %}
+    <div class="text-center text-danger">Укажите телефон</div>
+{% endif %}

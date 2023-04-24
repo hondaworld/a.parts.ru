@@ -1,0 +1,22 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Наименование</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.name', {'id': zapCard.id}) }}"
+               title="Изменить наименование"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Наименование, которое показывается: <span class="text-danger">{{ zapCard.detailName }}</span></strong>
+    </p>
+    {% if (zapCard.zapGroup) %}
+        <p><strong>Группа: </strong> {{ zapCard.zapGroup.name }}</p>
+    {% endif %}
+    <p><strong>Наименование: </strong> {{ check_empty(zapCard.name) }}</p>
+    <p><strong>Описание: </strong> {{ check_empty(zapCard.description) }}</p>
+    <p><strong>Альтернативное наименование: </strong> {{ check_empty(zapCard.nameBig) }}</p>
+    <p><strong>Английское наименование: </strong> {{ check_empty(zapCard.nameEng) }}</p>
+{% endblock %}

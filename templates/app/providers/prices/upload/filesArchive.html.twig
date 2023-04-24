@@ -1,0 +1,36 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Архив прайс-листов</h3>
+        <div class="block-options">
+
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <div id="prices_log_files_bad">
+
+        {% embed 'tables/table_simple.html.twig' %}
+
+            {% block header_buttons %}{% endblock %}
+
+            {% block table_header %}
+                <th>Файл</th>
+                <th>Размер</th>
+                <th>Дата</th>
+            {% endblock %}
+
+            {% block table_body %}
+                {% for file in archiveFiles %}
+                    <tr>
+                        <td><a href="{{ dir }}{{ file.name }}" target="_blank">{{ file.name }}</a></td>
+                        <td>{{ file.size }}</td>
+                        <td>{{ file.date|date('d.m.Y H:i') }}</td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        {% endembed %}
+    </div>
+
+{% endblock %}

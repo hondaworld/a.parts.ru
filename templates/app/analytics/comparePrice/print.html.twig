@@ -1,0 +1,132 @@
+{% extends 'print.html.twig' %}
+{% block title %}Сравнение цен{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Цена</th>
+            <th>Цена с наценкой</th>
+            <th>Закупка</th>
+            <th>% от закупки</th>
+            {% for providerPrice in providerPrices %}
+                <th>{{ providerPrice }} цена</th>
+                <th>{{ providerPrice }} %</th>
+            {% endfor %}
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for createrID, numbers in arZapCards %}
+                {% for number, item in numbers %}
+                    <tr>
+                        <td>{{ item.creater_name }}</td>
+                        <td>{{ number }}</td>
+                        <td class="text-right">{{ item.price|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right">{{ item.pricePercent|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right">{{ item.zapCardID ? item.priceZak|number_format(2, ',', ' ') : '' }}</td>
+                        <td class="text-right {{ item.percentZak|default(0) < 0 ? 'text-success' : 'text-danger' }}">{{ item.zapCardID ? item.percentZak|number_format(2, ',', ' ') : '' }}</td>
+                        {% for providerPriceID, providerPriceName in providerPrices %}
+                            {% if item.providers|default([]) ? item.providers[providerPriceID]|default(null) : null %}
+                                <th class="text-right">{{ item.providers[providerPriceID].price|number_format(2, ',', ' ') }}</th>
+                                <th class="text-right {{ item.percentZak|default(0) < 0 ? 'text-success' : 'text-danger' }}">{{ item.providers[providerPriceID].percentPrice }}
+                                    %
+                                </th>
+                            {% else %}
+                                <th></th>
+                                <th></th>
+                            {% endif %}
+                        {% endfor %}
+                        {% for opt in opts %}
+                            <td>
+                                {% if item.zapCardID %}
+                                    <div class="d-flex">
+                                        <input
+                                                type="text"
+                                                class="form-control form-control-sm js-convert-float-negative"
+                                                style="width: 70px;"
+                                                id="profit_{{ item.zapCardID }}_{{ opt.id }}"
+                                                data-name="profit"
+                                                data-card="{{ item.zapCardID }}"
+                                                data-opt="{{ opt.id }}"
+                                                data-price="{{ item.priceZak }}"
+                                                onchange="changeProfit(this)"
+                                                value="{{ item.profitsFromZapCard[opt.id] }}"
+                                        ><input
+                                                type="text"
+                                                class="form-control form-control-sm js-convert-number"
+                                                style="width: 70px;"
+                                                id="price_{{ item.zapCardID }}_{{ opt.id }}"
+                                                data-name="price"
+                                                data-card="{{ item.zapCardID }}"
+                                                data-opt="{{ opt.id }}"
+                                                data-price="{{ item.priceZak }}"
+                                                onchange="changeProfitPrice(this)"
+                                                value=""
+                                        >
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        <td>
+                            {% if item.zapCardID %}
+                                <button type="button" class="btn btn-sm btn-primary"
+                                        onclick="saveProfits('{{ item.zapCardID }}')">&gt;&gt;
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    <script>
+        function saveProfits(zapCardID) {
+            const data = {
+                zapCardID: zapCardID,
+                profits: {}
+            };
+            document.querySelectorAll('input').forEach(function (el) {
+                if (el.dataset.name === 'profit' && el.dataset.card === zapCardID) {
+                    data['profits'][el.dataset.opt] = el.value;
+                }
+
+            });
+            ajaxWithParams('{{ path('analytics.comparePrice.profitZapCard') }}', data);
+        }
+
+        function profitsDone(zapCardID) {
+            document.querySelectorAll('input').forEach(function (el) {
+                if (el.dataset.name === 'profit' && +el.dataset.card === +zapCardID) {
+                    el.parentElement.parentElement.parentElement.classList.add('text-muted');
+                }
+            });
+        }
+
+        function fillPrices() {
+            document.querySelectorAll('input').forEach(function (el) {
+                if (el.dataset.name === 'profit') {
+                    changeProfit(el);
+                }
+
+            });
+        }
+
+        function changeProfit(el) {
+            document.getElementById('price_' + +el.dataset.card + '_' + +el.dataset.opt).value = Math.ceil((1 + el.value / 100) * +el.dataset.price);
+        }
+
+        function changeProfitPrice(el) {
+            document.getElementById('profit_' + +el.dataset.card + '_' + +el.dataset.opt).value = +el.dataset.price === 0 ? 0 : Math.round((el.value / +el.dataset.price - 1) * 100 * 100) / 100;
+            changeProfit(document.getElementById('profit_' + +el.dataset.card + '_' + +el.dataset.opt));
+        }
+
+        fillPrices();
+    </script>
+{% endblock %}

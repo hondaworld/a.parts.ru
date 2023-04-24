@@ -1,0 +1,46 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Взаиморасчеты с предприятием {{ provider.name }}{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% block table_header %}
+            <th>Клиент</th>
+            <th>Организация</th>
+            <th>ПН</th>
+            <th>Дата</th>
+            <th>Кредит</th>
+            <th>Дебет</th>
+            <th>НДС</th>
+            <th>Комментарий</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for balance in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': balance.balanceID} only %}
+                    {% endif %}
+                    <td>{{ balance.user_name }}</td>
+                    <td>{{ balance.firm_name }}</td>
+                    <td>{{ balance.document_num|default('') }}</td>
+                    <td>{{ balance.dateofadded|date('d.m.Y H:i') }}</td>
+                    <td class="text-success text-right">{{ balance.balance > 0 ?  balance.balance|number_format(2, ',', ' ') : '' }}</td>
+                    <td class="text-danger text-right">{{ balance.balance < 0 ? (-balance.balance)|number_format(2, ',', ' ') : '' }}</td>
+                    <td class="text-right">{{ balance.balance_nds }}</td>
+                    <td>{{ balance.description }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

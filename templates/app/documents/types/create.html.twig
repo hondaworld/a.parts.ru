@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление типа документа{% endblock %}
+{% block header %}Добавление типа документа{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('documents.types') }}">Типы документов</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/documents/types/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

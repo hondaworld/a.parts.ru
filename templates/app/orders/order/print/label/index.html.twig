@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Наклейки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.goods', {'id' : user.id}) }}">Товары</a>
+    </li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, {'attr': {'target': '_blank'}}) }}
+
+    {% embed 'tables/table_simple.html.twig' %}
+        {% block table_header %}
+            <th>Бренд</th>
+            <th>Наименование</th>
+            <th>Номер</th>
+            <th>Ячейка</th>
+            <th>Заказ</th>
+            <th>Кол</th>
+            <th>Разделять кол. по наклейкам</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if expenses is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Задайте фильтр</td>
+                </tr>
+            {% elseif expenses is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.creater_name }}</td>
+                    <td>
+                        {% if expense.zapCard and expense.zapCard.detailName %}
+                            {{ expense.zapCard.detailName }}
+                        {% endif %}
+                    </td>
+                    <td>{{ expense.number }}</td>
+                    <td>{{ expense.skladLocation }}</td>
+                    <td>{{ expense.orderID }}</td>
+                    <td>{{ form_widget(form.children['quantity_' ~ expense.goodID]) }}</td>
+                    <td>{{ form_widget(form.children['isCheck_' ~ expense.goodID]) }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Распечатать') }}</button>
+    {{ form_end(form) }}
+
+{% endblock %}

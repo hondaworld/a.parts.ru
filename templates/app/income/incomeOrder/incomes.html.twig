@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Заказ №{{ incomeOrder.id }} поставщика {{ incomeOrder.provider.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('income', {'page' : app.session.get('page/income')|default(1)}) }}">Приходы</a>
+    </li>
+    <li class="breadcrumb-item"><a
+                href="{{ path('income.orders', {'page' : app.session.get('page/incomeOrder')|default(1)}) }}">Заказы
+            приходов</a></li>
+    <li class="breadcrumb-item">Заказ №{{ incomeOrder.id }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Приход', 'incomeID') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'detail_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер детали', 'number') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Регион', 'providerPrice') }}</th>
+            <th>Цена</th>
+            <th>Кол</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for income in pagination %}
+                <tr>
+                    <td>{{ income.incomeID }}</td>
+                    <td>{{ income.creater }}</td>
+                    <td>{{ income.detail_name }}</td>
+                    <td>{{ income.number }}</td>
+                    <td>{{ income.providerPrice }}</td>
+                    <td>{{ income.price }}</td>
+                    <td>{{ income.quantity }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            {% if incomeOrder.isOrdered == 0 %}
+                                <a href="{{ path('income.orders.deleteIncome', {'incomeOrderID': incomeOrder.id, 'id': income.incomeID}) }}"
+                                   onclick="deleteItemWithCheckbox(this, 'Вы уверены, что хотите удалить приход из заказа?<br><br><div class=\'custom-control custom-checkbox custom-control-inline\'><input type=checkbox id=isDeleteIncome class=\'custom-control-input\' checked><label class=\'custom-control-label\' for=\'isDeleteIncome\'> удалить приход</label></div>', 'isDeleteIncome')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить заказ">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            {% else %}
+                                <i class="far fa-trash-alt text-muted"></i>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

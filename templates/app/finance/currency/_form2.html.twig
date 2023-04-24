@@ -1,0 +1,10 @@
+{% extends 'blocks/block_group.html.twig' %}
+{% block header %}
+    {{ include('blocks/block_header.html.twig', {'header': 'Целая часть'}) }}
+{% endblock %}
+{% block content %}
+    {{ form_row(form.int_name) }}
+    {{ form_row(form.int_1) }}
+    {{ form_row(form.int_2) }}
+    {{ form_row(form.int_5) }}
+{% endblock %}

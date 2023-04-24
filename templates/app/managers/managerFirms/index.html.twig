@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Организации организацию {{ manager.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers') }}">Сотрудники</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('managers.edit', {'id': manager.id}) }}">{{ manager.name }}</a></li>
+    <li class="breadcrumb-item">Организации</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/managers/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('managers.firms.create', {'managerID': manager.id}) }}" class="nav-link"
+                   title="Добавить организацию"><i class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Организация</th>
+            <th>Подразделение</th>
+            <th>Должность</th>
+            <th>Принят</th>
+            <th>Уволен</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if firms is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for firm in firms %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': firm.linkID} only %}
+                    {% endif %}
+                    <td>{{ firm.firm }}</td>
+                    <td>{{ firm.org_group }}</td>
+                    <td>{{ firm.org_job }}</td>
+                    <td>{{ firm.dateofadded is null ? '' : firm.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ firm.dateofclosed is null ? '' : firm.dateofclosed|date('d.m.Y') }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('managers.firms.edit', {'managerID': manager.id, 'id': firm.linkID}) }}"
+                               title="Изменить организацию">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('managers.firms.delete', {'managerID': manager.id, 'id': firm.linkID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу организацию?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить организацию">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

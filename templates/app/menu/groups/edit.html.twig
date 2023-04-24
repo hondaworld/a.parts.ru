@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение группы меню {{ group.name }}{% endblock %}
+{% block header %}{{ group.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers.groups') }}">Группы меню</a></li>
+    <li class="breadcrumb-item">{{ group.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/menu/groups/_form.html.twig') }}
+{% endblock %}

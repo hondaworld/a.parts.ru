@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Приходы на склад {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads') }}">Склады</a></li>
+    <li class="breadcrumb-item">Приходы на склад {{ zapSklad.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('expense_income_income', 'ExpenseSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.income.income', {'id': zapSklad.id}) }}"
+                       class="nav-link" data-toggle="modal"
+                       data-target="#modalConfirm"
+                       title="Оприходовать"
+                       onclick="fromSelectedItemsModal(this, 'Вы уверены, что хотите оприходовать выделенные детали?')">
+                        <i class="fas fa-clipboard-check"></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('expense_income_scan', 'ExpenseSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.income.scan', {'id': zapSklad.id}) }}" class="nav-link">
+                        <i class="fas fa-barcode"
+                           title="Сканирование деталей. Будут автоматически оприходованы все детали, количество которых полностью просканировано."></i>
+                    </a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a href="{{ path('sklads.income', {'id': zapSklad.id, 'print': 1}) }}" class="nav-link"
+                   target="_blank">
+                    <i class="fas fa-print text-secondary" title="Напечатать"></i>
+                </a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('sklads.income', {'id': zapSklad.id, 'reset' : 1}) %}
+        {% block header_form %}
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Документы</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater_name') }}</th>
+            <th>Наименование</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>Откуда</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Куда положить', 'location') }}</th>
+            <th>Заказ</th>
+            <th>Вес</th>
+            <th>Кол</th>
+            <th>Приход</th>
+            <th>В приходе</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th></th>
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th>{{ form_widget(filter.zapSkladID) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for expenseSklad in pagination %}
+                <tr class="{{ expenseSklad.status == 3 ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': expenseSklad.zapCardID ~ '_' ~ expenseSklad.zapSkladID} only %}
+                    {% endif %}
+                    <td>
+                        {% for expense_skladDocumentID, document in expenseSklad.documents %}
+                            <div><a href="{{ path('perem.php', {'id': expense_skladDocumentID}) }}" target="_blank">{{ document.document_num }} от {{ document.document_date|date('d.m.Y') }}</a></div>
+                        {% endfor %}
+                    </td>
+                    <td>{{ expenseSklad.creater_name }}</td>
+                    <td>{{ zapCards[expenseSklad.zapCardID]|default(null) ? zapCards[expenseSklad.zapCardID].detailName : '' }}</td>
+                    <td>
+                        {% if is_granted('show', 'ZapCard') %}
+                            <a href="{{ path('card.parts.show', {'id': expenseSklad.zapCardID}) }}"
+                               title="В карточку детали">{{ expenseSklad.number }}</a>
+                        {% else %}
+                            {{ expenseSklad.number }}
+                        {% endif %}
+                    </td>
+                    <td>{{ expenseSklad.zapSklad }}</td>
+                    <td>{{ expenseSklad.location|nl2br }}</td>
+                    <td>{{ expenseSklad.order|default('')|nl2br }}</td>
+                    <td class="{{ expenseSklad.weight|default(null) and expenseSklad.weight.weightIsReal ? ' text-success' : '' }}">{{ expenseSklad.weight|default(null) ? expenseSklad.weight.weight : '' }}</td>
+                    <td>{{ expenseSklad.quantity }}</td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.zapCardID] %}
+                            {% if is_granted('index', 'Income') %}
+                                <div><a href="{{ path('income', {'form': {'incomeID': expense.incomeID}}) }}"
+                                        title="В приходы">{{ expense.incomeID }}</a></div>
+                            {% else %}
+                                <div>{{ expense.incomeID }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.zapCardID] %}
+                            <div>{{ expense.quantity }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {{ parent() }}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

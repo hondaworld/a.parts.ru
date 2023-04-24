@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление контакта клиента {{ user.name }}{% endblock %}
+{% block header %}Добавление контакта клиента {{ user.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('users') }}">Клиенты</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.show', {'id': user.id}) }}">{{ user.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('users.contacts', {'userID': user.id}) }}">Контакты</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/users/_tabs.html.twig') %}
+    {{ include('app/contacts/users/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

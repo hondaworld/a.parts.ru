@@ -1,0 +1,14 @@
+{{ include('app/firms/schetFakKor/incomeDocument/_form.html.twig') }}
+
+<div id="incomeDocumentTable" class="mt-2"></div>
+
+<script>
+    function showIncomeDocuments() {
+        const num = document.getElementById('form_document_num').value;
+        let url = '{{ path('schetFakKor.incomeDocumentTable', {'document_num': '*document_num*'}) }}';
+        url = url.replace('*document_num*', num);
+        const incomeDocumentTable = document.getElementById('incomeDocumentTable');
+        incomeDocumentTable.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="sr-only">Loading...</span></div></div>';
+        getHtmlFromAjax(url, incomeDocumentTable);
+    }
+</script>

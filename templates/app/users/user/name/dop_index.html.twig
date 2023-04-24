@@ -1,0 +1,23 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Дополнительные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.dopData', {'id': user.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Дата рождения: </strong>
+        {% if not user.dateofuser %}
+            <span class="text-muted font-italic">не указана</span>
+        {% else %}
+            {{ user.dateofuser|date('d.m.Y') }}
+        {% endif %}
+    </p>
+    <p>
+        <strong>Пол: </strong>
+        {{ check_empty(user.sex, 'не задан') }}
+    </p>
+{% endblock %}

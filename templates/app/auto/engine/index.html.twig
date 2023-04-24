@@ -1,0 +1,71 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Двигатели (чип-тюнинг)</h3>
+    </div>
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('auto.engine.create', {'auto_generationID': autoGeneration.id}) }}"
+                   class="nav-link" title="Добавить двигатель"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.engine.hide', {'auto_generationID': autoGeneration.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные двигатели?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.engine.unHide', {'auto_generationID': autoGeneration.id}) }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить двигатели?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if engines is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for engine in engines %}
+                <tr class="{{ engine.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': engine.auto_engineID} only %}
+                    {% endif %}
+                    <td>{{ engine.name }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('auto.engine.edit', {'auto_generationID': autoGeneration.id, 'id': engine.auto_engineID}) }}"
+                               title="Изменить двигатель">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('auto.engine.delete', {'auto_generationID': autoGeneration.id, 'id': engine.auto_engineID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить двигатель?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить двигатель">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

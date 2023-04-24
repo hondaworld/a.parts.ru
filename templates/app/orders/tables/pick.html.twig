@@ -1,0 +1,29 @@
+{% embed 'tables/table_simple.html.twig' %}
+
+    {% block header %}{% endblock %}
+
+    {% block table_header %}
+        {{ include('app/orders/tables/_main_header.html.twig') }}
+        <th>В сборке</th>
+        <th>Сумма сборки</th>
+        {% if is_granted('show', 'Order') %}
+            <th>Операции</th>
+        {% endif %}
+    {% endblock %}
+
+    {% block table_body %}
+        {% if orders is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Записей нет</td>
+            </tr>
+        {% endif %}
+        {% for userID, order in orders %}
+            <tr>
+                {{ include('app/orders/tables/_main_body.html.twig') }}
+                <td class="text-right">{{ order.quantity|default(0) }}</td>
+                <td class="text-right">{{ order.sum|default(0)|number_format(0, '', ' ') }}</td>
+                {{ include('app/orders/tables/_operations.html.twig') }}
+            </tr>
+        {% endfor %}
+    {% endblock %}
+{% endembed %}

@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Группы шаблонов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Группы шаблонов</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('template_group_create', 'Template') %}
+                <li class="nav-item">
+                    <a href="{{ path('template.groups.create') }}" class="nav-link" title="Добавить группу шаблонов"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if templateGroups is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for group in templateGroups %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': group.templateGroupID} only %}
+                    {% endif %}
+                    <td>{{ group.name }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('templates', {'id': group.templateGroupID}) }}"
+                               title="Шаблоны">
+                                <i class="far fa-file-code"></i>
+                            </a>
+                            {% if is_granted('template_group_edit', 'Template') %}
+                                <a href="{{ path('template.groups.edit', {'id': group.templateGroupID}) }}"
+                                   title="Изменить группу шаблонов">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            {% endif %}
+                            {% if is_granted('template_group_delete', 'Template') and not group.noneDelete %}
+                                <a href="{{ path('template.groups.delete', {'id': group.templateGroupID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу шаблонов?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить группу шаблонов">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

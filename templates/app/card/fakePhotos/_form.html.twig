@@ -1,0 +1,11 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    <form class="dropzone" id="zapCardPhotoDropzone"
+          action="{{ path('card.parts.fakePhotos.upload', {'id': zapCard.id}) }}"></form>
+    <div class="text-center">
+        <a class="mt-3 btn btn-primary" href="{{ path('card.parts.fakePhotos', {'id': zapCard.id }) }}">К фотографиям</a>
+    </div>
+
+{% endblock %}
+

@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Model\Ticket\UseCase\ClientTicketGroup\Edit;
+
+use App\ReadModel\Manager\ManagerFetcher;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class Form extends AbstractType
+{
+    private ManagerFetcher $managerFetcher;
+
+    public function __construct(ManagerFetcher $managerFetcher)
+    {
+        $this->managerFetcher = $managerFetcher;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('name', Type\TextType::class, ['label' => 'Наименование'])
+            ->add('managers', Type\ChoiceType::class, [
+                'required' => false,
+                'label' => 'Менеджеры',
+                'choices' => array_flip($this->managerFetcher->assoc(true)),
+                'expanded' => false,
+                'multiple' => true,
+                'attr' => ['size' => 10]
+            ])
+            ->add('isHideUser', Type\CheckboxType::class, ['required' => false, 'type' => 'primary', 'label' => 'Скрыть от пользователей', 'label_attr' => ['class' => 'switch-custom']])
+            ->add('isClose', Type\CheckboxType::class, ['required' => false, 'type' => 'primary', 'label' => 'Закрывать без сообщений', 'label_attr' => ['class' => 'switch-custom']])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Command::class,
+        ]);
+    }
+}

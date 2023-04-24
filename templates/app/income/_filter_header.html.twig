@@ -1,0 +1,50 @@
+<li class="nav-item">
+    <div class="dropdown">
+        <button type="button" class="btn-block-option"
+                data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false"
+                title="Фильтр"><i
+                    class="si si-equalizer"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right font-size-sm">
+            <div class="noCloseDropdown px-3 filter-header">
+                {% if 'abc' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.abc) }}</div><div class="col-6">{{ form_widget(filter.abc) }}</div></div>{% endif %}
+                {% if 'manager' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.managerID) }}</div><div class="col-6">{{ form_widget(filter.managerID) }}</div></div>{% endif %}
+                {% if 'dateofadded' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.dateofadded) }}</div><div class="col-6">{{ form_widget(filter.dateofadded) }}</div></div>{% endif %}
+                {% if 'creater' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.createrID) }}</div><div class="col-6">{{ form_widget(filter.createrID) }}</div></div>{% endif %}
+                {% if 'number' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.number) }}</div><div class="col-6">{{ form_widget(filter.number) }}</div></div>{% endif %}
+                {% if 'gtd' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.gtd) }}</div><div class="col-6">{{ form_widget(filter.gtd) }}</div></div>{% endif %}
+                {% if 'order' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.orderID) }}</div><div class="col-6">{{ form_widget(filter.orderID) }}</div></div>{% endif %}
+                {% if 'status' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.status) }}</div><div class="col-6">{{ form_widget(filter.status) }}</div></div>{% endif %}
+                {% if 'dateofzakaz' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.dateofzakaz) }}</div><div class="col-6">{{ form_widget(filter.dateofzakaz) }}</div></div>{% endif %}
+                {% if 'dateofin' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.dateofin) }}</div><div class="col-6">{{ form_widget(filter.dateofin) }}</div></div>{% endif %}
+                {% if 'dateofinplan' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.dateofinplan) }}</div><div class="col-6">{{ form_widget(filter.dateofinplan) }}</div></div>{% endif %}
+                {% if 'incomeID' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.incomeID) }}</div><div class="col-6">{{ form_widget(filter.incomeID) }}</div></div>{% endif %}
+                {% if 'incomeOrder' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.incomeOrder) }}</div><div class="col-6">{{ form_widget(filter.incomeOrder) }}</div></div>{% endif %}
+                {% if 'isUnpack' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.isUnpack) }}</div><div class="col-6">{{ form_widget(filter.isUnpack) }}</div></div>{% endif %}
+                {% if 'incomeDocument' in hideCols %}
+                    <div class="row"><div class="col-6">{{ form_label(filter.incomeDocument) }}</div><div class="col-6">{{ form_widget(filter.incomeDocument) }}</div></div>{% endif %}
+                <div>{{ form_row(filter.isShowQuantityMskNull) }}</div>
+                <div>{{ form_row(filter.isShowQuantitySpbNull) }}</div>
+                <div>{{ form_row(filter.isShowQuantitySrvNull) }}</div>
+                <div>{{ form_row(filter.isShowLessMskMax) }}</div>
+                <div>{{ form_row(filter.isShowLessSpbMax) }}</div>
+            </div>
+            <div class="my-2 mx-3 noCloseDropdown"><button class="btn btn-link" type="submit">Применить</button></div>
+        </div>
+    </div>
+</li>

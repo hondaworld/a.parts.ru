@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Дилерские цены{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'ShopPriceDealer') %}
+                <li class="nav-item">
+                    <a href="{{ path('dealer.prices.create') }}" class="nav-link">
+                        <i class="fas fa-plus" title="Добавить дилерскую цену"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('dealer.prices.upload') }}" class="nav-link">
+                        <i class="fas fa-upload" title="Загрузить дилерские цены"></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('delete', 'ShopPriceDealer') %}
+                <li class="nav-item">
+                    <a href="{{ path('dealer.prices.deleteSelected') }}" class="nav-link text-danger" data-toggle="modal"
+                       data-target="#modalConfirm" title="Удалить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить выделенные цены?')">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('dealer.prices', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Производитель', 'creater') : 'Производитель' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Номер', 'number') : 'Номер' }}</th>
+            <th>Цена</th>
+            {% if is_granted('edit', 'ShopPriceDealer') or is_granted('delete', 'ShopPriceDealer') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            {% if is_granted('edit', 'ShopPriceDealer') or is_granted('delete', 'ShopPriceDealer') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for dealer in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': dealer.shopPriceDealerID} only %}
+                    {% endif %}
+                    <td>{{ dealer.creater }}</td>
+                    <td>{{ dealer.number }}</td>
+                    <td>{{ dealer.price|number_format(2, ',', ' ') }}</td>
+                    {% if is_granted('edit', 'ShopPriceDealer') or is_granted('delete', 'ShopPriceDealer') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'ShopPriceDealer') %}
+                                <a href="{{ path('dealer.prices.edit', {'id': dealer.shopPriceDealerID}) }}"
+                                   title="Изменить цену">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'ShopPriceDealer') %}
+                                    <a href="{{ path('dealer.prices.delete', {'id': dealer.shopPriceDealerID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить цену?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить цену">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {% if pagination is not null %}
+                {{ parent() }}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

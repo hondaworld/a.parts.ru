@@ -1,0 +1,33 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Последние загруженные бренды</h3>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <h3>Загруженные бренды</h3>
+    <div class="overflow-y-auto mb-3" style="height: 200px;">
+        <table class="table table-bordered table-responsive border-0">
+            {% for createrID, count in providerPrice.rowsDone %}
+                <tr>
+                    <td>{{ creaters[createrID]|default('unknown') }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <h3>Отсутствующие бренды</h3>
+    <div class="overflow-y-auto" style="height: 200px;">
+        <table class="table table-bordered table-responsive border-0">
+            {% for createrName, count in providerPrice.rowsError %}
+                <tr>
+                    <td>{{ createrName }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

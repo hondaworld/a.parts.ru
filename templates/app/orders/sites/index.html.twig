@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сайты{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Сайты</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Site') %}
+                <li class="nav-item">
+                    <a href="{{ path('sites.create') }}" class="nav-link"><i class="fas fa-plus"
+                                                                             title="Добавить сайт"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Кратко</th>
+            <th>Наименование</th>
+            <th>Адрес</th>
+            <th>Марки автомобилей</th>
+            <th>Производители</th>
+            <th>Нормо-час</th>
+            {% if is_granted('edit', 'Site') or is_granted('delete', 'Site') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for site in all %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': site.id} only %}
+                    {% endif %}
+                    <td>{{ site.nameShort }}</td>
+                    <td>{{ site.name }}</td>
+                    <td>{{ site.url }}</td>
+                    <td>
+                        {% set arr = [] %}
+                        {% for marka in site.autoMarka %}
+                            {% set arr = arr|merge([marka.name]) %}
+                        {% endfor %}
+                        {{ arr|join(', ') }}
+                    </td>
+                    <td>{{ site.creaters|length }}</td>
+                    <td class="text-right">{{ site.normaPrice|number_format(2, ',', '') }}</td>
+                    {% if is_granted('edit', 'Site') or is_granted('delete', 'Site') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'Site') %}
+                                    <a href="{{ path('sites.edit', {'id': site.id}) }}"
+                                       title="Изменить сайт">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'Site') %}
+                                    <a href="{{ path('sites.delete', {'id': site.id}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить сайт?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить сайт">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

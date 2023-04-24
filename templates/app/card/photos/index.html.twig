@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Фотографии {{ zapCard.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item">Фотографии {{ zapCard.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/parts/_tabs.html.twig') %}
+
+    <div class="js-gallery">
+        {% embed 'tables/table_simple.html.twig' %}
+
+            {% block header_buttons %}
+                {% if is_granted('edit', 'ZapCard') %}
+                    <li class="nav-item">
+                        <a href="{{ path('card.parts.photos.create', {'id': zapCard.id}) }}"
+                           class="nav-link" title="Добавить фотографию"><i
+                                    class="fas fa-plus"></i></a>
+                    </li>
+                {% endif %}
+            {% endblock %}
+            {% block settings %}{% endblock %}
+
+            {% block table_header %}
+                <th>Фото</th>
+                <th>Основное</th>
+                {% if is_granted('edit', 'ZapCard') %}
+                    <th>Операции</th>
+                {% endif %}
+            {% endblock %}
+
+            {% block table_body %}
+                {% if zapCard.photos is empty %}
+                    <tr>
+                        <td colspan="50" class="text-center">Записей нет</td>
+                    </tr>
+                {% endif %}
+                {% for photo in zapCard.photos %}
+                    <tr>
+                        {% if (table_checkable|default(false)) %}
+                            {% include 'tables/td_checkbox.html.twig' with {'id': photo.id} only %}
+                        {% endif %}
+                        <td>
+                            <a href="{{ zap_card_photo_folder ~ photo.bimage }}" class="img-lightbox"><img
+                                        src="{{ zap_card_photo_folder ~ photo.simage }}"></a>
+                        </td>
+                        <td class="text-center"><a href="{{ path('card.parts.photos.main', {'zapCardID': zapCard.id, 'id': photo.id}) }}">{{ boolean_status(photo.isMain) }}</a></td>
+                        {% if is_granted('edit', 'ZapCard') %}
+                            <td class="text-center">
+                                <div class="btn-group">
+                                     <a href="{{ path('card.parts.photos.delete', {'zapCardID': zapCard.id, 'id': photo.id}) }}"
+                                     onclick="deleteItem(this, 'Вы уверены, что хотите удалить фотографию?')"
+                                     data-toggle="modal"
+                                     data-target="#modalConfirm"
+                                     class="text-danger"
+                                     title="Удалить фотографию">
+                                     <i class="far fa-trash-alt"></i>
+                                     </a>
+                                </div>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}

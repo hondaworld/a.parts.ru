@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение доставки {{ payMethod.val }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shop.payMethods') }}">Способы оплаты</a></li>
+    <li class="breadcrumb-item">{{ payMethod.val }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/shop/payMethods/_form.html.twig') }}
+{% endblock %}

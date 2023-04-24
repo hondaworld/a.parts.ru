@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Операции {{ section.name }}{% endblock %}
+{% block header %}Операции {{ section.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('menu.groups') }}">Группы меню</a></li>
+    <li class="breadcrumb-item">
+        <a href="{{ path('menu.sections', {'groupID': section.group.id, 'parentID': 0}) }}">{{ section.group.name }}</a>
+    </li>
+    {% for breadCrumb in arBreadCrumb %}
+        {% if (not breadCrumb.url|default(false)) %}
+            <li class="breadcrumb-item">{{ breadCrumb.name }}</li>
+        {% else %}
+            <li class="breadcrumb-item">
+                <a href="{{ path('menu.sections', {'groupID': section.group.id, 'parentID': breadCrumb.data.id}) }}">{{ breadCrumb.name }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('menu.actions.create', {'sectionID': section.id}) }}"
+                   class="nav-link" title="Добавить операцию"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('menu.actions.deleteSelected', {'sectionID': section.id}) }}" class="nav-link" data-toggle="modal"
+                   data-target="#modalConfirm" title="Удалить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить выделенные операции?')"><i
+                            class="fas fa-trash-alt"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+
+        {% block table_header %}
+            <th>Иконка</th>
+            <th>Операция</th>
+            <th>Наименование</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if actions is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for action in actions %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': action.id} only %}
+                    {% endif %}
+                    <td class="text-center"><i class="{{ action.icon }}"></i></td>
+                    <td>{{ action.name }}</td>
+                    <td>{{ action.label }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('menu.actions.edit', {'sectionID': section.id, 'id': action.id}) }}"
+                               title="Изменить операцию">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('menu.actions.delete', {'sectionID': section.id, 'id': action.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить операцию?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить операцию">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

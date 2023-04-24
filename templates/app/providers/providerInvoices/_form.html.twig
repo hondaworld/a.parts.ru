@@ -1,0 +1,37 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.status_from) }}
+    {{ form_row(form.status_to) }}
+    {{ form_row(form.status_none) }}
+    {{ form_row(form.deleteReasonID) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.price_email) }}
+    {{ form_row(form.email_from) }}
+    {{ form_row(form.num_number_type) }}
+
+    <div class="row">
+        <div class="col-md-4">{{ form_row(form.num_number_razd) }}</div>
+        <div class="col-md-4">{{ form_row(form.num_number) }}</div>
+        <div class="col-md-4">{{ form_row(form.priceadd) }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">{{ form_row(form.num_price) }}</div>
+        <div class="col-md-4">{{ form_row(form.num_quantity) }}</div>
+        <div class="col-md-4">{{ form_row(form.num_summ) }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.num_gtd) }}</div>
+        <div class="col-md-6">{{ form_row(form.num_country) }}</div>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.invoice', {'providerID' : provider.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

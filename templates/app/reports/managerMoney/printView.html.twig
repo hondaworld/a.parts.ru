@@ -1,0 +1,25 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Деньги менеджеров - {{ manager }}, {{ financeType }}{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Дата</th>
+            <th>Клиент</th>
+            <th>Сумма</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for balance in pagination %}
+                <tr>
+                    <td>{{ balance.dateofadded|date('d.m.Y H:i') }}</td>
+                    <td>{{ balance.user_name }}</td>
+                    <td class="text-right">{{ balance.balance|number_format(2, ',', ' ') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

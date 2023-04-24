@@ -1,0 +1,132 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Товары</h3>
+    </div>
+{% endblock %}
+{% block content %}
+
+
+    {% embed 'tables/table_pagination.html.twig' %}
+
+        {% block header %}{% endblock %}
+
+        {% block table_header %}
+            <th>Счет</th>
+            <th># РН</th>
+            <th>Дата</th>
+            <th>Бренд</th>
+            <th>Номер детали<br>Наименование</th>
+            <th>Регион</th>
+            <th>Вес</th>
+            <th class="text-right">
+                <i class="fas fa-ruble-sign" title="Цена"></i><br>
+                <i class="fas fa-percent" title="Скидка"></i><br>
+                <i class="fas fa-ruble-sign" title="Цена со скидкой"></i> + <i
+                        class="fas fa-percent" title="Скидка"></i></th>
+            <th>Кол.</th>
+            <th>Статус</th>
+            <th>Резерв</th>
+            <th>Возвращено</th>
+            <th>Заказано<br>Отгружено<br>План. приход</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for order in pagination %}
+                <tr
+                        {% if order.styleClasses|default(false) %}
+                            class="{{ order.styleClasses|join(' ') }}"
+                        {% endif %}
+                >
+                    <td>
+                        {% if order.schet and order.schet.is_exist %}
+                            <a href="{{ order.schet.url }}" target="_blank">{{ order.schet.number }}</a>
+                        {% endif %}
+                    </td>
+                    {% if order.document %}
+                        <td class="text-nowrap"
+                            title="{{ order.document.manager_name|default(null) ? 'Оформил ' ~ order.document.manager_name : '' }}">
+                            {{ order.document.name }} <a href="{{ order.document.url }}"
+                                                         target="_blank">{{ order.document.number }}</a>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>{{ order.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ order.creater_name }}</td>
+                    <td>
+                        <div>
+                            {% if is_granted('show', 'ZapCard') and order.zapCard is not null %}
+                                <a href="{{ path('card.parts.show', {'id': order.zapCard.id}) }}"
+                                   title="В карточку детали">{{ order.number }}</a>
+                            {% else %}
+                                {{ order.number }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if order.zapCard and order.zapCard.detailName %}
+                                {{ order.zapCard.detailName }}
+                            {% else %}
+                                <span class="text-muted font-italic">Наименование не задано</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ order.location|nl2br }}</td>
+                    <td class="{{ order.weight|default(null) and order.weight.weightIsReal ? ' text-success' : '' }}">
+                        {{ order.weight|default(null) ? order.weight.weight : '' }}
+                    </td>
+                    <td class="text-nowrap">
+                        <div class="text-right">{{ order.price|number_format(2, ',', ' ') }}</div>
+                        <div class="d-flex">
+                            <div class="ml-auto">{{ order.discount|number_format(0, ',', ' ') }}</div>
+                            <div>%</div>
+                        </div>
+                        <div title="Цена со скидкой" id="good_priceDiscount_{{ order.goodID }}"
+                             class="text-right font-weight-bold">{{ order.priceDiscount|number_format(2, ',', ' ') }}</div>
+                    </td>
+                    <td class="text-center text-nowrap" title="Количество">{{ order.quantity }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        {% if (order.reserve|default(false) and order.reserve.quantity > 0) %}
+                            {{ order.reserve.quantity }}
+                            {% if order.reserve.dateofclosed is null %}
+                                <i class="fas fa-infinity"></i>
+                            {% else %}
+                                ({{ order.reserve.dateofclosed|date('d.m.y') }})
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="text-center text-nowrap text-danger" title="Возвращено/Списано">
+                        <div>{{ order.quantityReturn }}</div>
+                    </td>
+
+                    <td>
+                        {% if order.providerPriceID %}
+                            {% if not order.incomeID %}
+                                <div class="text-muted font-italic">Не заказана</div>
+                            {% else %}
+                                <div>
+                                    {{ order.income|default(false) and order.income.dateofzakaz is not null ? order.income.dateofzakaz|date('d.m.Y') : ' - ' }}
+                                </div>
+                                <div>
+                                    {{ order.income|default(false) and order.income.dateofout is not null ? order.income.dateofout|date('d.m.Y') : ' - ' }}
+                                </div>
+                                <div>
+                                    {{ order.income|default(false) and order.income.dateofinplan is not null ? order.income.dateofinplan|date('d.m.Y') : ' - ' }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-muted font-italic">Складская</div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

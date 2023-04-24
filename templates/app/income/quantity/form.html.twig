@@ -1,0 +1,38 @@
+<table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th>Номер</th>
+        <th>Производитель</th>
+        <th>Поставщик</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ income.zapCard.number.value }}</td>
+        <td>{{ income.zapCard.creater.name }}</td>
+        <td>{{ income.providerPrice.name }}</td>
+    </tr>
+    </tbody>
+</table>
+
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'ajax-form'}, 'action': path('income.quantity.update', {'id': income.id})}) }}
+<h3>Изменение количества</h3>
+<p>Если деталь заказная и количество уменьшается, то в заказе она будет разделена, если увеличивается - будет создан
+    новый приход.</p>
+<div class="row">
+    <div class="col-8">
+        {{ form_widget(form.quantity) }}
+    </div>
+    <div class="col-4 text-right">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+{{ form_end(form) }}
+
+<div class="text-right mt-2">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+
+
+
+

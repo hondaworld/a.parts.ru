@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Группы мотоциклов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Группы мотоциклов</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('auto.moto.group.create') }}"
+                   class="nav-link" title="Добавить группу мотоциклов"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.moto.group.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные группы мотоциклов?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('auto.moto.group.unHide') }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить группы мотоциклов?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Фото</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if groups is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for group in groups %}
+                <tr class="{{ group.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': group.moto_groupID} only %}
+                    {% endif %}
+                    <td>{{ group.name }}</td>
+                    <td>
+                        {% if (group.photo != '') %}
+                            <img src="{{ auto_photo_folder ~ group.photo }}">
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('auto.moto.group.edit', {'id': group.moto_groupID}) }}"
+                               title="Изменить группу мотоциклов">
+                                <i class="fas fa-car-alt"></i>
+                            </a>
+                            <a href="{{ path('auto.moto.group.delete', {'id': group.moto_groupID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу мотоциклов?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить группу мотоциклов">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+<table class="table table-sm table-bordered table-striped table-hover w-auto">
+    <thead>
+    <tr class="table-primary">
+        <th>Заказ</th>
+        <th>Сумма</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for orderID, order in orders %}
+        <tr>
+            <td>
+                {% if is_granted('show', 'Order') %}
+                    <a href="{{ path('order.goods', {'id': order.userID, 'form': {'isShowAllGoods': 1, 'orderID': orderID}}) }}" target="_blank">{{ orderID }}</a>
+                {% else %}
+                    {{ orderID }}
+                {% endif %}
+            </td>
+            <td class="text-right">{{ order.sum|number_format(2, ',', ' ') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

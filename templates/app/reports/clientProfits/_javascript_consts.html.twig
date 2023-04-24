@@ -1,0 +1,115 @@
+<script>
+    const labels = [
+        {% for date in dates %}
+        '{{ date|date('d.m') }}',
+        {% endfor %}
+    ];
+    const profits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].profit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const incomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].income.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const mskProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].mskProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const mskIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].mskIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const mskServiceProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].mskServiceProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const mskServiceIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].mskServiceIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const spbProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].spbProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const spbIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].spbIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const spbServiceProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].spbServiceProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const spbServiceIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].spbServiceIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const serviceProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].serviceProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const serviceIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in dates %}
+            {{ profits[optID].serviceIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+</script>

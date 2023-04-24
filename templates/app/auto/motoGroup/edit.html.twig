@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение группы мотоциклов {{ motoGroup.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.moto.group') }}">Группы мотоциклов</a></li>
+    <li class="breadcrumb-item">{{ motoGroup.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/auto/motoGroup/_form.html.twig') }}
+{% endblock %}

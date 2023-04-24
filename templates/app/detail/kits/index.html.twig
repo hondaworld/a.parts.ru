@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Комплекты{% endblock %}
+{% block header %}Модель автомобиля{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+
+            <div class="list-group">
+                {% for model in models %}
+                    <div><a class="list-group-item list-group-item-action" href="{{ path('parts.price.kits.model', {'id': model.auto_modelID}) }}">{{ model.name }}</a></div>
+                {% endfor %}
+            </div>
+
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

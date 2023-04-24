@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Контрагенты{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'FirmContr') %}
+                <li class="nav-item">
+                    <a href="{{ path('firmcontr.create') }}" class="nav-link"><i class="fas fa-plus" title="Добавить контрагента"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'FirmContr') %}
+            <li class="nav-item">
+                <a href="{{ path('firmcontr.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенных контрагентов?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            {% endif %}
+            {% if is_granted('unhide', 'FirmContr') %}
+            <li class="nav-item">
+                <a href="{{ path('firmcontr.unHide') }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенных контрагентов?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('firmcontr', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Организация', 'organization') }}</th>
+            {% if is_granted('edit', 'FirmContr') or is_granted('delete', 'FirmContr') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.organization) }}</th>
+            {% if is_granted('show', 'FirmContr') or is_granted('delete', 'FirmContr') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for firmcontr in pagination %}
+                <tr class="{{ firmcontr.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': firmcontr.firmcontrID} only %}
+                    {% endif %}
+                    <td>{{ firmcontr.organization }}</td>
+                    {% if is_granted('edit', 'FirmContr') or is_granted('delete', 'FirmContr') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'FirmContr') %}
+                                    <a href="{{ path('firmcontr.edit', {'id': firmcontr.firmcontrID}) }}"
+                                       title="Изменить контрагента">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'FirmContr') %}
+                                    <a href="{{ path('firmcontr.delete', {'id': firmcontr.firmcontrID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить контрагента?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить контрагента">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

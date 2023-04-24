@@ -1,0 +1,41 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Цена в прайс-листах</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.profitPriceGroup', {'id': zapCard.id}) }}"
+               title="Изменить прайс-лист"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.profitAll', {'id': zapCard.id}) }}"
+               title="Изменить все наценки"><i class="fas fa-ruble-sign"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p>
+        <strong>Группа прайс-листов: </strong>
+        {% if zapCard.priceGroup %}
+            {% if is_granted('show', 'PriceList') %}
+                <a href="{{ path('price.list.price.lists.show', {'id': zapCard.priceGroup.priceList.id}) }}" target="_blank">{{ zapCard.priceGroup.name }}</a>
+            {% else %}
+                {{ zapCard.priceGroup.name }}
+            {% endif %}
+        {% else %}
+            {{ check_empty('', 'не задан') }}
+        {% endif %}
+    </p>
+    <p><strong>Зафиксирован: </strong>{{ boolean_status(zapCard.priceGroupFix) }}</p>
+    <table class="table table-striped">
+        <tr>
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for opt in opts %}
+                <td>{{ profitsFromPriceGroup[opt.id]|number_format(2, '.', '')|default('') }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock %}

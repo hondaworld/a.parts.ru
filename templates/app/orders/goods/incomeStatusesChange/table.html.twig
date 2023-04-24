@@ -1,0 +1,32 @@
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th>Номер заказа</th>
+        <th>Дата заказа</th>
+        <th>Наименование</th>
+        <th>Производитель</th>
+        <th>Номер детали</th>
+        <th>Цена, руб</th>
+        <th>Кол</th>
+        <th>Статус</th>
+        <th>Дата статуса</th>
+        <th>Комментарий</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for orderGood in orderGoods %}
+        <tr class="{{ orderGood.class|default('') }}">
+            <td>{{ orderGood.orderID }}</td>
+            <td>{{ orderGood.dateofadded|date('d.m.Y') }}</td>
+            <td>{{ orderGood.detail_name|default('') }}</td>
+            <td>{{ orderGood.creater_name }}</td>
+            <td>{{ orderGood.number }}</td>
+            <td class="text-right" nowrap>{{ orderGood.discountPrice|number_format(0, ',', ' ') }}</td>
+            <td class="text-right">{{ orderGood.quantity }}</td>
+            <td class="text-right">{{ orderGood.status|default('') }}</td>
+            <td class="text-right">{{ orderGood.dateofstatus|default(null)|date('d.m.Y')  }}</td>
+            <td class="text-right">{{ orderGood.status_reason|default('') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

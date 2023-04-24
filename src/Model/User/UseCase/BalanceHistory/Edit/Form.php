@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Model\User\UseCase\BalanceHistory\Edit;
+
+use App\Form\Type\FloatNumberNegativeType;
+use App\Form\Type\FloatNumberType;
+use App\ReadModel\Detail\CreaterFetcher;
+use App\ReadModel\Firm\FirmFetcher;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class Form extends AbstractType
+{
+    private FirmFetcher $firmFetcher;
+
+    public function __construct(FirmFetcher $firmFetcher)
+    {
+        $this->firmFetcher = $firmFetcher;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('firmID', Type\ChoiceType::class, [
+                'required' => true,
+                'label' => 'Организация',
+                'choices' => array_flip($this->firmFetcher->assocNotHide($options['data']->firmID)),
+                'expanded' => false,
+                'multiple' => false,
+                'placeholder' => ''
+            ])
+            ->add('balance', FloatNumberNegativeType::class, ['required' => true, 'label' => 'Сумма'])
+            ->add('description', Type\TextareaType::class, ['required' => false, 'label' => 'Комментарий'])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Command::class,
+        ]);
+    }
+}

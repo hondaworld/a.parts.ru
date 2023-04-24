@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение группы сотрудников {{ group.name }}{% endblock %}
+{% block header %}{{ group.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers.groups') }}">Группы сотрудников</a></li>
+    <li class="breadcrumb-item">{{ group.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="block block-rounded">
+        <div class="block-content">
+            {{ form_row(form.name) }}
+        </div>
+    </div>
+    {{ form_widget(form.actions) }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    {{ form_end(form) }}
+{% endblock %}

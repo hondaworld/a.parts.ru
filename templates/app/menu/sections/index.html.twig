@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block header %}{{ title }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('menu.groups') }}">Группы меню</a></li>
+    <li class="breadcrumb-item">
+        {% if (arBreadCrumb) %}
+            <a href="{{ path('menu.sections', {'groupID': group.id, 'parentID': 0}) }}">{{ group.name }}</a>
+        {% else %}
+            {{ group.name }}
+        {% endif %}
+    </li>
+    {% for breadCrumb in arBreadCrumb %}
+        {% if (not breadCrumb.url|default(false)) %}
+            <li class="breadcrumb-item">{{ breadCrumb.name }}</li>
+        {% else %}
+            <li class="breadcrumb-item">
+                <a href="{{ path('menu.sections', {'groupID': group.id, 'parentID': breadCrumb.data.id}) }}">{{ breadCrumb.name }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('menu.sections.create', {'groupID': group.id, 'parentID': parentID}) }}"
+                   class="nav-link" title="Добавить секцию меню"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('menu.sections.hide') }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные секции меню?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('menu.sections.unHide') }}" class="nav-link" data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные секции меню?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(sections, 'Наименование', 'name') }}</th>
+            <th>{{ knp_pagination_sortable(sections, 'Иконка', 'icon') }}</th>
+            <th>{{ knp_pagination_sortable(sections, 'Адрес', 'url') }}</th>
+            <th>Сущность</th>
+            <th>Шаблон</th>
+            <th>{{ knp_pagination_sortable(sections, 'Сортировка', 'sort') }}</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if sections is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for section in sections %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ section.id : '') }}
+                        class="{{ section.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': section.id} only %}
+                    {% endif %}
+                    <td>{{ section.name }}</td>
+                    <td class="text-center"><i class="{{ section.icon }}"></i></td>
+                    <td>{{ section.url }}</td>
+                    <td>{{ section.entity }}</td>
+                    <td>{{ section.pattern }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) and sections.isSorted('sort') ? ' sortable' : '') }}"
+                        data-url="{{ path('menu.sections.sort', {'id': section.id}) }}"
+                        data-direction="{{ sections.direction }}">{{ section.sort }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('menu.sections', {'groupID': group.id, 'parentID' : section.id}) }}"
+                               title="Подсекции меню">
+                                <i class="fas fa-bars"></i>
+                            </a>
+                            <a href="{{ path('menu.actions', {'sectionID': section.id}) }}"
+                               title="Операции">
+                                <i class="far fa-list-alt"></i>
+                            </a>
+                            <a href="{{ path('menu.sections.edit', {'groupID': group.id, 'parentID' : parentID, 'id': section.id}) }}"
+                               title="Изменить секцию меню">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('menu.sections.delete', {'groupID': group.id, 'parentID' : parentID, 'id': section.id}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить секцию меню?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить секцию меню">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

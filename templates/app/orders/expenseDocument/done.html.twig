@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Печать расходной накладной клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Печать расходной накладной клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">Печать</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+
+        {% block content %}
+
+            {% if expenseDocument.financeType and expenseDocument.financeType.id in [1,2,3,5,6] %}
+                {% if expenseDocument.check %}
+                    <button class="btn btn-primary" disabled>
+                        <i class="fas fa-cash-register"></i> Печать чека на накладную
+                    </button>
+                {% else %}
+                    <a href="" data-toggle="modal" data-target="#modalForm"
+                       data-url="{{ path('order.check.pay', {'id': expenseDocument.id}) }}"
+                       data-title="Распечатать чек на накладную"
+                       class="btn btn-primary ajax-modal-html">
+                        <i class="fas fa-cash-register"></i> Печать чека на накладную
+                    </a>
+                {% endif %}
+            {% endif %}
+
+            {% if isNakladnaya %}
+                <h2>Накладная Торг-12 №{{ expenseDocument.document.documentNum }} от {{ expenseDocument.dateofadded|date('d.m.Y') }}</h2>
+                <a class="btn btn-primary" href="{{ path('nakladnaya.php', {'id': expenseDocument.id}) }}"
+                   target="_blank"><i class="fas fa-print"></i> Печатать</a>
+                <a class="btn btn-success" href="{{ path('nakladnaya_excel.php', {'id': expenseDocument.id}) }}"
+                   target="_blank"><i class="far fa-file-excel"></i> Печатать в Excel</a>
+                {% if user.edo %}
+                    <a class="btn btn-danger"
+                       href="{{ path('nakladnaya_xml.php', {'id': expenseDocument.id}) }}"{# download="nakladnaya.xml" #}
+                       target="_blank"><i class="far fa-file-code"></i> Печатать в Xml</a>
+                {% endif %}
+            {% endif %}
+
+            {% if isChek %}
+                <h2>Товарный чек №{{ expenseDocument.document.documentNum }} от {{ expenseDocument.dateofadded|date('d.m.Y') }}</h2>
+                <a class="btn btn-primary" href="{{ path('chek.php', {'id': expenseDocument.id}) }}"
+                   target="_blank"><i class="fas fa-print"></i> Печатать</a>
+            {% endif %}
+
+            {% if isSchetFak %}
+                <h2>Счет-фактура №{{ schetFak.document.documentNum }} от {{ schetFak.dateofadded|date('d.m.Y') }}</h2>
+                <a class="btn btn-primary" href="{{ path('schet_fak.php', {'id': schetFak.id}) }}"
+                   target="_blank"><i class="fas fa-print"></i> Печатать</a>
+                <a class="btn btn-success" href="{{ path('schet_fak_excel.php', {'id': schetFak.id}) }}"
+                   target="_blank"><i class="far fa-file-excel"></i> Печатать в Excel</a>
+                {% if user.edo %}
+                    <a class="btn btn-danger"
+                       href="{{ path('schet_fak_xml.php', {'id': schetFak.id}) }}"{# download="schet_fak.xml" #}
+                       target="_blank"><i class="far fa-file-code"></i> Печатать в Xml</a>
+                {% endif %}
+            {% endif %}
+
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Закупка</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.price', {'id': zapCard.id}) }}"
+               title="Изменить закупку"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Приоритетный регион поставки: </strong>{{ optimalName }}</p>
+    <p><strong>Цена закупки: </strong> {{ zapCard.price }} руб.</p>
+    <p><strong>Цена закупки: </strong> {{ zapCard.currencyPrice }} у.е.</p>
+    <p>
+        <strong>Валюта закупки: </strong>
+        {% if zapCard.currency %}
+            {{ zapCard.currency.name }}
+        {% else %}
+            {{ check_empty('', 'не задан') }}
+        {% endif %}
+    </p>
+    <p>
+        <strong>Поставщик цены закупки: </strong>
+        {% if zapCard.currencyProviderPrice %}
+            {{ zapCard.currencyProviderPrice.fullName }}
+        {% else %}
+            {{ check_empty('', 'не задан') }}
+        {% endif %}
+    </p>
+{% endblock %}

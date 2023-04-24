@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Деньги менеджеров{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Деньги менеджеров</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('reports.managerMoney') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.period) }}</li>
+            <li class="nav-item">{{ form_widget(filter.dateofreport) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Менеджер</th>
+            <th>Сумма</th>
+            {% for finance_typeID, financeTypeName in financeTypes %}
+                <th>{{ financeTypeName }}</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for managerID, managerName in managers %}
+                {% if profits[managerID]|default(null) %}
+                    <tr>
+                        <td>{{ managerName }}</td>
+                        <td class="text-nowrap text-right cursor-pointer"
+                            onclick="
+                                    reloadGraph(
+                                    '{{ managerName }}',
+                                    profits['{{ managerID }}'])
+                                    "
+                        >{{ profits[managerID].value|number_format(2, ',', ' ') }}</td>
+                        {% for finance_typeID, financeTypeName in financeTypes %}
+                            <td class="text-right"><a href="{{ path('reports.managerMoney.view', {
+                                    'form': {
+                                        'inPage': 50,
+                                        'dateofreport': {
+                                            'date_from': filter.dateofreport.vars.data.date_from,
+                                            'date_till': filter.dateofreport.vars.data.date_till
+                                        },
+                                        'finance_typeID': finance_typeID,
+                                        'managerID': managerID
+                                    }
+                                }) }}">{{ profits[managerID]['financeTypes'][finance_typeID]|default(0)|number_format(2, ',', ' ') }}</a></td>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <div class="block block-rounded">
+        <div class="block-content block-content-full text-center">
+            <div class="py-3" id="myChartCont" style="max-width: 1200px;">
+                <canvas id="myChart" class="js-chartjs-bars"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    {{ include('app/reports/managerMoney/_javascript_consts.html.twig') }}
+
+    <script>
+        function reloadGraph(label, data) {
+            event.preventDefault();
+            const datasets = [];
+            datasets.push({
+                label,
+                data,
+                backgroundColor,
+                borderColor,
+                borderWidth: 1
+            });
+            One.reloadGraph(datasets);
+        }
+
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.managerMoney.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.managerMoney.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+
+
+        const backgroundColor = ['rgba(54, 162, 235, 0.2)'];
+        const borderColor = ['rgba(54, 162, 235, 1)'];
+        const prev_backgroundColor = ['rgba(255, 99, 132, 0.2)'];
+        const prev_borderColor = ['rgba(255, 99, 132, 1)'];
+        const months = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
+        const chartType = 'bar';
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Менеджер',
+                data: [],
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        };
+        const chartOptions = {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            },
+        };
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Закрепление прайс-листа{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Закрепление прайс-листа</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('analytics.priceFix') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'ABC МСК', 'abc_msk') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'ABC СПБ', 'abc_spb') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'detail_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'craeter_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Закупка', 'price') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'На складе', 'quantity') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Прайс-лист', 'price_group') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Зафиксирован', 'is_price_group_fix') }}</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>{{ form_widget((filter.price_groupID)) }}</th>
+            <th>{{ form_widget((filter.is_price_group_fix)) }}</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for item in pagination %}
+                <tr>
+                    <td>{{ item.abc_msk }}</td>
+                    <td>{{ item.abc_spb }}</td>
+                    <td>{{ item.detail_name }}</td>
+                    <td>{{ item.creater_name }}</td>
+                    <td>
+                        {% if is_granted('show', 'ZapCard') %}
+                            <a href="{{ path('card.parts.prices', {'id': item.zapCardID}) }}">{{ item.number }}</a>
+                        {% else %}
+                            {{ profit.name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ item.price|number_format(2, ',', ' ') }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td>{{ item.price_group }}</td>
+                    <td class="text-center">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input"
+                                   data-url="{{ path('analytics.priceFix.fix', {'id': item.zapCardID}) }}"
+                                   name="is_price_group_fix" id="is_price_group_fix_{{ item.zapCardID }}"
+                                   onclick="getAjaxForClickedCheckbox(this)" {{ item.is_price_group_fix ? 'checked' : null }}>
+                            <label class="custom-control-label" for="is_price_group_fix_{{ item.zapCardID }}"></label>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    {{ form_end(filter) }}
+{% endblock %}

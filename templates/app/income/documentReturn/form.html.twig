@@ -1,0 +1,53 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'action': path('income.change.documentReturn.create', {'returning': returning}) }) }}
+
+<div class="row">
+    <div class="col-6">{{ form_row(form.document_prefix) }}</div>
+    <div class="col-6">{{ form_row(form.document_sufix) }}</div>
+</div>
+
+{{ form_row(form.returning_reason) }}
+
+{{ form_row(form.firmID) }}
+{{ form_row(form.providerID) }}
+
+{% if incomes %}
+    <div style="height: 300px; overflow-y: auto">
+        <table class="table table-sm table-bordered table-striped">
+            <thead>
+            <tr class="table-primary">
+                <th>Деталь</th>
+                <th>Поставщик</th>
+                <th>Кол.</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for income in incomes %}
+                <tr>
+                    <td>{{ income.zapCard.number.value }}<br>{{ income.zapCard.creater.name }}</td>
+                    <td>{{ income.providerPrice.description|default('Возврат клиента') }}<br>
+                        {% if income.orderGoods %}
+                            {{ income.orderGoods[0].order.id }}
+                        {% else %}
+                            Склад
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for sklad in income.sklads %}
+                            <div class="d-flex align-content-center"><div class="mr-2">{{ sklad.zapSklad.nameShort }}</div><div class="mr-2">{{ sklad.quantityIn - sklad.reserve }} шт. </div><div class="ml-auto" style="width: 50px;">{{ form_widget(form.children['incomeSklad_' ~ sklad.id]) }}</div></div>
+                        {% endfor %}
+                    </td>
+                    {# <td class="text-center"><a class="btn btn-primary" href="{{ path('income.providerPrice.update', {'id': income.id, 'providerPriceID': price.providerPriceID}) }}">&gt;&gt;</a></td> #}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

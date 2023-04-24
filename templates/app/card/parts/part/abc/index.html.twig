@@ -1,0 +1,35 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">ABC</h3>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if abc and zapSklads %}
+        {% for skladID, sklad in zapSklads %}
+            <div data-sklad="{{ skladID }}" data-url="{{ path('card.parts.abc', {'id': zapCard.id}) }}"
+                 class="abc_block">
+                <div class="title">{{ sklad }}</div>
+                <ul>
+                    <li{{ zapCard.zapCardAbc(skladID) == '' ? ' class="active"' : '' }} title="Пустое значение">&nbsp;&nbsp;&nbsp;</li>
+                    {% for abc_item in abc %}
+                        <li{{ zapCard.zapCardAbc(skladID) == abc_item.abc ? ' class="active"' : '' }}
+                                title="{{ abc_item.description }}">{{ abc_item.abc }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="ml-3">
+                    <a href="#"
+                       title="Посмотреть историю"
+                       data-toggle="modal"
+                       data-target="#modalAlert"
+                       data-data="{{ zapCard.abcHistory(skladID)|json_encode }}"
+                    >
+                        {% if zapCard.abcHistory(skladID)|length > 0 %}
+                            {{ zapCard.abcHistory(skladID)[0].dateofadded }}
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% if 'dateofzakaz' not in hideCols %}
+    <td
+            {% if income.dateofzakaz %}
+                title="Изменить дату заказа"
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#modalDateOfZakaz"
+                data-incomeid="{{ income.incomeID }}"
+                data-dateofzakaz="{{ income.dateofzakaz ? income.dateofzakaz|date('d.m.Y') : '' }}"
+                data-ident="dateofzakaz"
+                onclick="modalDateOfZakazChange(this)"
+            {% endif %}
+    >{{ income.dateofzakaz ? income.dateofzakaz|date('d.m.Y') : '' }}</td>
+{% endif %}

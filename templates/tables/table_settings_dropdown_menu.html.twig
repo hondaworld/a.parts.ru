@@ -1,0 +1,31 @@
+{% if changeTableColsPath|default(false) and cols|default(false) %}
+    <li class="nav-item">
+        <div class="dropdown">
+            <button type="button" class="btn-block-option"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"
+                    title="Настройки отображения таблицы"><i
+                        class="si si-settings"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right font-size-sm{{ cols|length > 10 ? ' filter-header' : '' }}">
+                <div class="row">
+                    {% for col_name, col_label in cols %}
+                        <div class="col-{{ cols|length > 10 ? '6' : '12' }}">
+                            <div class="noCloseDropdown py-1 px-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input type='checkbox' class='custom-control-input' name='tableCol[]'
+                                           id="tableCol_{{ col_name }}"
+                                           value="{{ col_name }}" {{ col_name in hideCols ? '' : 'checked' }}>
+                                    <label class="custom-control-label"
+                                           for="tableCol_{{ col_name }}">{{ col_label }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="my-2 mx-3 noCloseDropdown"><a href="{{ changeTableColsPath }}"
+                                                              onclick='changeTableCols(event, this)'>Применить</a></div>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endif %}

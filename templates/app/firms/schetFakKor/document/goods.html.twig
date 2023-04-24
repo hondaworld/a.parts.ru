@@ -1,0 +1,31 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Детали</h3>
+        <div class="block-options"></div>
+    </div>
+{% endblock %}
+{% block content %}
+    <table class="table table-sm table-bordered table-striped table-hover">
+        <thead>
+        <tr class="table-primary">
+            <th>Деталь</th>
+            <th>Возвращено по ВЗ</th>
+            <th>Возвращено всего</th>
+            <th>Продано</th>
+            <th>Цена</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for good in goods %}
+            <tr>
+                <td>{{ good.detailName }} ({{ good.number }})</td>
+                <td>{{ good.quantity }}</td>
+                <td>{{ good.quantityReturnAll }}</td>
+                <td>{{ good.quantityAll }}</td>
+                <td class="text-right">{{ good.price|number_format(2, ',', ' ') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

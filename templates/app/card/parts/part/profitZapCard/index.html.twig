@@ -1,0 +1,29 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Наценка по прайс-листам</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.profitZapCard', {'id': zapCard.id}) }}"
+               title="Изменить наценки по прайс-листам"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('card.parts.profitAll', {'id': zapCard.id}) }}"
+               title="Изменить все наценки"><i class="fas fa-ruble-sign"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><em>Будет использована при реализации товара, если цена не найдена в текущем прайс-листе</em></p>
+    <table class="table table-striped">
+        <tr>
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for opt in opts %}
+                <td>{{ profitsFromZapCard[opt.id]|default('') }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock %}

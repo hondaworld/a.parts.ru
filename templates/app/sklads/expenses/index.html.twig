@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Перемещения{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Перемещения</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('sklads.expenses', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, '# документа', 'document_num') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>Откуда</th>
+            <th>Местоположение</th>
+            <th>Куда</th>
+            <th>Местоположение</th>
+            <th>Заказ</th>
+            <th>Количество</th>
+            <th>Приход</th>
+            <th>В приходе</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.document_num) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th>{{ form_widget(filter.zapSkladID) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.zapSkladID_to) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for expenseSklad in pagination %}
+                <tr>
+                    <td><a href="{{ path('perem.php', {'id': expenseSklad.expense_skladDocumentID}) }}" target="_blank">{{ expenseSklad.document_num }}</a></td>
+                    <td>{{ expenses[expenseSklad.expense_skladDocumentID][expenseSklad.zapCardID][0].dateofadded|date('d.m.Y H:i') }}</td>
+                    <td>{{ expenseSklad.creater_name }}</td>
+                    <td>
+                        {% if is_granted('show', 'ZapCard') %}
+                            <a href="{{ path('card.parts.show', {'id': expenseSklad.zapCardID}) }}" title="В карточку детали">{{ expenseSklad.number }}</a>
+                        {% else %}
+                            {{ expenseSklad.number }}
+                        {% endif %}
+                    </td>
+                    <td>{{ expenseSklad.zapSklad }}</td>
+                    <td>
+                        {% if locations[expenseSklad.zapCardID]|default(null) and locations[expenseSklad.zapCardID][expenseSklad.zapSkladID]|default(null) %}
+                            {{ locations[expenseSklad.zapCardID][expenseSklad.zapSkladID]['location'] }}
+                        {% endif %}
+                    </td>
+                    <td>{{ expenseSklad.zapSklad_to }}</td>
+                    <td>
+                        {% if locations[expenseSklad.zapCardID]|default(null) and locations[expenseSklad.zapCardID][expenseSklad.zapSkladID_to]|default(null) %}
+                            {{ locations[expenseSklad.zapCardID][expenseSklad.zapSkladID_to]['location'] }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set quantity = 0 %}
+                        {% for expense in expenses[expenseSklad.expense_skladDocumentID][expenseSklad.zapCardID] %}
+                            {% if expense.orderID %}
+                                <div>{{ expense.orderID }} - {{ expense.quantity }} шт.</div>
+                            {% else %}
+                                {% set quantity = quantity + expense.quantity %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if quantity > 0 %}
+                            <div>Склад - {{ quantity }} шт.</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set quantity = 0 %}
+                        {% for expense in expenses[expenseSklad.expense_skladDocumentID][expenseSklad.zapCardID] %}
+                            {% set quantity = quantity + expense.quantity %}
+                        {% endfor %}
+                        {{ quantity }}
+                    </td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.expense_skladDocumentID][expenseSklad.zapCardID] %}
+                            {% if is_granted('index', 'Income') %}
+                                <div><a href="{{ path('income', {'form': {'incomeID': expense.incomeID}}) }}" title="В приходы">{{ expense.incomeID }}</a></div>
+                            {% else %}
+                                <div>{{ expense.incomeID }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.expense_skladDocumentID][expenseSklad.zapCardID] %}
+                            <div>{{ expense.quantity }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {{ parent() }}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

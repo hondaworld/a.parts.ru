@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Бухгалтерские документы{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/firms/allDocuments/_search_form.html.twig') }}
+
+{% endblock %}

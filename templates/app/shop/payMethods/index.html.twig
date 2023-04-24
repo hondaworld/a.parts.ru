@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Способы оплаты{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'PayMethod') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.payMethods.create') }}" class="nav-link"
+                       title="Добавить способ оплаты"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'PayMethod') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.payMethods.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные способы оплаты?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'PayMethod') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.payMethods.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные способы оплаты?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Сортировка</th>
+            {% if is_granted('edit', 'PayMethod') or is_granted('delete', 'PayMethod') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for payMethod in all %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ payMethod.payMethodID : '') }}
+                        class="{{ payMethod.isHide ? ' text-muted' : '' }}{{ payMethod.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': payMethod.payMethodID} only %}
+                    {% endif %}
+                    <td>{{ payMethod.val }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('shop.payMethods.sort', {'id': payMethod.payMethodID}) }}"
+                        data-direction="asc">{{ payMethod.number }}</td>
+                    {% if is_granted('edit', 'PayMethod') or is_granted('delete', 'PayMethod') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'PayMethod') %}
+                                    <a href="{{ path('shop.payMethods.edit', {'id': payMethod.payMethodID}) }}"
+                                       title="Изменить способ оплаты">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if (is_granted('delete', 'PayMethod')) %}
+                                    <a href="{{ path('shop.payMethods.delete', {'id': payMethod.payMethodID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить способ оплаты?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить способ оплаты">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

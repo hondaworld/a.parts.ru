@@ -1,0 +1,536 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Товары клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Товары клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">{{ user.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+    {{ form_start(filter) }}
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% include ('app/orders/goods/_header_buttons.html.twig') %}
+        {% endblock %}
+
+        {% set reset_path = path('order.goods', {'id': user.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item pr-1">{{ form_widget(filter.isShowAllGoods) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            <li class="nav-item">
+                <button type="button" class="btn-block-option" data-toggle="block-option" data-action="content_toggle">
+                    <i class="si si-arrow-up"></i></button>
+            </li>
+        {% endblock %}
+
+
+        {% block table_header %}
+            {% include ('app/orders/goods/_table_header.html.twig') %}
+        {% endblock %}
+
+        {% block filters %}
+            {% include ('app/orders/goods/_filters.html.twig') %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for order in pagination %}
+                <tr
+                        {% if order.styleClasses|default(false) %}
+                            class="{{ order.styleClasses|join(' ') }}"
+                        {% endif %}
+                >
+                    {% if (table_checkable|default(false)) %}
+                        {% if not order.isDisabled %}
+                            {% include 'tables/td_checkbox.html.twig' with {'id': order.goodID} only %}
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    {% endif %}
+                    <td>
+                        {% for alert in order.alerts %}
+                            <div>
+                                <button
+                                        class="btn btn-danger"
+                                        onclick="deleteGoodAlert(this, '{{ path('order.goods.alerts.delete', {'id': alert.alertID}) }}');"
+                                        title="{{ alert.name }} от {{ alert.dateofadded|date('d.m.Y') }}"
+                                ><i class="fas fa-exclamation"></i></button>
+                            </div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if order.schet %}
+                            {% if order.schet.is_exist %}
+                                {% if is_granted('show', 'Schet') %}
+                                    <a href="{{ path('schets.show', {'id': order.schetID}) }}">{{ order.schet.number }}</a>
+                                {% elseif order.schet.is_print %}
+                                    <a href="{{ path('schet.php', {'id': order.schetID}) }}"
+                                       target="_blank">{{ order.schet.number }}</a>
+                                {% else %}
+                                    {{ order.schet.number }}
+                                {% endif %}
+
+                            {% else %}
+                                <button
+                                        class="btn btn-danger schet-button"{{ not is_granted('order_good_schet', 'Order') ? ' disabled' : '' }}
+                                        onclick="changeGoodInSchet(this, '{{ path('schet.createByGood', {'id': order.goodID}) }}');"
+                                ><i class="fas fa-minus"></i></button>
+                            {% endif %}
+                        {% else %}
+                            <button
+                                    class="btn btn-success schet-button"{{ not is_granted('order_good_schet', 'Order') ? ' disabled' : '' }}
+                                    onclick="changeGoodInSchet(this, '{{ path('schet.createByGood', {'id': order.goodID}) }}');"
+                            ><i class="fas fa-plus"></i></button>
+                        {% endif %}
+                    </td>
+                    {% if order.document %}
+                        <td class="text-nowrap"
+                            title="{{ order.document.manager_name|default(null) ? 'Оформил ' ~ order.document.manager_name : '' }}">
+                            {{ order.document.name }} <a href="{{ order.document.url }}"
+                                                         target="_blank">{{ order.document.number }}</a>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+
+                    <td>
+                        <a href="{{ path('orders.view', {'id': order.orderID}) }}"
+                           title="В карточку заказа">{{ order.orderID }}</a>
+                        {% if (order.siteID) %}
+                            <sup>{{ sites[order.siteID]|default('') }}</sup>
+                        {% endif %}
+                        {% if (order.order|default(null)) %}
+                            <div>
+                                {% if (order.order.delivery) %}
+                                    <sup><i class="fas fa-truck" title="{{ order.order.delivery.name }}"></i></sup>
+                                    {% if (order.order.deliverySum == 'client') %}
+                                        <sup><i class="fas fa-user-check" title="Оплачивается клиентом"></i></sup>
+                                    {% elseif (order.order.deliverySum == 'free') %}
+                                        <sup><i class="fas fa-user-slash" title="Бесплатная доставка"></i></sup>
+                                    {% else %}
+                                        <sup><i class="fas fa-ruble-sign"
+                                                title="{{ order.order.deliverySum }} руб."></i></sup>
+                                    {% endif %}
+                                {% endif %}
+                                {% if (order.order.payMethod) %}
+                                    {% if (order.order.payMethod.id == 1) %}
+                                        <sup><i class="far fa-credit-card" title="{{ order.order.payMethod.val }}"></i></sup>
+                                    {% elseif (order.order.payMethod.id == 8) %}
+                                        <sup><i class="fas fa-file-invoice-dollar"
+                                                title="{{ order.order.payMethod.val }}"></i></sup>
+                                    {% else %}
+                                        <sup><i class="fas fa-wallet" title="{{ order.order.payMethod.val }}"></i></sup>
+                                    {% endif %}
+                                {% endif %}
+                                {% if (order.order.vin != '') %}
+                                    <sup><i class="fas fa-car-side" title="VIN: {{ order.order.vin }}"></i></sup>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td>{{ order.dateofadded|date('d.m.Y') }}</td>
+                    <td>{{ order.creater_name }}</td>
+                    <td>
+                        <div>
+                            {% if order.number_old != '' %}
+                                <span class="text-muted">{{ order.number_old }}<br>заменен на<br></span>
+                            {% endif %}
+                            {% if is_granted('show', 'ZapCard') and order.zapCard is not null %}
+                                <a href="{{ path('card.parts.show', {'id': order.zapCard.id}) }}"
+                                   title="В карточку детали">{{ order.number }}</a>
+                            {% else %}
+                                {{ order.number }}
+                            {% endif %}
+                        </div>
+                        <div
+                                {% if is_granted('edit', 'ZapCard') %}
+                                    title="Изменить наименование"
+                                    style="cursor: pointer"
+                                    data-toggle="modal"
+                                    data-target="#modalName"
+                                    data-goodid="{{ order.goodID }}"
+                                    data-number="{{ order.number }}"
+                                    data-createrid="{{ order.createrID }}"
+                                    data-zapgroupid="{{ order.zapCard|default(null) ? (order.zapCard.zapGroup|default(null) ? order.zapCard.zapGroup.id : '') : '' }}"
+                                    data-name="{{ order.zapCard|default(null) ? order.zapCard.name : '' }}"
+                                    data-description="{{ order.zapCard|default(null) ? order.zapCard.description : '' }}"
+                                    data-name_big="{{ order.zapCard|default(null) ? order.zapCard.nameBig : '' }}"
+                                    data-nameeng="{{ order.zapCard|default(null) ? order.zapCard.nameEng : '' }}"
+                                    data-ident="name"
+                                    onclick="modalNameChange(this)"
+                                {% endif %}
+                        >
+                            {% if order.zapCard and order.zapCard.detailName %}
+                                {{ order.zapCard.detailName }}
+                            {% else %}
+                                <span class="text-muted font-italic">Наименование не задано</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td
+                            {% if (is_granted('order_good_change_location', 'Order')) %}
+                                {% if not order.isDisabled and (order.zapSkladID and (not order.reserve|default(false) or order.reserve|default(false) and order.reserve.quantity == 0) or not order.zapSkladID and not order.incomeID) %}
+                                    data-toggle="modal"
+                                    data-target="#modalProviderPrice"
+                                    data-url="{{ path('order.goods.providerPrices', {'id': order.goodID}) }}"
+                                    data-title="Изменить поставщика"
+                                    title="Изменить поставщика"
+                                    class="ajax-modal-html"
+                                    style="cursor: pointer"
+                                {% endif %}
+                            {% endif %}
+                    >{{ order.location|nl2br }}</td>
+                    <td class="{{ order.weight|default(null) and order.weight.weightIsReal ? ' text-success' : '' }}">
+                        {{ order.weight|default(null) ? order.weight.weight : '' }}
+                    </td>
+                    <td class="text-nowrap">
+                        <div
+                                {% if (is_granted('order_good_change_price', 'Order') and order.expenseDocumentID is null) %}
+                                    title="Изменить цену и скидку"
+                                    style="cursor: pointer"
+                                    data-toggle="modal"
+                                    data-target="#modalPrice"
+                                    data-goodid="{{ order.goodID }}"
+                                    data-value="{{ order.price }}"
+                                    id="good_price_{{ order.goodID }}"
+                                    data-ident="price"
+                                    onclick="modalPriceChange(this)"
+                                {% endif %}
+
+                                class="text-right"
+                        >{{ order.price|number_format(2, ',', ' ') }}</div>
+                        <div class="d-flex">
+                            <div
+                                    {% if (is_granted('order_good_change_price', 'Order') and order.expenseDocumentID is null) %}
+                                        title="Изменить цену и скидку"
+                                        style="cursor: pointer"
+                                        data-toggle="modal"
+                                        data-target="#modalPrice"
+                                        data-goodid="{{ order.goodID }}"
+                                        data-value="{{ order.discount }}"
+                                        id="good_discount_{{ order.goodID }}"
+                                        data-ident="discount"
+                                        onclick="modalPriceChange(this)"
+                                    {% endif %}
+
+                                    class="ml-auto"
+                            >{{ order.discount|number_format(0, ',', ' ') }}
+                            </div>
+                            <div>%</div>
+                        </div>
+                        <div title="Цена со скидкой" id="good_priceDiscount_{{ order.goodID }}"
+                             class="text-right font-weight-bold">{{ order.priceDiscount|number_format(2, ',', ' ') }}</div>
+                    </td>
+                    <td
+                            {% if is_granted('order_good_change_quantity', 'Order') and not order.isDisabled and order.reserve.quantity == 0 and order.incomeID == 0 %}
+                                class="text-center text-nowrap"
+                                onclick="modalQuantityChange(this)"
+                                data-toggle="modal"
+                                data-target="#modalQuantity"
+                                data-number="{{ order.number }}"
+                                data-creater="{{ order.creater_name }}"
+                                data-location="{{ order.location }}"
+                                data-quantity="{{ order.quantity }}"
+                                data-url="{{ path('order.goods.quantity.update', {'id': order.goodID}) }}"
+                                data-urlchange="{{ path('order.goods.quantityChange.update', {'id': order.goodID}) }}"
+                                style="cursor: pointer;" title="Изменить количество"
+                            {% else %}
+                                class="text-center text-nowrap" title="Количество"
+                            {% endif %}
+                    >{{ order.quantity }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        {% if (order.reserve|default(false) and order.reserve.quantity > 0) %}
+                            {{ order.reserve.quantity }}
+                            {% if order.reserve.dateofclosed is null %}
+                                <i class="fas fa-infinity"></i>
+                            {% else %}
+                                ({{ order.reserve.dateofclosed|date('d.m.y') }})
+                            {% endif %}
+                        {% endif %}
+                    </td>
+
+
+                    <td class="text-nowrap">
+                        {% for skladID, skladName in sklads %}
+                            <div>{{ skladName }}</div>
+                        {% endfor %}
+                    </td>
+                    <td class="text-center text-nowrap font-weight-bold" title="Доступно для резерва">
+                        {% for skladID, skladName in sklads %}
+                            {% if order.zapCard|default(false) and quantityInWarehouse[order.zapCard.id]|default(false) and quantityInWarehouse[order.zapCard.id][skladID]|default(false) %}
+                                <div>{{ quantityInWarehouse[order.zapCard.id][skladID] }}</div>
+                            {% else %}
+                                <div>0</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="text-center text-dark text-nowrap" title="В наличии">
+                        {% for skladID, skladName in sklads %}
+                            {% if order.zapCard|default(false) and quantityIncomes[order.zapCard.id]|default(false) and quantityIncomes[order.zapCard.id][skladID]|default(false) %}
+                                <div>{{ quantityIncomes[order.zapCard.id][skladID]['quantityIn'] }}</div>
+                            {% else %}
+                                <div>0</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="text-center text-nowrap text-warning" title="В пути">
+                        {% for skladID, skladName in sklads %}
+                            {% if order.zapCard|default(false) and quantityIncomes[order.zapCard.id]|default(false) and quantityIncomes[order.zapCard.id][skladID]|default(false) %}
+                                <div>{{ quantityIncomes[order.zapCard.id][skladID]['quantityPath'] }}</div>
+                            {% else %}
+                                <div>0</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="text-center text-nowrap text-info" title="В резерве">
+                        {% for skladID, skladName in sklads %}
+                            {% if order.zapCard|default(false) and quantityIncomes[order.zapCard.id]|default(false) and quantityIncomes[order.zapCard.id][skladID]|default(false) %}
+                                <div>{{ quantityIncomes[order.zapCard.id][skladID]['reserve'] }}</div>
+                            {% else %}
+                                <div>0</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="text-center text-nowrap text-danger" title="Возвращено/Списано">
+                        <div>{{ order.quantityReturn }}</div>
+                    </td>
+
+                    <td>
+                        {% if order.providerPriceID %}
+                            {% if not order.incomeID %}
+                                <div class="text-muted font-italic">Не заказана</div>
+                            {% else %}
+                                <div>
+                                    {{ order.income|default(false) and order.income.dateofzakaz is not null ? order.income.dateofzakaz|date('d.m.Y') : ' - ' }}
+                                </div>
+                                <div>
+                                    {{ order.income|default(false) and order.income.dateofout is not null ? order.income.dateofout|date('d.m.Y') : ' - ' }}
+                                </div>
+                                <div>
+                                    {{ order.income|default(false) and order.income.dateofinplan is not null ? order.income.dateofinplan|date('d.m.Y') : ' - ' }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-muted font-italic">Складская</div>
+                        {% endif %}
+                    </td>
+                    {% if is_granted('delete', 'Order') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('order_good_delete', 'Order') %}
+                                    {% if order.reserve|default(false) and order.reserve.quantity > 0 or order.isDeleted == 1 or order.incomeID is not null or order.expenseDocumentID is not null or order.order_status == 3 %}
+                                        <i class="far fa-trash-alt text-muted"></i>
+                                    {% else %}
+                                        <a href="#" data-toggle="modal" data-target="#modalForm"
+                                           data-url="{{ path('order.goods.delete', {'id': order.goodID}) }}"
+                                           data-title="Удалить деталь"
+                                           class="nav-link ajax-modal-html">
+                                            <i class="far fa-trash-alt text-danger" title="Удалить деталь"></i>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+    {% endembed %}
+
+    {{ form_end(filter) }}
+
+    <div class="block block-rounded">
+
+        <div class="block-content block-content-full d-inline-block w-auto">
+            <div>
+                {% if is_granted('order_change_dates', 'Order') %}
+                    <a href="" data-toggle="modal" data-target="#modalForm"
+                       data-url="{{ path('order.goods.dateOfService', {'id': user.id}) }}"
+                       data-title="Изменить дату сервиса"
+                       class="ajax-modal-html d-inline-flex">
+                        <div class="pr-1">Сервис:</div>
+                        <div data-ident="dateofservice" data-userid="{{ user.id }}">
+                            {% if user.dateofservice %}
+                                {{ user.dateofservice|date('d.m.Y') }}
+                            {% else %}
+                                <span class="text-muted font-italic">не задан</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% else %}
+                    {% if user.dateofservice %}
+                        {{ user.dateofservice|date('d.m.Y') }}
+                    {% else %}
+                        <span class="text-muted font-italic">не задан</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div>
+                {% if is_granted('order_change_dates', 'Order') %}
+                    <a href="" data-toggle="modal" data-target="#modalForm"
+                       data-url="{{ path('order.goods.dateOfDelivery', {'id': user.id}) }}"
+                       data-title="Изменить дату доставки"
+                       class="ajax-modal-html d-inline-flex">
+                        <div class="pr-1">Доставка:</div>
+                        <div data-ident="dateofdelivery" data-userid="{{ user.id }}">
+                            {% if user.dateofdelivery %}
+                                {{ user.dateofdelivery|date('d.m.Y') }}
+                            {% else %}
+                                <span class="text-muted font-italic">не задана</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% else %}
+                    {% if user.dateofdelivery %}
+                        {{ user.dateofdelivery|date('d.m.Y') }}
+                    {% else %}
+                        <span class="text-muted font-italic">не задана</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div>
+                {% if is_granted('edit', 'Order') %}
+                    <a href="" data-toggle="modal" data-target="#modalForm"
+                       data-url="{{ path('order.goods.reseller', {'id': expenseDocument.id}) }}"
+                       data-title="Изменить реселлера"
+                       class="ajax-modal-html d-inline-flex">
+                        <div class="pr-1">Реселлер:</div>
+                        <div data-ident="reseller" data-expensedocumentid="{{ expenseDocument.id }}">
+                            {% if expenseDocument.reseller %}
+                                {{ expenseDocument.reseller.name }}
+                            {% else %}
+                                <span class="text-muted font-italic">не задан</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% else %}
+                    {% if expenseDocument.reseller %}
+                        {{ expenseDocument.reseller.name }}
+                    {% else %}
+                        <span class="text-muted font-italic">не задан</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="d-inline-flex">
+                <div id="newSchet">
+                    {% if newSchetData.qnt|default(0) > 0 %}
+                        В счете {{ newSchetData.qnt|default(0) }} товаров на {{ newSchetData.sum|default(0) }} р.
+                    {% else %}
+                        Счет не создан
+                    {% endif %}
+                </div>
+                <div class="pl-2"><a href="#" data-toggle="modal" data-target="#modalConfirm"
+                                     onclick="clearGoodSchet('{{ path('schet.clear', {'id': user.id}) }}')">очистить
+                        счет</a>
+                </div>
+            </div>
+            <div>Сумма деталей со скидкой: {{ sumOrder|number_format(0, '', ' ') }} р.</div>
+            <div>
+                Прибыль: {{ sumOrderProfit|number_format(0, '', ' ') }} р.
+                {% if isOrderPriceWrong %}
+                    <span class="text-danger" title="Сумма может быть некорректной">*</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% set numberOfPageForm = 1 %}
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% include ('app/orders/goods/_header_buttons_expense.html.twig') %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Дата</th>
+            <th>Бренд</th>
+            <th>Номер детали<br>Наименование</th>
+            <th>Регион</th>
+            <th>Вес</th>
+            <th class="text-right">
+                <i class="fas fa-ruble-sign" title="Цена"></i><br>
+                <i class="fas fa-percent" title="Скидка"></i><br>
+                <i class="fas fa-ruble-sign" title="Цена со скидкой"></i> + <i
+                        class="fas fa-percent" title="Скидка"></i></th>
+            <th>Кол.</th>
+            <th>Собрано</th>
+            <th colspan="2">Приходы</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if expenses is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for expense in expenses %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': expense.goodID, 'row': 'expense'} only %}
+                    {% endif %}
+                    <td>{{ expense.dateofexpense|default(null)|date('d.m.Y') }}</td>
+                    <td>{{ expense.creater_name }}</td>
+                    <td>
+                        <div>{{ expense.number }}</div>
+                        {% if expense.zapCard|default(null) and expense.zapCard.detailName %}
+                            {{ expense.zapCard.detailName }}
+                        {% else %}
+                            <span class="text-muted font-italic">Наименование не задано</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ expense.location|nl2br }}</td>
+                    <td class="{{ expense.weight|default(null) and expense.weight.weightIsReal ? ' text-success' : '' }}">
+                        {{ expense.weight|default(null) ? expense.weight.weight : '' }}
+                    </td>
+                    <td class="text-nowrap">
+                        <div class="text-right">{{ expense.price|number_format(2, ',', ' ') }}</div>
+                        <div class="text-right">{{ expense.discount|number_format(0, ',', ' ') }}%</div>
+                        <div title="Цена со скидкой"
+                             class="text-right font-weight-bold">{{ expense.priceDiscount|number_format(2, ',', ' ') }}</div>
+                    </td>
+                    <td>{{ expense.quantity }}</td>
+                    <td class="text-center">{% if expense.quantity - expense.quantityPicking == 0 %}<i
+                                class="fas fa-check text-success"></i>{% endif %}</td>
+                    <td>
+                        {% for income in expense.expenses %}
+                            <div class="{{ income.status == 8 ? 'text-success' : 'text-warning' }}">{{ income.incomeID }}</div>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for income in expense.expenses %}
+                            <div class="{{ income.status == 8 ? 'text-success' : 'text-warning' }}">{{ income.quantity }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block table_footer %}
+            <tr>
+                <th colspan="6" class="text-right font-weight-bold">Итого:</th>
+                <th class="text-right">{{ expensesSum.sum|number_format(2, ',', ' ') }}</th>
+                <th>{{ expensesSum.quantity }}</th>
+                <th colspan="3"></th>
+            </tr>
+        {% endblock %}
+    {% endembed %}
+
+    {% include ('app/orders/goods/_modals.html.twig') %}
+{% endblock %}

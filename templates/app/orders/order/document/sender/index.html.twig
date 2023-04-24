@@ -1,0 +1,36 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Грузоотправитель</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.sender', {'id': user.id}) }}"
+               title="Изменить грузоотправителя"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if (not expenseDocument.gruzFirm|default(false) and (not expenseDocument.gruzFirmBeznal|default(false))) %}
+        <p class="text-danger">Грузоотправитель будет браться из вкладки "Предприятие"</p>
+    {% endif %}
+    <p><strong>Предприятие: </strong>
+        {% if (expenseDocument.gruzFirm|default(false)) %}
+            {{ expenseDocument.gruzFirm.nameShort }}
+        {% else %}
+            <span class="text-muted font-italic">не задано</span>
+        {% endif %}
+    </p>
+    {% if (expenseDocument.gruzFirm|default(false)) %}
+        <p><strong>Адрес: </strong>
+        {% if (expenseDocument.gruzFirmContact|default(false)) %}
+            {{ expenseDocument.gruzFirmContact.fullAddress }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+        <p><strong>Реквизит: </strong>
+        {% if (expenseDocument.gruzFirmBeznal|default(false)) %}
+            {{ expenseDocument.gruzFirmBeznal.fullRequisite }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    {% endif %}
+{% endblock %}

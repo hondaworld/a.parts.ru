@@ -1,0 +1,29 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+
+    {% include 'blocks/block_header.html.twig' with {'header': 'Платежи'} only %}
+
+    <div class="block block-rounded">
+
+        {% if operations %}
+            <div class="block-content block-content-full d-inline-block w-auto">
+                <table class="table table-sm table-bordered table-striped">
+                    <tr class="table-primary">
+                        <th></th>
+                        {% for finance_type in financeTypes %}
+                            <th>{{ finance_type }}</th>
+                        {% endfor %}
+                    </tr>
+                    {% for firm, firmOperations in operations %}
+                        <tr>
+                            <th>{{ firm }}</th>
+                            {% for finance_type in financeTypes %}
+                                <td class="text-right">{{ (operations[firm]|default(null) ? operations[firm][finance_type]|default(0) : 0)|number_format(2, ',', ' ') }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

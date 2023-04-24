@@ -1,0 +1,18 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {% if zapCard.shopType.id not in [5,7] %}
+        {{ form_row(form.auto_modelID) }}
+    {% else %}
+        {{ form_row(form.moto_modelID) }}
+    {% endif %}
+
+    {{ form_row(form.year) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('card.parts.auto', {'id' : zapCard.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

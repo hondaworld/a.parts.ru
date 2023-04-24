@@ -1,0 +1,253 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Приходы{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {{ include('app/income/index/header_buttons.html.twig') }}
+        {% endblock %}
+
+        {% set reset_path = path('income', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+
+            {% include 'app/income/_filter_header.html.twig' %}
+
+            {% set changeTableColsPath = path('income.cols') %}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            {{ include('app/income/index/table_header.html.twig') }}
+        {% endblock %}
+
+        {% block filters %}
+            {{ include('app/income/index/filters.html.twig') }}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Задайте фильтр</td>
+                </tr>
+            {% elseif pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for income in pagination %}
+                {% set isDisabled = income.status in [4,5,10,8] ? true : false %}
+                {% set colorClass = income.status in [4,5,10] ? 'text-danger' : (income.status == 8 ? 'text-success' : (income.status == 1 ? 'font-weight-bold' : 'text-warning')) %}
+                <tr class="{{ colorClass }}">
+                    {% if not isDisabled %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': income.incomeID} only %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    {{ include('app/income/index/cols/abc.html.twig') }}
+                    {{ include('app/income/index/cols/manager.html.twig') }}
+                    {{ include('app/income/index/cols/dateofadded.html.twig') }}
+                    {{ include('app/income/index/cols/creater.html.twig') }}
+                    {{ include('app/income/index/cols/name.html.twig') }}
+                    {{ include('app/income/index/cols/number.html.twig') }}
+                    {{ include('app/income/index/cols/location.html.twig') }}
+                    {{ include('app/income/index/cols/providerPrice.html.twig') }}
+                    {{ include('app/income/index/cols/country.html.twig') }}
+                    {{ include('app/income/index/cols/gtd.html.twig') }}
+                    {{ include('app/income/index/cols/order.html.twig') }}
+                    {{ include('app/income/index/cols/weight.html.twig') }}
+                    {{ include('app/income/index/cols/priceZak.html.twig') }}
+                    {{ include('app/income/index/cols/priceDost.html.twig') }}
+                    {{ include('app/income/index/cols/price.html.twig') }}
+                    {{ include('app/income/index/cols/discountPrice.html.twig') }}
+                    {{ include('app/income/index/cols/status.html.twig') }}
+                    {{ include('app/income/index/cols/quantity.html.twig') }}
+                    {{ include('app/income/index/cols/dateofzakaz.html.twig') }}
+                    {{ include('app/income/index/cols/dateofin.html.twig') }}
+                    {{ include('app/income/index/cols/dateofinplan.html.twig') }}
+                    {{ include('app/income/index/cols/incomeID.html.twig') }}
+                    {{ include('app/income/index/cols/incomeOrder.html.twig') }}
+                    {{ include('app/income/index/cols/isUnpack.html.twig') }}
+                    {{ include('app/income/index/cols/incomeDocument.html.twig') }}
+                    {% if is_granted('delete', 'Income') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('delete', 'Income') %}
+                                    {% if income.status == 1 %}
+                                        <a href="{{ path('income.delete', {'id': income.incomeID}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить приход?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Удалить приход">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    {% else %}
+                                        <i class="far fa-trash-alt text-secondary"></i>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {% if pagination is not null %}
+                {{ parent() }}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+
+
+    <div class="block block-rounded">
+
+        <div class="block-content block-content-full d-inline-block w-auto">
+            <div><strong>Итого в у.е.:</strong> {{ sum.priceZak|number_format(2, ',', ' ') }}</div>
+            <div><strong>Итого в руб.:</strong> {{ sum.price|number_format(2, ',', ' ') }}</div>
+            <div><strong>Доставка в у.е.:</strong> {{ sum.priceDost|number_format(2, ',', ' ') }}</div>
+            <div><strong>Вес в кг.:</strong> {{ sum.weight|number_format(4, ',', ' ') }}</div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalProviderPriceFilter" tabindex="-1" role="dialog"
+         aria-labelledby="modalProviderPriceFilterLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div id="modalProviderPriceFilterText" class="modal-body noCloseDropdown">
+                    {{ form_widget(filter.providerPriceID) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            onclick="document.getElementById('form_providerPriceID').value = '';" data-dismiss="modal">
+                        Сбросить
+                    </button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Выбрать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(filter) }}
+
+
+    <script>
+
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('income.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function modalCountryChange(el) {
+            document.forms['formCountry'].action = '/income/' + el.dataset.zapcardid + '/country';
+            document.getElementById('modalCountryAlert').classList.remove("d-block");
+            document.getElementById('modalCountryAlert').classList.add('d-none');
+            document.getElementById('formCountry_countryID').value = el.dataset.countryid;
+        }
+
+        function modalNumberChange(el) {
+            document.forms['formNumber'].action = '/income/' + el.dataset.incomeid + '/number';
+            document.getElementById('modalNumberAlert').classList.remove("d-block");
+            document.getElementById('modalNumberAlert').classList.add('d-none');
+            document.getElementById('formNumber_number').value = el.dataset.number;
+        }
+
+        function modalDateOfZakazChange(el) {
+            document.forms['formDateOfZakaz'].action = '/income/' + el.dataset.incomeid + '/dateofzakaz';
+            document.getElementById('modalDateOfZakazAlert').classList.remove("d-block");
+            document.getElementById('modalDateOfZakazAlert').classList.add('d-none');
+            setDatePicker('formDateOfZakaz_dateofzakaz', el.dataset.dateofzakaz)
+        }
+
+        function modalDateOfInChange(el) {
+            document.forms['formDateOfIn'].action = '/income/' + el.dataset.incomeid + '/dateofin';
+            document.getElementById('modalDateOfInAlert').classList.remove("d-block");
+            document.getElementById('modalDateOfInAlert').classList.add('d-none');
+            setDatePicker('formDateOfIn_dateofin', el.dataset.dateofin)
+        }
+
+        function modalDateOfInPlanChange(el) {
+            document.forms['formDateOfInPlan'].action = '/income/' + el.dataset.incomeid + '/dateofinplan';
+            document.getElementById('modalDateOfInPlanAlert').classList.remove("d-block");
+            document.getElementById('modalDateOfInPlanAlert').classList.add('d-none');
+            setDatePicker('formDateOfInPlan_dateofinplan', el.dataset.dateofinplan)
+        }
+
+        function modalWeightChange(el) {
+            document.forms['formWeight'].action = '/income/' + el.dataset.incomeid + '/weight';
+            document.getElementById('modalWeightAlert').classList.remove("d-block");
+            document.getElementById('modalWeightAlert').classList.add('d-none');
+            document.getElementById('formWeight_weight').value = el.dataset.weight;
+            document.getElementById('formWeight_weightIsReal').checked = !!+el.dataset.weightisreal;
+        }
+
+        function modalNameChange(el) {
+            document.forms['formName'].action = '/income/' + el.dataset.zapcardid + '/name';
+            document.getElementById('modalNameAlert').classList.remove("d-block");
+            document.getElementById('modalNameAlert').classList.add("d-none");
+            document.getElementById('formName_zapGroupID').value = el.dataset.zapgroupid;
+            document.getElementById('formName_name').value = el.dataset.name;
+            document.getElementById('formName_description').value = el.dataset.description;
+            document.getElementById('formName_name_big').value = el.dataset.name_big;
+            document.getElementById('formName_nameEng').value = el.dataset.nameeng;
+        }
+
+        function modalStatusChange(el, incomeID) {
+            document.getElementById('modalStatusIncome').innerText = incomeID;
+        }
+
+        function modalSkladChange(el, number) {
+            document.getElementById('modalSkladNumber').innerText = number;
+        }
+
+        function modalProviderPriceChange(el, incomeID) {
+            document.getElementById('modalProviderPriceIncome').innerText = incomeID;
+        }
+
+        function modalIncomeChange(el, incomeID) {
+            document.getElementById('modalIncomeHistoryIncome').innerText = incomeID;
+        }
+
+        function modalQuantityAllChange(el, incomeID) {
+            document.getElementById('modalQuantityAllIncome').innerText = incomeID;
+        }
+
+        function modalQuantityChange(el, incomeID) {
+            document.getElementById('modalQuantityIncome').innerText = incomeID;
+            document.forms['formQuantity'].action = el.dataset.url;
+            document.forms['formQuantityChange'].action = el.dataset.urlchange;
+            document.getElementById('modalQuantityAlert').classList.remove("d-block");
+            document.getElementById('modalQuantityAlert').classList.add("d-none");
+            document.getElementById('modalQuantityNumber').innerText = el.dataset.number;
+            document.getElementById('modalQuantityCreater').innerText = el.dataset.creater;
+            document.getElementById('modalQuantityProviderPrice').innerText = el.dataset.providerprice;
+            document.getElementById('formQuantity_quantity').value = el.dataset.quantity;
+            document.getElementById('formQuantityChange_quantity').value = el.dataset.quantity;
+        }
+
+        {% if windowTop|default(0) > 0 %}
+        window.scrollBy(0, {{ windowTop }})
+        {% endif %}
+    </script>
+
+    {{ include('app/income/_modals.html.twig') }}
+
+{% endblock %}

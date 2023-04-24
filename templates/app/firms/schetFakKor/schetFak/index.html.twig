@@ -1,0 +1,14 @@
+{{ include('app/firms/schetFakKor/schetFak/_form.html.twig') }}
+
+<div id="schetFakTable" class="mt-2"></div>
+
+<script>
+    function showSchetFaks() {
+        const num = document.getElementById('form_document_num').value;
+        let url = '{{ path('schetFakKor.schetFakTable', {'document_num': '*document_num*'}) }}';
+        url = url.replace('*document_num*', num);
+        const schetFakTable = document.getElementById('schetFakTable');
+        schetFakTable.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="sr-only">Loading...</span></div></div>';
+        getHtmlFromAjax(url, schetFakTable);
+    }
+</script>

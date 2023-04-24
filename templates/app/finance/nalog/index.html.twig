@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Налоговые схемы{% endblock %}
+{% block header %}Налоговые схемы{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Налоговые схемы</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('nalog.create') }}" class="nav-link" title="Добавить налоговую схему"><i
+                            class="fas fa-plus"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Текущий НДС, %</th>
+            <th>Текущий НДС</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if nalogs is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for nalog in nalogs %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': nalog.nalogID} only %}
+                    {% endif %}
+                    <td>{{ nalog.name }}</td>
+                    <td>{{ nalog.nds }}</td>
+                    <td>{{ nalog.nds / (100 + nalog.nds) }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('nalog.nds', {'nalogID': nalog.nalogID}) }}"
+                               title="НДС">
+                                <i class="fas fa-percentage"></i>
+                            </a>
+                            <a href="{{ path('nalog.edit', {'id': nalog.nalogID}) }}"
+                               title="Изменить налоговую схему">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('nalog.delete', {'id': nalog.nalogID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить налоговую схему?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить налоговую схему">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

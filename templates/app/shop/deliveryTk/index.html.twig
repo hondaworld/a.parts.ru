@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ТК отгрузки{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'DeliveryTk') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.deliveryTk.create') }}" class="nav-link"
+                       title="Добавить ТК отгрузки"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'DeliveryTk') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.deliveryTk.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные ТК отгрузки?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'DeliveryTk') %}
+                <li class="nav-item">
+                    <a href="{{ path('shop.deliveryTk.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные ТК отгрузки?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Адрес</th>
+            {% if is_granted('edit', 'DeliveryTk') or is_granted('delete', 'DeliveryTk') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for delivery in all %}
+                <tr class="{{ delivery.isHide ? ' text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': delivery.delivery_tkID} only %}
+                    {% endif %}
+                    <td>{{ delivery.name }}</td>
+                    <td>{{ delivery.http }}</td>
+                    {% if is_granted('edit', 'DeliveryTk') or is_granted('delete', 'DeliveryTk') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'DeliveryTk') %}
+                                    <a href="{{ path('shop.deliveryTk.edit', {'id': delivery.delivery_tkID}) }}"
+                                       title="Изменить ТК отгрузку">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if (is_granted('delete', 'DeliveryTk')) %}
+                                    <a href="{{ path('shop.deliveryTk.delete', {'id': delivery.delivery_tkID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить ТК отгрузку?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить ТК отгрузку">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

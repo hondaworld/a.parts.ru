@@ -1,0 +1,14 @@
+{% if 'gtd' not in hideCols %}
+    <td>
+        <input
+                type="text"
+                class="js-autocomplete-simple form-control form-control-sm table-col-input"
+                style="min-width: 70px;"
+                data-old="{{ income.gtd }}"
+                data-id="{{ income.incomeID }}"
+                data-url-submit="{{ path('income.gtd', {'id': income.incomeID}) }}"
+                data-url="{{ path('api_gtd') }}"
+                value="{{ income.gtd }}"
+        >
+    </td>
+{% endif %}

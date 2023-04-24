@@ -1,0 +1,115 @@
+<script>
+    const prev_labels = [
+        {% for date in prevDates %}
+        '{{ date|date('d.m') }}',
+        {% endfor %}
+    ];
+    const prev_profits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].profit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_incomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].income.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_mskProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].mskProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_mskIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].mskIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_mskServiceProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].mskServiceProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_mskServiceIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].mskServiceIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_spbProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].spbProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_spbIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].spbIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_spbServiceProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].spbServiceProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_spbServiceIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].spbServiceIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_serviceProfits = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].serviceProfit.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+    const prev_serviceIncomes = {
+        {% for optID, opt in opts %}
+        '{{ optID }}': [
+            {% for date in prevDates %}
+            {{ prevProfits[optID].serviceIncome.date[date|date('Y-m-d')]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+</script>

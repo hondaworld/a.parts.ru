@@ -1,0 +1,40 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Документ</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('schet_fak_kor.php', {'id': schetFakKor.id}) }}"
+               title="Печать корректировочного счета фактуры" target="_blank">
+                <i class="fas fa-print"></i>
+            </a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('schet_fak_kor_excel.php', {'id': schetFakKor.id}) }}"
+               title="Печать корректировочного счета фактуры в Excel" target="_blank">
+                <i class="far fa-file-excel"></i>
+            </a>
+            {% if schetFakKor.schetFak.expenseDocument.user.edo %}
+                <a type="button" class="btn btn-sm btn-alt-primary"
+                   href="{{ path('schet_fak_kor_xml.php', {'id': schetFakKor.id}) }}"
+                   title="Печать корректировочного счета фактуры в XML" target="_blank">
+                    <i class="far fa-file-code"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Префикс: </strong>
+        {{ check_empty(schetFakKor.document.prefix, 'не задан') }}
+    </p>
+    <p><strong>Суфикс: </strong>
+        {{ check_empty(schetFakKor.document.sufix, 'не задан') }}
+    </p>
+    <p><strong>Номер: </strong>
+        {{ check_empty(schetFakKor.document.num, 'не задан') }}
+    </p>
+    <p><strong>Дата: </strong>
+        {{ schetFakKor.dateofadded|date('d.m.Y') }}
+    </p>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение причины отказа {{ deleteReason.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shop.delivery') }}">Причины отказа</a></li>
+    <li class="breadcrumb-item">{{ deleteReason.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/shop/deleteReasons/_form.html.twig') }}
+{% endblock %}

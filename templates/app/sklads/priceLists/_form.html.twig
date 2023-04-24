@@ -1,0 +1,14 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.koef_dealer) }}
+    {{ form_row(form.no_discount) }}
+    {{ form_row(form.isMain) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('price.list.price.lists') }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

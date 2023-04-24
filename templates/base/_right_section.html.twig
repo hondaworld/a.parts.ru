@@ -1,0 +1,79 @@
+<div class="d-flex align-items-center">
+    <!-- User Dropdown -->
+    <div class="dropdown d-inline-block ml-2">
+        <button type="button" class="btn btn-sm btn-dual d-flex align-items-center"
+                id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
+            <img class="rounded-circle" src="{{ asset(app.user.photo) }}" style="width: 21px;">
+            <span class="d-none d-sm-inline-block ml-2">{{ app.user.firstname }}</span>
+            <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block ml-1 mt-1"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-md dropdown-menu-right p-0 border-0"
+             aria-labelledby="page-header-user-dropdown">
+            <div class="p-3 text-center bg-primary-dark rounded-top">
+                <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset(app.user.photo) }}"
+                     alt="">
+                <p class="mt-2 mb-0 text-white font-w500">{{ app.user.name }}</p>
+                <p class="mb-0 text-white-50 font-size-sm">{{ app.user.role }}</p>
+            </div>
+            <div class="p-2">
+                {# <a class="dropdown-item d-flex align-items-center justify-content-between" #}
+                {# href="be_pages_generic_inbox.html"> #}
+                {# <span class="font-size-sm font-w500">Inbox</span> #}
+                {# <span class="badge badge-pill badge-primary ml-2">3</span> #}
+                {# </a> #}
+                <a class="dropdown-item d-flex align-items-center justify-content-between"
+                   href="{{ path('profile') }}">
+                    <span class="font-size-sm font-w500">Профиль</span>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between"
+                   href="{{ path('profile.password') }}">
+                    <span class="font-size-sm font-w500">Изменить пароль</span>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between"
+                   href="{{ path('favouriteMenu') }}">
+                    <span class="font-size-sm font-w500">Избранное</span>
+                </a>
+                <div role="separator" class="dropdown-divider"></div>
+                <a class="dropdown-item d-flex align-items-center justify-content-between"
+                   href="{{ path('app_logout') }}">
+                    <span class="font-size-sm font-w500">Выйти</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- END User Dropdown -->
+
+    <!-- Notifications Dropdown -->
+    <div class="dropdown d-inline-block ml-2">
+        <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-fw fa-bell"></i>
+            <span id="right-section-tickets-bell" style="display: none" class="text-success">•</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0 border-0 font-size-sm"
+             aria-labelledby="page-header-notifications-dropdown">
+            <div class="p-2 bg-primary-dark text-center rounded-top">
+                <h5 class="dropdown-header text-uppercase text-white">Тикеты</h5>
+            </div>
+            <div style="min-height: 55px;" class="block block-transparent mb-0">
+                <ul id="right-section-tickets-list" class="nav-items mb-0">
+                </ul>
+            </div>
+            <div class="p-2 border-top">
+                <a class="btn btn-sm btn-light btn-block text-center" href="{{ path('client-tickets.tickets') }}">
+                    <i class="fa fa-fw fa-arrow-down mr-1"></i> Все тикеты
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- END Notifications Dropdown -->
+
+    <!-- Toggle Side Overlay -->
+    <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+    <button type="button" class="btn btn-sm btn-dual ml-2" data-toggle="layout"
+            data-action="side_overlay_toggle" id="button-show-overlay">
+        <i class="fa fa-fw fa-list-ul fa-flip-horizontal"></i>
+    </button>
+    <!-- END Toggle Side Overlay -->
+</div>

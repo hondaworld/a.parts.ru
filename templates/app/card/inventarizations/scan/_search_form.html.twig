@@ -1,0 +1,28 @@
+{% embed 'blocks/block_container.html.twig' %}
+    {% block content %}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'return false;'}}) }}
+        <div class="row mb-2">
+            <div class="col-auto">
+                {{ form_widget(form.zapSkladID, {'id': 'search_zap_skladID'}) }}
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary" onclick="zapSklad()"><i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+        <script>
+            function zapSklad() {
+                const search_zap_skladID = document.getElementById('search_zap_skladID');
+                if (search_zap_skladID.value !== '') {
+                    let url = '{{ path('inventarizations.goods.scan', {'inventarizationID': inventarization.id, 'id': '*search_zap_skladID*'}) }}';
+                    url = url.replace('*search_zap_skladID*', search_zap_skladID.value).replaceAll('&amp;', '&');
+                    window.location = url;
+                } else {
+                    search_zap_skladID.classList.add("is-invalid");
+                }
+            }
+        </script>
+
+    {% endblock %}
+{% endembed %}

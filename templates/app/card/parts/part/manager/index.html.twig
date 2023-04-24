@@ -1,0 +1,18 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Менеджер</h3>
+        <div class="block-options">
+            {% if is_granted('zap_card_manager_change', zapCard) %}
+                <a type="button" class="btn btn-sm btn-alt-primary"
+                   href="{{ path('card.parts.manager', {'id': zapCard.id}) }}"
+                   title="Изменить менеджера"><i class="fas fa-edit"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Ответственный менеджер: </strong>
+        {{ check_empty(zapCard.manager.name|default(''), 'не задан') }}
+    </p>
+{% endblock %}

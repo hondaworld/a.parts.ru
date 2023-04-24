@@ -1,0 +1,15 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.createrID) }}
+    {{ form_row(form.number) }}
+    {{ form_row(form.providerID) }}
+    {{ form_row(form.comment) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('exclude.providers', {'page' : app.session.get('page/providerExclude')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

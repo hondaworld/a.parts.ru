@@ -1,0 +1,14 @@
+{% if 'country' not in hideCols %}
+    <td
+            {% if is_granted('edit', 'ZapCard') %}
+                title="Изменить страну"
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#modalCountry"
+                data-zapcardid="{{ income.zapCardID }}"
+                data-countryid="{{ income.countryID }}"
+                data-ident="country"
+                onclick="modalCountryChange(this)"
+            {% endif %}
+    >{{ income.country_name|default('') }}</td>
+{% endif %}

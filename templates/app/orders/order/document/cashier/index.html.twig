@@ -1,0 +1,48 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Плательщик</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.cashier', {'id': user.id}) }}"
+               title="Изменить клиента"><i class="fas fa-user"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.cashierFirmContr', {'id': user.id}) }}"
+               title="Изменить контрагента"><i class="far fa-building"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.cashierSchetFak', {'id': user.id}) }}"
+               title="Изменить настройки с/ф"><i class="fas fa-file-invoice-dollar"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if (not expenseDocument.cashUser|default(false) and (not expenseDocument.cashFirmContr|default(false))) %}
+        <p class="text-danger">Плательщик будет браться из вкладки "Клиент"</p>
+    {% endif %}
+    <p><strong>Клиент: </strong>
+        {% if (expenseDocument.cashUser|default(false)) %}
+            {{ expenseDocument.cashUser.nameWithPhoneMobile }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+    {% if (expenseDocument.cashUser|default(false)) %}
+        <p><strong>Адрес: </strong>
+        {% if (expenseDocument.cashUserContact|default(false)) %}
+            {{ expenseDocument.cashUserContact.fullAddress }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+        <p><strong>Реквизит: </strong>
+        {% if (expenseDocument.cashUserBeznal|default(false)) %}
+            {{ expenseDocument.cashUserBeznal.fullRequisite }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    {% endif %}
+    <p><strong>Контрагент: </strong>
+        {% if (expenseDocument.cashFirmContr|default(false)) %}
+            {{ expenseDocument.cashFirmContr.ur.organization }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    </p>
+    <p><strong>В с/ф в ИНН/КПП показывать данные грузополучателя: </strong> {{ boolean_status(expenseDocument.isGruzInnKpp) }}</p>
+{% endblock %}

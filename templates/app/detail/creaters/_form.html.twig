@@ -1,0 +1,17 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.name_rus) }}
+    {{ form_row(form.isOriginal) }}
+    {{ form_row(form.tableName) }}
+    {{ form_row(form.creater_weightID) }}
+    {{ form_row(form.description) }}
+
+    <button type="submit" class="btn btn-primary">Добавить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('creaters', {'page' : app.session.get('page/creaters')|default(1)}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

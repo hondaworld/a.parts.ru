@@ -1,0 +1,11 @@
+{% extends 'blocks/block_container_full.html.twig' %}
+{% block content %}
+    {{ form_start(act, {'attr': {'novalidate': 'novalidate', 'target': '_blank'}, 'action': path('providers.balance.history.act', {'providerID': provider.id})}) }}
+    <div class="row">
+        <div class="col">{{ form_widget(act.dateofadded) }}</div>
+        <div class="col">{{ form_widget(act.userID) }}</div>
+        <div class="col">{{ form_widget(act.firmID) }}</div>
+        <div class="col"><button type="submit" class="btn btn-primary btn-sm">{{ buttonName|default('Акт') }}</button></div>
+    </div>
+    {{ form_end(act) }}
+{% endblock %}

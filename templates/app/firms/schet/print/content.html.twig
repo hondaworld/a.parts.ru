@@ -1,0 +1,142 @@
+<table class="w-100">
+    <tr>
+        <td class="text-center" style="padding-left: 50px; padding-right: 50px; font-size: 10px;">Внимание! Оплата
+            данного
+            счета означает согласие с условиями поставки товара. Уведомление об оплате обязательно, в противном случае
+            не гарантируется наличие товара на складе. Товар отпускается по факту прихода денег на р/с Поставщика
+        </td>
+    </tr>
+    <tr>
+        <td class="text-center" style="padding-top: 10px; padding-bottom: 10px; font-size: 12px;"><strong>Образец
+                заполнения
+                платежного поручения</strong></td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width: 100%;" class="border1">
+                <tr>
+                    <td width="56%" colspan="2" rowspan="2">{{ schet.firmBeznal.bank.name }}
+                        <br><br><span style="font-size: 10px;">Банк получателя</span></td>
+                    <td width="9%">БИК</td>
+                    <td width="35%">{{ schet.firmBeznal.bank.bik }}</td>
+                </tr>
+                <tr>
+                    <td width="9%">Сч.&nbsp;№</td>
+                    <td width="35%">{{ schet.firmBeznal.bank.korschet }}</td>
+                </tr>
+                <tr>
+                    <td width="28%">ИНН {{ schet.firm.inn }}</td>
+                    <td width="28%">КПП {{ schet.firm.kpp }}</td>
+                    <td width="9%" rowspan="2">Сч.&nbsp;№</td>
+                    <td width="35%"
+                        rowspan="2">{{ schet.firmBeznal.rasschet }}</td>
+                </tr>
+                <tr>
+                    <td width="56%" colspan="2">{{ schet.firm.name }}<br><br><span
+                                style="font-size: 10px;">Получатель</span></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td><h2>Счет №{{ document_num }} от {{ document_date|date('d.m.Y') }}</h2></td>
+    </tr>
+    <tr>
+        <td width="100%">
+            <hr class="border w-100">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table width="100%">
+                <tr>
+                    <td width="15%" style="padding-bottom: 5px;">Поставщик:&nbsp;</td>
+                    <td width="85%"><strong>{{ schet.firm.nameWithInnAndKpp }}
+                            , {{ schet.firmContact.fullAddress }}</strong>&nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-bottom: 5px;">Покупатель:&nbsp;</td>
+                    <td><strong>{{ schet.expUser.passportNameOrOrganizationWithInnKppAndPhonemob(true) }}
+                            , {{ schet.expUserContact.fullAddressWithPhones }}</strong>&nbsp;
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="table-goods">
+                <tr>
+                    <th width="5%">№</th>
+                    <th width="60%">Товар</th>
+                    <th width="10%">Кол-во</th>
+                    <th width="5%">Ед.</th>
+                    <th width="10%">Цена</th>
+                    <th width="10%">Сумма</th>
+                </tr>
+                {% for index, schetGood in schet.schetGoods %}
+                    <tr>
+                        <td class="text-center">{{ index + 1 }}</td>
+                        <td>{{ zapCards[schetGood.id] ? zapCards[schetGood.id].detailName : '' }}
+                            ({{ schetGood.number.value }})
+                        </td>
+                        <td class="text-center">{{ schetGood.quantity }}</td>
+                        <td class="text-center">шт</td>
+                        <td class="text-right" nowrap>{{ schetGood.price|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right"
+                            nowrap>{{ (schetGood.price * schetGood.quantity)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td><br></td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="3" cellspacing="1" width="100%">
+                <tr>
+                    <td width="85%" align="right"><strong>Итого:</strong></td>
+                    <td width="15%" align="right"><strong>{{ sum|number_format(2, ',', ' ') }}</strong></td>
+                </tr>
+                <tr>
+                    <td width="85%" align="right"><strong>В том числе НДС:</strong></td>
+                    <td width="15%" align="right">
+                        <strong>{{ nds == 0 ? "НДС не облагается" : sumNds|number_format(2, ',', ' ') }}</strong>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td><br></td>
+    </tr>
+    <tr>
+        <td>Всего наименований {{ schet.schetGoods|length }}, на сумму {{ sum|number_format(2, ',', ' ') }}
+            рублей, {{ nds == 0 ? "НДС не облагается" : "в том числе НДС " ~ sumNds|number_format(2, ',', ' ') }}</td>
+    </tr>
+    <tr>
+        <td><strong>{{ mb_ucfirst(numberInWords(sum, true)) }}</strong></td>
+    </tr>
+    <tr>
+        <td width="100%"><br>
+            <hr class="border w-100">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="3" cellspacing="1" width="100%">
+                <tr>
+                    <td width="15%"><strong>Руководитель</strong></td>
+                    <td width="10%">___________</td>
+                    <td width="25%" style="font-size: 10px;">({{ schet.firm.director.name|default('') }})</td>
+                    <td width="15%"><strong>Бухгалтер</strong></td>
+                    <td width="10%">___________</td>
+                    <td width="25%" style="font-size: 10px;">({{ schet.firm.buhgalter.name|default('') }})</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

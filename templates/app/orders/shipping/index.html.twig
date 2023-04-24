@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Отгрузки клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Отгрузки клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item">Отгрузки</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/orders/order/_tabs.html.twig') %}
+
+
+    {% embed 'tables/table_pagination.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Получатель', 'gruz_user_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Отправитель', 'gruz_firm_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Город', 'gruz_user_town') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Оплатил', 'pay_type_name') }}</th>
+            <th>Место</th>
+            <th>Длина, см</th>
+            <th>Ширина, см</th>
+            <th>Высота, см</th>
+            <th>Вес, кг</th>
+            <th>Объем, куб.см</th>
+            <th>{{ knp_pagination_sortable(pagination, 'ТК', 'delivery_tk') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Трекинг номер', 'tracknumber') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+            <th><i class="fas fa-paperclip"></i></th>
+            <th>{{ knp_pagination_sortable(pagination, 'Статус', 'status_name') }}</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for shipping in pagination %}
+                <tr>
+                    <td>{{ shipping.gruz_user_name }}</td>
+                    <td>{{ shipping.gruz_firm_name }}</td>
+                    <td>{{ shipping.gruz_user_town }}</td>
+                    <td>{{ shipping.pay_type_name }}</td>
+                    <td class="text-center">
+                        {% for place in shipping.places %}
+                            {{ place.number }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.length|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.width|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.height|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ place.weight|number_format(4, ',', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-right">
+                        {% for place in shipping.places %}
+                            {{ (place.length * place.width * place.height)|number_format(0, '', ' ') }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ shipping.delivery_tk }}</td>
+                    <td>{{ shipping.tracknumber }}</td>
+                    <td>{{ shipping.dateofadded|date('d.m.Y') }}</td>
+                    <td>
+                        {% if (shipping.nakladnaya is not empty) %}
+                            <a href="{{ user_shipping_attach_folder ~ shipping.nakladnaya }}" target="_blank"><i
+                                        class="fas fa-paperclip"></i></a>
+                        {% endif %}
+                    </td>
+                    <td>{{ shipping.status_name }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

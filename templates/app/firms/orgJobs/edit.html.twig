@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение должности {{ orgJob.name }}{% endblock %}
+{% block header %}{{ orgJob.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('org.jobs') }}">Должности</a></li>
+    <li class="breadcrumb-item">{{ orgJob.name }}</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/firms/orgJobs/_form.html.twig') }}
+{% endblock %}

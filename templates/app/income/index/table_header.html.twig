@@ -1,0 +1,84 @@
+{% if 'abc' not in hideCols %}
+    <th>ABC</th>
+{% endif %}
+{% if 'manager' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Менеджер', 'manager_nick') : 'Менеджер' }}</th>
+{% endif %}
+{% if 'dateofadded' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Дата', 'dateofadded') : 'Дата' }}</th>
+{% endif %}
+{% if 'creater' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Бренд', 'creater') : 'Бренд' }}</th>
+{% endif %}
+{% if 'name' not in hideCols %}
+    <th>Наименование</th>
+{% endif %}
+{% if 'number' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Номер', 'number') : 'Номер' }}</th>
+{% endif %}
+{% if 'location' not in hideCols %}
+    <th>Ячейка</th>
+{% endif %}
+{% if 'providerPrice' not in hideCols %}
+    <th>Регион</th>
+{% endif %}
+{% if 'country' not in hideCols %}
+    <th>Страна</th>
+{% endif %}
+{% if 'gtd' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'ГТД', 'gtd') : 'ГТД' }}</th>
+{% endif %}
+{% if 'order' not in hideCols %}
+    <th>Заказ</th>
+{% endif %}
+{% if 'weight' not in hideCols %}
+    <th>Вес</th>
+{% endif %}
+{% if 'priceZak' not in hideCols %}
+    <th class="text-center"><i class="fas fa-dollar-sign" title="Закупка, у.е."></i></th>
+{% endif %}
+{% if 'priceDost' not in hideCols %}
+    <th class="text-center"><i class="fas fa-truck" title="Доставка, у.е."></i></th>
+{% endif %}
+{% if 'price' not in hideCols %}
+    <th class="text-center"><i class="fas fa-ruble-sign" title="Цена, руб."></i></th>
+{% endif %}
+{% if 'discountPrice' not in hideCols %}
+    <th class="text-center"><i class="far fa-money-bill-alt" title="Розница, руб."></i></th>
+{% endif %}
+{% if 'status' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Статус', 'status_name') : 'Статус' }}</th>
+{% endif %}
+{% if 'quantity' not in hideCols %}
+    <th class="text-center"><i class="fas fa-warehouse" title="Склад"></i></th>
+    <th class="text-center"><i class="fas fa-boxes" title="Всего"></i></th>
+    <th class="text-center"><i class="fas fa-pallet" title="В наличии"></i></th>
+    <th class="text-center"><i class="fas fa-shipping-fast" title="В пути"></i></th>
+    <th class="text-center"><i class="fas fa-dolly-flatbed" title="В резерве"></i></th>
+    <th class="text-center"><i class="fas fa-trash" title="Возвращено/Списано"></i></th>
+    <th class="text-center"><i class="fas fa-clipboard-check" title="Заказано"></i></th>
+{% endif %}
+{% if 'dateofzakaz' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Заказано', 'dateofzakaz') : 'Заказано' }}</th>
+{% endif %}
+{% if 'dateofin' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'Приход', 'dateofin') : 'Приход' }}</th>
+{% endif %}
+{% if 'dateofinplan' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, 'План', 'dateofinplan') : 'План' }}</th>
+{% endif %}
+{% if 'incomeID' not in hideCols %}
+    <th>{{ pagination ? knp_pagination_sortable(pagination, '#', 'incomeID') : '#' }}</th>
+{% endif %}
+{% if 'incomeOrder' not in hideCols %}
+    <th>Заказ</th>
+{% endif %}
+{% if 'isUnpack' not in hideCols %}
+    <th>Посч.</th>
+{% endif %}
+{% if 'incomeDocument' not in hideCols %}
+    <th>ПН</th>
+{% endif %}
+{% if is_granted('delete', 'Income') %}
+    <th>Операции</th>
+{% endif %}

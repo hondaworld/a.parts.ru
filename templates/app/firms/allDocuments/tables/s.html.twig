@@ -1,0 +1,38 @@
+<tr>
+    {% if isShowDocType|default(false) %}
+        <td>СЧ</td>
+    {% endif %}
+    <td>{{ doc.document_num }}</td>
+    <td>{{ doc.dateofadded|date('d.m.Y') }}</td>
+    <td>
+        {% if is_granted('edit', 'Firm') %}
+            <a href="{{ path('firms.edit', {'id': doc.firmID}) }}">{{ doc.from_name }}</a>
+        {% else %}
+            {{ doc.from_name }}
+        {% endif %}
+    </td>
+    <td>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': doc.userID}) }}">{{ doc.to_name }}</a>
+        {% else %}
+            {{ doc.to_name }}
+        {% endif %}
+    </td>
+    <td class="text-right">{{ doc.sum|number_format(2, ',', ' ') }}</td>
+    <td class="text-left">
+        <div class="btn-group">
+            {% if is_granted('show', 'Schet') %}
+                <a href="{{ path('schets.show', {'id': doc.id}) }}"
+                   title="Просмотр счета">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </a>
+            {% endif %}
+            {% if doc.finance_typeID != 5 %}
+                <a href="{{ path('schet.php', {'id': doc.id}) }}"
+                   title="Печать счета" target="_blank">
+                    <i class="fas fa-print"></i>
+                </a>
+            {% endif %}
+        </div>
+    </td>
+</tr>

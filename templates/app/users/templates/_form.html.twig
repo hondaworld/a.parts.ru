@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% if template|default(null) %}
+        {{ form_row(form.templateGroupID) }}
+    {% endif %}
+    {{ form_row(form.name) }}
+    {{ form_row(form.subject) }}
+    {{ form_row(form.text) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Сохранить') }}</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('templates', {'id': templateGroup.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

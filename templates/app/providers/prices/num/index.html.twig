@@ -1,0 +1,58 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Параметры прайс-листа</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('providers.prices.price', {'id': providerPrice.id}) }}"
+               title="Изменить параметры"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('providers.prices.num', {'id': providerPrice.id}) }}"
+               title="Настроить колонки"><i class="fas fa-table"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <h3>Файл</h3>
+    <p><strong>Прайс-лист
+            родитель: </strong>{{ providerPrice.superProviderPrice ? providerPrice.superProviderPrice.fullName : '<span class="text-muted font-italic">не задан</span>' }}
+        (при загрузке родителя все данные копируются сюда)</p>
+    <p><strong>Файл: </strong>{{ check_empty(providerPrice.price.price) }}</p>
+    <p><strong>Файл копировать в файл: </strong>{{ check_empty(providerPrice.price.priceCopy) }}</p>
+    <p><strong>Часть наименования файла из e-mail: </strong>{{ check_empty(providerPrice.price.priceEmail) }}</p>
+    <p><strong>E-mail, от которого идет письмо с прайсом: </strong>{{ check_empty(providerPrice.price.emailFrom) }}
+        (предыдущий пункт обязательно должен быть заполнен)</p>
+    <p><strong>Не учитывать расширение (всегда csv): </strong>{{ boolean_status(providerPrice.price.isNotCheckExt) }}
+    </p>
+    <h3>Колонки</h3>
+    <p>
+        <strong>Производитель: </strong>{{ providerPrice.creater ? providerPrice.creater.name : '<span class="text-muted font-italic">не задан</span>' }}
+    </p>
+    <p><strong>Разделитель: </strong>{{ check_empty(providerPrice.price.razd, 'не задан') }}</p>
+    <p><strong>Разделитель десятичных знаков: </strong>{{ providerPrice.price.razdDecimal|default('Авто') }}</p>
+    <p><strong>Коэффициент, умножаемый на цену: </strong>{{ providerPrice.price.priceadd == 0 ? '<span class="text-muted font-italic">не задан</span>' : providerPrice.price.priceadd }}</p>
+    <p>
+    <strong>Значения RG (формат: RG;процент\n): </strong>
+    {% if (providerPrice.price.rgValue is empty) %}
+        <span class="text-muted font-italic">не заданы</span>
+    {% else %}
+        <div class="border rounded p-2">
+            {{ providerPrice.price.rgValue|nl2br }}
+        </div>
+    {% endif %}
+    </p>
+
+    <p><strong>Обновление: </strong>{{ boolean_status(providerPrice.price.isUpdate) }}
+    </p>
+
+    {% if (maxCol > 0 or maxCol == 0 and providerPrice.num.labelFromColNum(0) is not empty) %}
+        <table class="table table-bordered table-responsive border-0">
+            <tr>
+                {% for col in 0..maxCol %}
+                    <td>{{ check_empty(providerPrice.num.labelFromColNum(col)) }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+    {% endif %}
+
+{% endblock %}

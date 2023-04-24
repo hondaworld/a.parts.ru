@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Закрытые регионы{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'DetailProviderExclude') %}
+                <li class="nav-item">
+                    <a href="{{ path('exclude.providers.create') }}" class="nav-link">
+                        <i class="fas fa-plus" title="Добавить закрытый регион"></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('delete', 'DetailProviderExclude') %}
+                <li class="nav-item">
+                    <a href="{{ path('exclude.providers.deleteSelected') }}" class="nav-link text-danger" data-toggle="modal"
+                       data-target="#modalConfirm" title="Удалить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить выделенные закрытые регионы?')">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% set reset_path = path('exclude.providers', {'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Производитель', 'creater') : 'Производитель' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Номер', 'number') : 'Номер' }}</th>
+            <th>{{ pagination ? knp_pagination_sortable(pagination, 'Поставщик', 'provider') : 'Поставщик' }}</th>
+            <th>Комментарий</th>
+            {% if is_granted('delete', 'DetailProviderExclude') or is_granted('edit', 'DetailProviderExclude') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th>{{ form_widget(filter.providerID) }}</th>
+            <th></th>
+            {% if is_granted('delete', 'DetailProviderExclude') or is_granted('edit', 'DetailProviderExclude') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for providerExclude in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': providerExclude.excludeID} only %}
+                    {% endif %}
+                    <td>{{ providerExclude.creater }}</td>
+                    <td>{{ providerExclude.number }}</td>
+                    <td>{{ providerExclude.provider }}</td>
+                    <td>{{ providerExclude.comment }}</td>
+                    {% if is_granted('delete', 'DetailProviderExclude') or is_granted('edit', 'DetailProviderExclude') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'DetailProviderExclude') %}
+                                    <a href="{{ path('exclude.providers.edit', {'id': providerExclude.excludeID}) }}"
+                                       title="Изменить закрытый регион">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('delete', 'DetailProviderExclude') %}
+                                    <a href="{{ path('exclude.providers.delete', {'id': providerExclude.excludeID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить закрытый регион?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить закрытый регион">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {% if pagination is not null %}
+                {{ parent() }}
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Текущая отгрузка со склада {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads') }}">Склады</a></li>
+    <li class="breadcrumb-item">Текущая отгрузка со склада {{ zapSklad.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('expense_shipping_delete', 'ExpenseSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.shipping.deleteSelected', {'id': zapSklad.id}) }}"
+                       class="nav-link text-danger" data-toggle="modal"
+                       data-target="#modalConfirm"
+                       title="Удаление из отгрузки. Удалены детали будут только те, что не находятся в сборке."
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите удалить из отгрузки выделенные детали?')">
+                        <i class="far fa-trash-alt"></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('expense_shipping_pack', 'ExpenseSklad') %}
+                <li class="nav-item">
+                    <a href="#" data-toggle="modal" data-target="#modalForm"
+                       data-url="{{ path('sklads.shipping.pack', {'id': zapSklad.id}) }}"
+                       data-title="Сборка" class="nav-link ajax-modal-html">
+                        <i class="fas fa-box-open"
+                           title="Сборка. Чтобы отгрузить детали их необходимо добавить в сборку. Собранные детали отображаются серым цветом."></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('expense_shipping_scan', 'ExpenseSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.shipping.scan', {'id': zapSklad.id}) }}" class="nav-link">
+                        <i class="fas fa-barcode"
+                           title="Сканирование деталей. Будут обработаны все детали, помеченные как &quot;В сборке&quot;."></i>
+                    </a>
+                </li>
+            {% endif %}
+            {% if is_granted('expense_shipping_send', 'ExpenseSklad') %}
+                <li class="nav-item">
+                    <a href="{{ path('sklads.shipping.send', {'id': zapSklad.id}) }}"
+                       class="nav-link text-success" data-toggle="modal"
+                       data-target="#modalConfirm"
+                       title="Отгрузка. Для отгрузки не нужно выделять детали. Будут отгружены все детали, помеченные как &quot;В сборке&quot;."
+                       onclick="confirmModalAndRedirectToUrl(this, 'Вы уверены, что хотите отгрузить собранные детали?')">
+                        <i class="fas fa-truck"></i>
+                    </a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a href="{{ path('sklads.shipping', {'id': zapSklad.id, 'print': 1}) }}" class="nav-link"
+                   target="_blank">
+                    <i class="fas fa-print text-secondary" title="Напечатать"></i>
+                </a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('sklads.shipping', {'id': zapSklad.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.isPacked) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Сборщик</th>
+            <th>Собрано</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater_name') }}</th>
+            <th>Наименование</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'number') }}</th>
+            <th>Куда</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Откуда взять', 'location') }}</th>
+            <th>Заказ</th>
+            <th>Вес</th>
+            <th>Кол</th>
+            <th>Приход</th>
+            <th>В приходе</th>
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.managerID) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th></th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th>{{ form_widget(filter.zapSkladID_to) }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for expenseSklad in pagination %}
+                <tr class="{{ expenseSklad.status == 3 ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': expenseSklad.zapCardID ~ '_' ~ expenseSklad.zapSkladID_to} only %}
+                    {% endif %}
+                    <td>{{ expenseSklad.manager|default('')|nl2br }}</td>
+                    <td class="text-center">{% if expenseSklad.quantity == expenseSklad.quantityPicking %}<i
+                                class="fas fa-check text-success"></i>{% endif %}</td>
+                    <td>{{ expenseSklad.creater_name }}</td>
+                    <td>{{ zapCards[expenseSklad.zapCardID]|default(null) ? zapCards[expenseSklad.zapCardID].detailName : '' }}</td>
+                    <td>
+                        {% if is_granted('show', 'ZapCard') %}
+                            <a href="{{ path('card.parts.show', {'id': expenseSklad.zapCardID}) }}"
+                               title="В карточку детали">{{ expenseSklad.number }}</a>
+                        {% else %}
+                            {{ expenseSklad.number }}
+                        {% endif %}
+                    </td>
+                    <td>{{ expenseSklad.zapSklad_to }}</td>
+                    <td>{{ expenseSklad.location|nl2br }}</td>
+                    <td>{{ expenseSklad.order|default('')|nl2br }}</td>
+                    <td class="{{ expenseSklad.weight|default(null) and expenseSklad.weight.weightIsReal ? ' text-success' : '' }}">{{ expenseSklad.weight|default(null) ? expenseSklad.weight.weight : '' }}</td>
+                    <td>{{ expenseSklad.quantity }}</td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.zapCardID] %}
+                            {% if is_granted('index', 'Income') %}
+                                <div><a href="{{ path('income', {'form': {'incomeID': expense.incomeID}}) }}"
+                                        title="В приходы">{{ expense.incomeID }}</a></div>
+                            {% else %}
+                                <div>{{ expense.incomeID }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for expense in expenses[expenseSklad.zapCardID] %}
+                            <div>{{ expense.quantity }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+        {% block pagination %}
+            {{ parent() }}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

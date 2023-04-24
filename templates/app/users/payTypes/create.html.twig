@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление метода оплаты клиентов{% endblock %}
+{% block header %}Добавление метода оплаты клиентов{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('shop.pay.types') }}">Методы оплаты клиентов</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/users/payTypes/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

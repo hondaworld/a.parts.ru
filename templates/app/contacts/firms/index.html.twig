@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Контакты организации {{ firm.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('firms.edit', {'id': firm.id}) }}">{{ firm.nameShort }}</a></li>
+    <li class="breadcrumb-item">Контакты</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/firms/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('contacts_change', firm) %}
+                <li class="nav-item">
+                    <a href="{{ path('firms.contacts.create', {'firmID': firm.id}) }}"
+                       title="Добавить контакт организации" class="nav-link"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('firms.contacts.hide', {'firmID': firm.id}) }}" class="nav-link" data-class="text-muted" data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные контакты организации?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('firms.contacts.unHide', {'firmID': firm.id}) }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные контакты организации?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Мобильный телефон</th>
+            <th>E-mail</th>
+            {% if is_granted('contacts_change', firm) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if contacts is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for contact in contacts %}
+                <tr class="{{ contact.isHide ? ' text-muted' : '' }}{{ contact.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': contact.contactID} only %}
+                    {% endif %}
+                    <td>{{ contact.address }}</td>
+                    <td>{{ phone_mobile(contact.phonemob) }}</td>
+                    <td><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></td>
+                    {% if is_granted('contacts_change', firm) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{{ path('firms.contacts.edit', {'firmID': firm.id, 'id': contact.contactID}) }}"
+                                   title="Изменить контакт организации">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('firms.contacts.delete', {'firmID': firm.id, 'id': contact.contactID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить контакт организации?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить контакт организации">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

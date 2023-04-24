@@ -1,0 +1,9 @@
+{% extends 'blocks/block_container_simple.html.twig' %}
+{% block block_content %}
+    {% block header %}{% endblock %}
+    <div class="block-content">
+        <div class="py-sm-2 py-md-3">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

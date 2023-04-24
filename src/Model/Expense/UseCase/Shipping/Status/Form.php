@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Model\Expense\UseCase\Shipping\Status;
+
+
+use App\Form\Type\DatePickerType;
+use App\ReadModel\Income\IncomeStatusFetcher;
+use App\ReadModel\Order\ShippingStatusFetcher;
+use App\ReadModel\Shop\DeleteReasonFetcher;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class Form extends AbstractType
+{
+    private $shippingStatusFetcher;
+
+    public function __construct(ShippingStatusFetcher $shippingStatusFetcher)
+    {
+        $this->shippingStatusFetcher = $shippingStatusFetcher;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('status', Type\ChoiceType::class, [
+                'required' => true,
+                'label' => 'Статус',
+                'choices' => array_flip($this->shippingStatusFetcher->assocForChange()),
+                'placeholder' => ''
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Command::class
+        ]);
+    }
+}

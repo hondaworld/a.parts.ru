@@ -1,0 +1,11 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.copy_auto_modificationID) }}
+
+    <button type="submit" class="btn btn-primary">{{ buttonName|default('Копировать') }}</button>
+    <a class="ml-3 btn btn-secondary"
+       href="{{ path('auto.work.period', {'auto_modificationID': autoModification.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+{% endblock %}
+

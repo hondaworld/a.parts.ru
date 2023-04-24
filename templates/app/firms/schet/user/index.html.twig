@@ -1,0 +1,26 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Счет на</h3>
+        <div class="block-options">
+            {% if schet.userContactNeed %}
+                <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('schets.userContact', {'id': schet.id}) }}"
+                   title="Изменить адрес клиента"><i class="fas fa-edit"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Клиент: </strong>
+        {% if is_granted('show', 'User') %}
+            <a href="{{ path('users.show', {'id': schet.user.id}) }}">{{ schet.user.getPassportNameOrOrganizationWithInnKppAndPhonemob }}</a>
+        {% else %}
+            {{ schet.user.getPassportNameOrOrganizationWithInnKppAndPhonemob }}
+        {% endif %}
+    </p>
+    {% if schet.expUserContact %}
+        <p><strong>Контакт: </strong>
+            {{ schet.expUserContact.getFullAddressWithPhones }}
+        </p>
+    {% endif %}
+{% endblock %}

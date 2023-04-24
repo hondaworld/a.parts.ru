@@ -1,0 +1,24 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение производителя'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.name_rus) }}
+    {{ form_row(form.isOriginal) }}
+    {{ form_row(form.tableName) }}
+    {{ form_row(form.creater_weightID) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.catalogs) }}
+    {{ form_row(form.alt_names) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('creaters.show', {'id': creater.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

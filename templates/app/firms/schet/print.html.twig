@@ -1,0 +1,79 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Счет №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-family: Arial, serif;
+            font-size: 10px;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        .border, .border-bottom {
+            border-color: #000000 !important;
+        }
+
+        table.border1 {
+            width: auto;
+            border: 1px solid #000000;
+            border-collapse: collapse;
+        }
+
+        table.border1 td, table.border1 th {
+            border: 1px solid #000000;
+            border-collapse: collapse;
+            font-size: 10px;
+            vertical-align: top;
+            padding: 5px;
+        }
+
+        table.table-goods {
+            border: 2px solid #000000;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+
+        h2 {
+            margin: 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+
+    {{ include('app/firms/schet/print/content.html.twig') }}
+    {{ include('app/firms/schet/print/footer.html.twig') }}
+
+{% endblock %}

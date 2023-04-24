@@ -1,0 +1,31 @@
+{% extends 'blocks/block_container.html.twig' %}
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.isUr) }}
+    {{ form_row(form.name_short) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.nalogID) }}
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.dateofadded) }}</div>
+        <div class="col-md-6">{{ form_row(form.dateofclosed) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.inn) }}</div>
+        <div class="col-md-6">{{ form_row(form.kpp) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.okpo) }}</div>
+        <div class="col-md-6">{{ form_row(form.ogrn) }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">{{ form_row(form.directorID) }}</div>
+        <div class="col-md-6">{{ form_row(form.buhgalterID) }}</div>
+    </div>
+    {{ form_row(form.isNDS) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('firms') }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

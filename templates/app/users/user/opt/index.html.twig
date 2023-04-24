@@ -1,0 +1,23 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Оптовый пакет</h3>
+        <div class="block-options">
+            {% if is_granted('opt_change', user) %}
+                <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.opt', {'id': user.id}) }}"
+                   title="Изменить"><i class="fas fa-edit"></i></a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Оптовый пакет: </strong> {{ user.opt.name }}</p>
+    <p><strong>Метод оплаты: </strong>
+
+        {% if not user.shopPayType %}
+            <span class="text-muted font-italic">не задан</span>
+        {% else %}
+            {{ user.shopPayType.name }}
+        {% endif %}
+    </p>
+{% endblock %}

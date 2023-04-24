@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Клиенты с балансом{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Клиенты с балансом</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="print()"><i class="fas fa-print" title="Распечатать"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i></a>
+            </li>
+        {% endblock %}
+
+        {% set reset_path = path('reports.clientBalance') %}
+        {% block header_form %}
+            <li class="nav-item">{{ form_widget(filter.finance_typeID) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'ID', 'userID') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Клиент', 'u.name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Баланс', 'balance') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Метод оплаты', 'shop_pay_type') }}</th>
+        {% endblock %}
+
+        {% block filters %}{% endblock %}
+
+        {% block table_body %}
+            {% for user in pagination %}
+                <tr>
+                    <td>{{ user.userID }}</td>
+                    <td>
+                        {% if is_granted('show', 'User') %}
+                            <a href="{{ path('users.show', {'id': user.userID}) }}">{{ user.name }}</a>
+                        {% else %}
+                            {{ user.name }}
+                        {% endif %}
+                    </td>
+                    <td class="text-right">{{ user.balance|number_format(2, ',', ' ') }}</td>
+                    <td>{{ user.shop_pay_type }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+        {% block pagination %}{% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <script>
+        function print() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.clientBalance.print') }}';
+            document.getElementById('printForm').submit();
+        }
+
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('reports.clientBalance.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+
+{% endblock %}

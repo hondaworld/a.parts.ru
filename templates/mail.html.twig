@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{% block title %}Письмо{% endblock %}</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            font-family: sans-serif;
+            line-height: 1.15;
+        }
+
+        body {
+            color: #343a40;
+            text-align: left;
+            background-color: white;
+        }
+
+        * {
+            font-size: 0.9rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        a {
+            color: #5179d6;
+        }
+
+        img {
+            border: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        .table {
+            margin-bottom: 1rem;
+            color: #343a40;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #e1e6e9;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #e1e6e9;
+        }
+
+        .table-bordered {
+            border: 1px solid #e1e6e9;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #e1e6e9;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f1f4f5;
+        }
+
+        .table-primary,
+        .table-primary > th,
+        .table-primary > td {
+            background-color: #ced9f4;
+        }
+
+        .table-primary th,
+        .table-primary td,
+        .table-primary thead th,
+        .table-primary tbody + tbody {
+            border-color: #a5b9ea;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+        .text-primary {
+            color: #ced9f4;
+        }
+        .text-success {
+            color: #28a745;
+        }
+        .text-danger {
+            color: #dc3545;
+        }
+        .text-secondary {
+            color: #6c757d;
+        }
+        .text-muted {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>

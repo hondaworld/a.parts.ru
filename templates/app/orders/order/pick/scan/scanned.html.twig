@@ -1,0 +1,40 @@
+<table class="table table-striped border">
+    <tr>
+        <th>Производитель</th>
+        <th>Номер</th>
+        <th>Регион</th>
+        <th>Всего</th>
+        <th>Собрано</th>
+        <th></th>
+    </tr>
+
+    {% for expense in expenses %}
+        {% if (expense.quantityPicking > 0) %}
+        <tr>
+            <td>{{ expense.creater_name }}</td>
+            <td>{{ expense.number }}</td>
+            <td>{{ expense.location }}</td>
+            <td>{{ expense.quantity }}</td>
+            <td>{{ expense.quantityPicking }}</td>
+            <td>
+                <a href="{{ path('order.pick.scan.delete', {'id': user.id, 'goodID': expense.goodID}) }}"
+                   onclick="deleteItem(this, 'Вы уверены, что хотите отменить сборку данной детали?')"
+                   data-toggle="modal"
+                   data-target="#modalConfirm"
+                   class="text-danger"
+                   title="Отменить сборку детали">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+
+<a href="{{ path('order.goods.picked', {'id': user.id}) }}"
+   class="btn btn-primary" data-toggle="modal"
+   data-target="#modalConfirm"
+   title="Заказ собран"
+   onclick="confirmModal(this, 'Вы уверены, что заказ собран?')">
+    Заказ собран
+</a>

@@ -1,0 +1,68 @@
+{% embed 'tables/table_simple.html.twig' %}
+
+    {% block header_buttons %}
+        <li class="nav-item">
+            <a href="{{ path('order.shipping.places.create', {'id': user.id}) }}" class="nav-link"
+               title="Добавить место"><i
+                        class="fas fa-plus"></i></a>
+        </li>
+        {% if expenseDocument.isPicking %}
+            <li class="nav-item">
+                <a href="{{ path('order.print.shippingLabel', {'id': user.id}) }}"
+                   class="nav-link"
+                   title="Наклейка на сборку" target="_blank">
+                    <i class="fas fa-tag"></i>
+                </a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <div class="nav-link"><i class="fas fa-tag text-muted"></i></div>
+            </li>
+        {% endif %}
+    {% endblock %}
+    {% block settings %}{% endblock %}
+
+    {% block table_header %}
+        <th>Место</th>
+        <th>Длина, см</th>
+        <th>Ширина, см</th>
+        <th>Высота, см</th>
+        <th>Вес, кг</th>
+        <th>Объем, куб.см</th>
+        <th>Операции</th>
+    {% endblock %}
+
+    {% block table_body %}
+        {% if places is empty %}
+            <tr>
+                <td colspan="50" class="text-center">Мест нет</td>
+            </tr>
+        {% endif %}
+        {% for place in places %}
+            <tr>
+                <td class="text-center">{{ place.number }}</td>
+                <td class="text-right">{{ place.length|number_format(0, '', ' ') }}</td>
+                <td class="text-right">{{ place.width|number_format(0, '', ' ') }}</td>
+                <td class="text-right">{{ place.height|number_format(0, '', ' ') }}</td>
+                <td class="text-right">{{ place.weight|number_format(4, ',', ' ') }}</td>
+                <td class="text-right">{{ (place.length * place.width * place.height)|number_format(0, '', ' ') }}</td>
+                <td class="text-center">
+                    <div class="btn-place">
+                        <a href="{{ path('order.shipping.places.edit', {'id': place.shipping_placeID, 'userID': user.id}) }}"
+                           title="Изменить место">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ path('order.shipping.places.delete', {'id': place.shipping_placeID, 'userID': user.id}) }}"
+                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить место?')"
+                           data-toggle="modal"
+                           data-target="#modalConfirm"
+                           class="text-danger"
+                           title="Удалить место">
+                            <i class="far fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+{% endembed %}

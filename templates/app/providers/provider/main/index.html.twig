@@ -1,0 +1,19 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('providers.edit', {'id': provider.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('providers.priceCurrency', {'id': provider.id}) }}"
+               title="Коэффициенты прайс-листов"><i class="fas fa-file-csv"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p><strong>Наименование: </strong> {{ provider.name }}</p>
+    <p><strong>Клиент: </strong> {{ provider.user.name }} - {{ phone_mobile(provider.user.phonemob) }}</p>
+    <p><strong>Процент от дилерской цены: </strong> {{ provider.koefDealer }}</p>
+    <p><strong>Является дилером: </strong> {{ boolean_status(provider.dealer) }}</p>
+    <p><strong>Приоритетный склад: </strong> {{ provider.zapSklad.name }}</p>
+{% endblock %}

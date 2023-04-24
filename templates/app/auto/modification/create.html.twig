@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление модификации поколения {{ autoGeneration.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('auto.marka') }}">Марки</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.model', {'auto_markaID': autoGeneration.model.marka.id}) }}">{{ autoGeneration.model.marka.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.model.show', {'auto_markaID': autoGeneration.model.marka.id, 'id': autoGeneration.model.id}) }}">{{ autoGeneration.model.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('auto.generation.show', {'auto_modelID': autoGeneration.model.id, 'id': autoGeneration.id}) }}">{{ autoGeneration.name }}</a></li>
+    <li class="breadcrumb-item">Добавление</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/auto/modification/_form.html.twig', {'buttonName': 'Добавить'}) }}
+{% endblock %}

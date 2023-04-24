@@ -1,0 +1,16 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">{{ title|default('') }}</h3>
+        <div class="block-options"></div>
+    </div>
+{% endblock %}
+{% block content %}
+    {% for item in news %}
+        {% if item.type == type %}
+            <h3>{{ item.name }}</h3>
+            <div class="text-muted font-italic">{{ item.dateofadded|date('d.m.Y') }}</div>
+            <p>{{ item.description|raw }}</p>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

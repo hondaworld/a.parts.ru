@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Модификации {{ autoModel.marka.name ~ ' ' ~ autoModel.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('parts.price.to') }}">Модели автомобилей</a></li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+        {% block content %}
+
+            <div class="list-group">
+                {% for modification in modifications %}
+                    <div><a class="list-group-item list-group-item-action" href="{{ path('parts.price.to.modification', {'id' : modification.auto_modificationID}) }}">{{ modification.modification }}</a></div>
+                {% endfor %}
+            </div>
+
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Расположение на складах {{ zapCard.number.value }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('card.parts', {'page' : app.session.get('page/zapCards')|default(1)}) }}">Номенклатура</a>
+    </li>
+    <li class="breadcrumb-item">Склады {{ zapCard.number.value }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/card/parts/_tabs.html.twig') %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('edit', 'ZapCard') %}
+                <li class="nav-item">
+                    <a href="{{ path('card.parts.sklad.create', {'id': zapCard.id}) }}" class="nav-link"><i
+                                class="fas fa-plus" title="Добавить склад"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>Склад</th>
+            <th>Остаток</th>
+            <th>Резерв</th>
+            <th>Доступно</th>
+            <th>В пути</th>
+            <th>Ячейка</th>
+            <th>Мин</th>
+            <th>Макс</th>
+            <th>Перемещение</th>
+            {% if is_granted('edit', 'ZapCard') or is_granted('delete', 'ZapCard') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if all is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for location in all %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': location.zapSkladLocationID} only %}
+                    {% endif %}
+                    <td>{{ location.sklad_name }}</td>
+                    <td>{{ quantities[location.zapSkladID]|default(null) ? quantities[location.zapSkladID].quantityIn|default(0) : 0 }}</td>
+                    <td
+                            class="ajax-modal-html"
+                            onclick="modalReserveChange(this, '{{ location.sklad_name }}')"
+                            data-toggle="modal"
+                            data-target="#modalReserve"
+                            data-url="{{ path('card.parts.sklad.reserve', {'zapCardID': location.zapCardID, 'id': location.zapSkladID}) }}"
+                            style="cursor: pointer;"
+                            title="Просмотр резервов"
+                    >{{ quantities[location.zapSkladID]|default(null) ? quantities[location.zapSkladID].reserve|default(0) : 0 }}</td>
+                    <td>{{ quantityInWarehouse[location.zapSkladID]|default(0) }}</td>
+                    <td>{{ quantities[location.zapSkladID]|default(null) ? quantities[location.zapSkladID].quantityPath|default(0) : 0 }}</td>
+                    <td>{{ location.location }}</td>
+                    <td>{{ location.quantityMin }} {% if location.quantityMinIsReal %}<span class="badge badge-success">Закреплен</span>{% endif %}
+                    </td>
+                    <td>{{ location.quantityMax }}</td>
+                    <td>
+                        <div class="d-flex">
+                            <button class="btn btn-sm btn-outline-primary" onclick="changeQuantity(this, -1)"><i
+                                        class="fas fa-minus"></i></button>
+                            <input
+                                    type="text"
+                                    class="form-control form-control-sm js-convert-number text-center"
+                                    style="width: 50px;"
+                                    data-max-value="{{ quantityInWarehouse[location.zapSkladID]|default(0) }}"
+                                    data-url-submit="{{ path('card.parts.sklad.perem', {'zapCardID': location.zapCardID, 'id': location.zapSkladID}) }}"
+                                    value=""
+                                    onkeyup="onChangeQuantity(this)"
+                            >
+                            <button class="btn btn-sm btn-outline-primary" onclick="changeQuantity(this, 1)"><i
+                                        class="fas fa-plus"></i></button>
+                            <select class="form-control form-control-sm">
+                                {% for skladID, sklad_name in sklads %}
+                                    {% if skladID != location.zapSkladID %}
+                                        <option value="{{ skladID }}">{{ sklad_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-primary" name="submit" disabled="disabled"
+                                    onclick="perem(this)">&gt;&gt;
+                            </button>
+                        </div>
+                    </td>
+                    {% if is_granted('edit', 'ZapCard') or is_granted('delete', 'ZapCard') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'ZapCard') %}
+                                    <a href="{{ path('card.parts.sklad.edit', {'zapCardID': zapCard.id, 'id': location.zapSkladLocationID}) }}"
+                                       title="Изменить склад">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('edit', 'ZapCard') %}
+                                    <a href="{{ path('card.parts.sklad.delete', {'zapCardID': zapCard.id, 'id': location.zapSkladLocationID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить склад?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить склад">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+    <div class="block block-rounded">
+        <div class="block-header">
+            <h3 class="block-title">Статистика продаж за последний год</h3>
+        </div>
+        <div class="block-content block-content-full text-center">
+            <div class="py-3" style="max-width: 800px;">
+                <canvas id="myChart" class="js-chartjs-bars"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const months = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
+        const chartType = 'bar';
+        const chartData = {
+            labels: [
+                {% for date in chartDate %}
+                months[({{ date.month }} -1)],
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Текущий год',
+                data: [
+                    {% for date in chartDate %}
+                    {{ chartData[date.year]|default(false) ? chartData[date.year][date.month]|default(0) : 0 }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                ],
+                borderWidth: 1
+            }, {
+                label: 'Прошлый год',
+                data: [
+                    {% for date in chartDate %}
+                    {{ chartDataLastYear[date.year-1]|default(false) ? chartDataLastYear[date.year-1][date.month]|default(0) : 0 }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+        const chartOptions = {
+            // plugins: {
+            //     legend: {
+            //         display: false,
+            //     }
+            // },
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            },
+        };
+
+        function modalReserveChange(el, skladName) {
+            document.getElementById('modalReserveSkladName').innerText = skladName;
+        }
+
+        function changeQuantity(el, i) {
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'input') {
+                    item.value = +item.value + i;
+                    onChangeQuantity(item);
+                }
+            });
+        }
+
+        function onChangeQuantity(el) {
+            if (el.value < 0) el.value = 0;
+            if (+el.value > +el.dataset.maxValue) el.value = el.dataset.maxValue;
+            if (+el.value === 0) el.value = '';
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'button' && item.name === 'submit') {
+                    item.disabled = el.value === '';
+                }
+            });
+        }
+
+        function perem(el) {
+            var input;
+            var select;
+            el.parentElement.childNodes.forEach(function (item) {
+                if (item.localName === 'input') {
+                    input = item;
+                }
+                if (item.localName === 'select') {
+                    select = item;
+                }
+            });
+            if (input && select) tableColInputSubmit(input, {zapSkladID_to: select.value});
+        }
+    </script>
+
+    <div class="modal fade" id="modalReserve" tabindex="-1" role="dialog" aria-labelledby="modalReserveLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalReserveLabel">Резервы склада <span
+                                id="modalReserveSkladName"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="modalReserveText" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

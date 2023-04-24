@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение документа сотрудника {{ manager.name }}{% endblock %}
+{% block header %}Изменение документа сотрудника {{ manager.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('managers') }}">Сотрудники</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('managers.edit', {'id': manager.id}) }}">{{ manager.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ path('managers.documents', {'managerID': manager.id}) }}">Документы</a></li>
+    <li class="breadcrumb-item">Изменение</li>
+{% endblock %}
+
+{% block body %}
+    {% include ('app/managers/_tabs.html.twig') %}
+    {{ include ('app/documents/managers/_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Изменение сайта {{ site.nameShort }}{% endblock %}
+{% block header %}{{ site.nameShort }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sites') }}">Сайты</a></li>
+    <li class="breadcrumb-item">{{ site.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/orders/sites/_form.html.twig') }}
+
+{% endblock %}

@@ -1,0 +1,279 @@
+<aside id="side-overlay">
+    <!-- Side Header -->
+    <div class="content-header border-bottom">
+        <!-- User Avatar -->
+        <a class="img-link mr-1" href="{{ path('profile') }}">
+            <img class="img-avatar img-avatar32" src="{{ asset(app.user.photo) }}" alt="">
+        </a>
+        <!-- END User Avatar -->
+
+        <!-- User Info -->
+        <div class="ml-2">
+            <a class="text-dark font-w600 font-size-sm" href="{{ path('profile') }}">{{ app.user.firstname }}</a>
+        </div>
+        <!-- END User Info -->
+
+        <!-- Close Side Overlay -->
+        <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+        <a class="ml-auto btn btn-sm btn-alt-danger" href="javascript:void(0)" data-toggle="layout"
+           data-action="side_overlay_close">
+            <i class="fa fa-fw fa-times"></i>
+        </a>
+        <!-- END Close Side Overlay -->
+    </div>
+    <!-- END Side Header -->
+
+    <!-- Side Content -->
+    <div class="content-side">
+        <!-- Side Overlay Tabs -->
+        <div class="block block-transparent pull-x pull-t">
+            <ul class="nav nav-tabs nav-tabs-alt nav-justified" data-toggle="tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#so-overview">
+                        <i class="fa fa-fw fa-coffee text-gray mr-1"></i> Обзор
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#so-sales">
+                        <i class="fa fa-fw fa-chart-line text-gray mr-1"></i> Продажи
+                    </a>
+                </li>
+            </ul>
+            <div class="block-content tab-content overflow-hidden">
+                <!-- Overview Tab -->
+                <div class="tab-pane pull-x fade fade-left show active" id="so-overview" role="tabpanel">
+                    <!-- Activity -->
+                    <div class="block" id="overlay-services">
+                        <div class="block-header block-header-default">
+                            <h3 class="block-title">Сервисы</h3>
+                            <div class="block-options">
+                                <button type="button" class="btn-block-option" data-toggle="block-option"
+                                        data-action="content_toggle"></button>
+                            </div>
+                        </div>
+                        <div class="block-content">
+                            <!-- Activity List -->
+                            <ul class="nav-items mb-0">
+                                <li>
+                                    <a class="text-dark media py-2">
+                                        <div class="mr-3 ml-2">
+                                            <i class="si si-bubble text-success"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <div class="font-size-sm font-w600">SMS RU</div>
+                                            <div id="overlay-smsru"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <!-- END Activity List -->
+                        </div>
+                    </div>
+                    <!-- END Activity -->
+
+                    <!-- Online Friends -->
+                    <div class="block" id="overlay-orders">
+                        <div class="block-header block-header-default">
+                            <h3 class="block-title">Заказы</h3>
+                            <div class="block-options">
+                                <button type="button" class="btn-block-option" data-toggle="block-option"
+                                        data-action="content_toggle"></button>
+                            </div>
+                        </div>
+                        <div class="block-content">
+                            <!-- Users Navigation -->
+                            <ul class="nav-items mb-0">
+                                <li>
+                                    <a class="text-dark media py-2"
+                                       href="{{ path('orders', {'form': {'param': 'newByUser'}}) }}">
+                                        <div class="mr-3 ml-2">
+                                            <i class="si si-user text-info"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <div class="font-size-sm font-w600">Новые клиентские</div>
+                                            <div id="overlay-new-orders-user"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-dark media py-2"
+                                       href="{{ path('orders', {'form': {'param': 'newByManager'}}) }}">
+                                        <div class="mr-3 ml-2">
+                                            <i class="si si-call-in text-info"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <div class="font-size-sm font-w600">Новые менеджерские</div>
+                                            <div id="overlay-new-orders-manager"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-dark media py-2"
+                                       href="{{ path('orders', {'form': {'param': 'newByCron'}}) }}">
+                                        <div class="mr-3 ml-2">
+                                            <i class="si si-envelope text-info"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <div class="font-size-sm font-w600">Новые автоматические</div>
+                                            <div id="overlay-new-orders-cron"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="text-dark media py-2" href="{{ path('orders') }}">
+                                        <div class="mr-3 ml-2">
+                                            <i class="si si-basket-loaded text-info"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <div class="font-size-sm font-w600">Всего сегодня</div>
+                                            <div id="overlay-new-orders-today"></div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <!-- END Users Navigation -->
+                        </div>
+                    </div>
+                    <!-- END Online Friends -->
+
+                </div>
+                <!-- END Overview Tab -->
+
+                <!-- Sales Tab -->
+                <div class="tab-pane pull-x fade fade-right" id="so-sales" role="tabpanel">
+                    <div class="block mb-0">
+                        <!-- Stats -->
+                        <div class="block-content">
+                            <div class="row items-push pull-t">
+                                <div class="col-6">
+                                    <div class="font-size-sm font-w600 text-uppercase">Доход</div>
+                                    <div class="font-size-lg" id="overlay-today-income">0 р.</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="font-size-sm font-w600 text-uppercase">Прибыль</div>
+                                    <div class="font-size-lg" id="overlay-today-profit">0 р.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END Stats -->
+
+                        <!-- Москва -->
+                        <div id="overlay-today-msk" style="display: none;">
+                            <div class="block-content block-content-full block-content-sm bg-body-light">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="font-size-sm font-w600 text-uppercase">Москва</span>
+                                    </div>
+                                    <div class="col-6 text-right"></div>
+                                </div>
+                            </div>
+                            <div class="block-content">
+                                <ul class="nav-items push">
+                                    <li>
+                                        <a class="text-dark media py-2">
+                                            <div class="mr-3 ml-2">
+                                                <i class="fa fa-fw fa-circle text-success"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="font-w600" id="overlay-today-msk-income"></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-dark media py-2" href="">
+                                            <div class="mr-3 ml-2">
+                                                <i class="fa fa-fw fa-circle text-success"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="font-w600" id="overlay-today-msk-profit"></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- END Москва -->
+
+                        <!-- СПБ -->
+                        <div id="overlay-today-spb" style="display: none;">
+                            <div class="block-content block-content-full block-content-sm bg-body-light">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="font-size-sm font-w600 text-uppercase">Санкт-Петербург</span>
+                                    </div>
+                                    <div class="col-6 text-right"></div>
+                                </div>
+                            </div>
+                            <div class="block-content">
+                                <ul class="nav-items push">
+                                    <li>
+                                        <a class="text-dark media py-2">
+                                            <div class="mr-3 ml-2">
+                                                <i class="fa fa-fw fa-circle text-success"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="font-w600" id="overlay-today-spb-income"></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-dark media py-2" href="">
+                                            <div class="mr-3 ml-2">
+                                                <i class="fa fa-fw fa-circle text-success"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="font-w600" id="overlay-today-spb-profit"></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- END СПБ -->
+
+                        <!-- Регионы -->
+                        <div id="overlay-today-region" style="display: none;">
+                            <div class="block-content block-content-full block-content-sm bg-body-light">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="font-size-sm font-w600 text-uppercase">Регионы</span>
+                                    </div>
+                                    <div class="col-6 text-right"></div>
+                                </div>
+                            </div>
+                            <div class="block-content">
+                                <ul class="nav-items push">
+                                    <li>
+                                        <a class="text-dark media py-2">
+                                            <div class="mr-3 ml-2">
+                                                <i class="fa fa-fw fa-circle text-success"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="font-w600" id="overlay-today-region-income"></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-dark media py-2" href="">
+                                            <div class="mr-3 ml-2">
+                                                <i class="fa fa-fw fa-circle text-success"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="font-w600" id="overlay-today-region-profit"></div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- END Регионы -->
+
+                    </div>
+                </div>
+                <!-- END Sales Tab -->
+            </div>
+        </div>
+        <!-- END Side Overlay Tabs -->
+    </div>
+    <!-- END Side Content -->
+</aside>

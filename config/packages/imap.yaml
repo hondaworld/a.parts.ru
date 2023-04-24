@@ -1,0 +1,20 @@
+imap:
+    connections:
+        prices_connection:
+            mailbox: "{www.parts.ru:143/imap/notls}INBOX"
+            username: "prices@parts.ru"
+            password: "zdyUtzLs"
+            attachments_dir: "%kernel.project_dir%/var/imap/attachments"
+            server_encoding: "UTF-8"
+        invoices_connection:
+            mailbox: "{www.parts.ru:143/imap/notls}INBOX"
+            username: "invoice@parts.ru"
+            password: "IsiuFiki"
+            attachments_dir: "%kernel.project_dir%/var/imap/attachments"
+            server_encoding: "UTF-8"
+        orders_connection:
+            mailbox: "{www.parts.ru:143/imap/notls}INBOX"
+            username: "zakaz@parts.ru"
+            password: "uDVeBi3P"
+            attachments_dir: "%kernel.project_dir%/var/imap/attachments"
+            server_encoding: "UTF-8"

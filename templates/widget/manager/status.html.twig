@@ -1,0 +1,7 @@
+{% if isAdmin %}
+    <span class="badge badge-danger">Админ</span>
+{% elseif isManager %}
+    <span class="badge badge-success">Менеджер</span>
+{% else %}
+    <span class="badge badge-secondary">Сотрудник</span>
+{% endif %}

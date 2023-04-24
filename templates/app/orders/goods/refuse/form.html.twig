@@ -1,0 +1,11 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)'}, 'action': path('order.goods.refuse.action') }) }}
+
+{{ form_row(form.deleteReasonID) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Отказаться</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

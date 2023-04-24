@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Взаиморасчеты с организацией {{ firm.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('firms') }}">Организации</a></li>
+    <li class="breadcrumb-item">Взаиморасчеты</li>
+{% endblock %}
+
+{% block body %}
+
+    {% include ('app/firms/_tabs.html.twig') %}
+
+    <div class="row">
+        <div class="col-auto">
+            {{ include('app/firms/balanceHistory/balances.html.twig') }}
+        </div>
+        <div class="col">
+            {{ form_start(filter) }}
+
+            {% embed 'tables/table_full.html.twig' %}
+
+                {% block header_buttons %}
+                    {% if is_granted('firm_balance_change', 'Firm') %}
+                        <li class="nav-item">
+                            <a href="{{ path('firms.balance.history.create', {'firmID': firm.id}) }}" class="nav-link">
+                                <i class="fas fa-plus" title="Добавить баланс"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('firms.balance.history', {'firmID': firm.id, 'isPrint': 1}) }}"
+                               class="nav-link" target="_blank"><i class="fas fa-print" title="Распечатать"></i></a>
+                        </li>
+                    {% endif %}
+                {% endblock %}
+
+                {% set reset_path = path('firms.balance.history', {'firmID': firm.id, 'reset' : 1}) %}
+                {% block header_form %}
+                    <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+                    <li class="nav-item">{{ form_widget(filter.dateofadded) }}</li>
+                    {{ parent() }}
+                    {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+                {% endblock %}
+
+                {% block table_header %}
+                    <th>{{ knp_pagination_sortable(pagination, 'Поставщик', 'provider_name') }}</th>
+                    <th>ПН</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'Дата', 'dateofadded') }}</th>
+                    <th>Кредит</th>
+                    <th>Дебет</th>
+                    <th>НДС</th>
+                    <th>Комментарий</th>
+                    {% if is_granted('firm_balance_change', 'Firm') %}
+                        <th>Операции</th>
+                    {% endif %}
+                {% endblock %}
+
+                {% block filters %}
+                    <th>{{ form_widget(filter.providerID) }}</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    {% if is_granted('firm_balance_change', 'Firm') %}
+                        <th></th>
+                    {% endif %}
+                {% endblock %}
+
+                {% block table_body %}
+                    {% if pagination is empty %}
+                        <tr>
+                            <td colspan="50" class="text-center">Записей нет</td>
+                        </tr>
+                    {% endif %}
+                    {% for balance in pagination %}
+                        <tr>
+                            {% if (table_checkable|default(false)) %}
+                                {% include 'tables/td_checkbox.html.twig' with {'id': balance.balanceID} only %}
+                            {% endif %}
+                            <td>
+                                {% if is_granted('show', 'Provider') %}
+                                    <a href="{{ path('providers.show', {'id': balance.providerID}) }}">{{ balance.provider_name }}</a>
+                                {% else %}
+                                    {{ balance.provider_name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ balance.document_num|default('') }}</td>
+                            <td>{{ balance.dateofadded|date('d.m.Y H:i') }}</td>
+                            <td class="text-success text-right text-nowrap">{{ balance.balance > 0 ?  balance.balance|number_format(2, ',', ' ') : '' }}</td>
+                            <td class="text-danger text-right text-nowrap">{{ balance.balance < 0 ? (-balance.balance)|number_format(2, ',', ' ') : '' }}</td>
+                            <td class="text-right text-nowrap">{{ balance.balance_nds|number_format(2, ',', ' ') }}</td>
+                            <td>{{ balance.description }}</td>
+                            {% if is_granted('firm_balance_change', 'Firm') %}
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="{{ path('firms.balance.history.edit', {'firmID': firm.id, 'id': balance.balanceID}) }}"
+                                           title="Изменить баланс организации">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ path('firms.balance.history.delete', {'firmID': firm.id, 'id': balance.balanceID}) }}"
+                                           onclick="deleteItem(this, 'Вы уверены, что хотите удалить баланс организации?')"
+                                           data-toggle="modal"
+                                           data-target="#modalConfirm"
+                                           class="text-danger"
+                                           title="Удалить баланс организации">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            {% endembed %}
+            {{ form_end(filter) }}
+
+        </div>
+    </div>
+{% endblock %}

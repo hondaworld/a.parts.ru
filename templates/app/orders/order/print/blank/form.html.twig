@@ -1,0 +1,13 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-submit' : '1', 'target': '_blank'}, 'action': path('order.print.blank', {'id': user.id}) }) }}
+
+{{ form_row(form.isHideNumbers) }}
+{{ form_row(form.isShowSrok) }}
+{{ form_row(form.cols) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Бланк заказа</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

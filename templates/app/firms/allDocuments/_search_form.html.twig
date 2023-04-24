@@ -1,0 +1,44 @@
+{% embed 'blocks/block_container.html.twig' %}
+    {% block content %}
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'return false;'}}) }}
+        <div class="row mb-2">
+            <div class="col-auto">
+                {{ form_widget(form.doc_typeID, {'id': 'search_doc_typeID'}) }}
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary" onclick="documentType()"><i class="fas fa-angle-double-right"></i></button>
+            </div>
+            <div class="col-auto">{{ form_widget(form.document_num, {'id': 'search_document_num'}) }}</div>
+            <div class="col-auto">{{ form_widget(form.year, {'id': 'search_year'}) }}</div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary" onclick="documentNum()"><i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+        <script>
+            function documentType() {
+                const search_doc_typeID = document.getElementById('search_doc_typeID');
+                if (search_doc_typeID.value !== '') {
+                    let url = '{{ path('allDocuments.documentType', {'id': '*search_doc_typeID*', 'reset': 1}) }}';
+                    url = url.replace('*search_doc_typeID*', search_doc_typeID.value).replaceAll('&amp;', '&');
+                    window.location = url;
+                } else {
+                    search_doc_typeID.classList.add("is-invalid");
+                }
+            }
+            function documentNum() {
+                const search_document_num = document.getElementById('search_document_num');
+                const search_year = document.getElementById('search_year');
+                if (search_document_num.value !== '') {
+                    let url = '{{ path('allDocuments.documentNum', {'document_num': '*search_document_num*', 'year': '*search_year*'}) }}';
+                    url = url.replace('*search_document_num*', search_document_num.value).replace('*search_year*', search_year.value).replaceAll('&amp;', '&');
+                    window.location = url;
+                } else {
+                    search_document_num.classList.add("is-invalid");
+                }
+            }
+        </script>
+
+    {% endblock %}
+{% endembed %}

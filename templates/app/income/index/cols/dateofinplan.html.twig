@@ -1,0 +1,14 @@
+{% if 'dateofinplan' not in hideCols %}
+    <td
+            {% if is_granted('income_date_in_plan', 'Income') and income.status == 6 %}
+                title="Изменить планируемую дату прихода"
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#modalDateOfInPlan"
+                data-incomeid="{{ income.incomeID }}"
+                data-dateofinplan="{{ income.dateofinplan ? income.dateofinplan|date('d.m.Y') : '' }}"
+                data-ident="dateofinplan"
+                onclick="modalDateOfInPlanChange(this)"
+            {% endif %}
+    >{{ income.dateofinplan ? income.dateofinplan|date('d.m.Y') : '' }}</td>
+{% endif %}

@@ -1,0 +1,18 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение цены реализации по умолчанию'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.currency_price) }}
+    {{ form_row(form.currency_providerPriceID) }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('card.parts.prices', {'id': zapCard.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

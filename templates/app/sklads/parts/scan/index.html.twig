@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сканирование деталей склада {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads.parts', {'id' : zapSklad.id}) }}">Номенклатура склада</a>
+    </li>
+    <li class="breadcrumb-item">Сканирование {{ zapSklad.nameShort }}</li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xl-6">
+            <button
+                    class="btn btn-primary mb-4"
+                    style="max-width: 450px; width: 100%; height: 100px; font-size: 30px;"
+                    data-toggle="modal"
+                    data-target="#modalNumber">Сканировать
+            </button>
+            {% if searchNumber is not empty %}
+                {% if arr|length == 0 %}
+                    <div>Такой детали на складе нет</div>
+                {% else %}
+                    {{ include('app/sklads/parts/scan/locations.html.twig') }}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalNumber" tabindex="-1" role="dialog" aria-labelledby="modalNumberLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form name="f_scan" action="{{ path('sklads.parts.scan', {'id': zapSklad.id}) }}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalNumberLabel">Поиск по номеру</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="modalNumberText" class="modal-body">
+                        <div class="alert d-none" id="modalNumberAlert" role="alert">
+                            <p class="mb-0" id="modalNumberAlertMessage"></p>
+                        </div>
+                        <input type="text" name="number" id="searchNumber" class="form-control" value="">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="modalNumberButton" class="btn btn-primary">
+                            Найти
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)'}, 'action': path('income.orders.create') }) }}
+
+<p>Вы уверены, что хотите обработать выделенные приходы?</p>
+<p>Обработаются только приходы со статусом "Заказать".</p>
+
+{{ form_row(form.zapSkladID) }}
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Обработать</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+

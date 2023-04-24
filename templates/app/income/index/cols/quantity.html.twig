@@ -1,0 +1,88 @@
+{% if 'quantity' not in hideCols %}
+    <td
+            class="text-nowrap ajax-modal-html"
+            onclick="modalSkladChange(this, '{{ income.number }}')"
+            data-toggle="modal"
+            data-target="#modalSklad"
+            data-url="{{ path('income.sklads', {'id': income.incomeID}) }}"
+            style="cursor: pointer;"
+            title="Наличие детали на складах"
+    >
+        <div><br/></div>
+        {% for skladID, skladName in sklads %}
+            {% if incomeSklads[income.incomeID]|default(false) and incomeSklads[income.incomeID][skladID]|default(false) %}
+                <div>{{ skladName }}</div>
+            {% endif %}
+        {% endfor %}
+    </td>
+    <td
+            {% if is_granted('income_quantity', 'Income') and not isDisabled %}
+                class="text-center text-dark text-nowrap"
+                onclick="modalQuantityChange(this, {{ income.incomeID }})"
+                data-toggle="modal"
+                data-target="#modalQuantity"
+                data-number="{{ income.number }}"
+                data-creater="{{ income.creater }}"
+                data-providerprice="{{ providerPrices[income.providerPriceID]|default(null) ? providerPrices[income.providerPriceID] : '' }}"
+                data-quantity="{{ income.quantity }}"
+                data-url="{{ path('income.quantity.update', {'id': income.incomeID}) }}"
+                data-urlchange="{{ path('income.quantityChange.update', {'id': income.incomeID}) }}"
+                style="cursor: pointer;" title="Изменить количество"
+            {% else %}
+                class="text-center text-dark text-nowrap" title="Всего"
+            {% endif %}
+    >
+        <div>{{ income.quantity }}</div>
+        {% for skladID, skladName in sklads %}
+            {% if incomeSklads[income.incomeID]|default(false) and incomeSklads[income.incomeID][skladID]|default(false) %}
+                <div>{{ incomeSklads[income.incomeID][skladID]['quantity'] }}</div>
+            {% endif %}
+        {% endfor %}
+    </td>
+    <td
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                class="text-center text-dark text-nowrap font-weight-bold ajax-modal-html"
+                onclick="modalQuantityAllChange(this, {{ income.incomeID }})"
+                data-toggle="modal"
+                data-target="#modalQuantityAll"
+                data-url="{{ path('income.quantityAll', {'id': income.incomeID}) }}"
+                style="cursor: pointer;" title="Изменить общее количество"
+            {% else %}
+                class="text-center text-dark text-nowrap font-weight-bold" title="В наличии"
+            {% endif %}
+    >
+        <div>{{ income.quantityIn }}</div>
+        {% for skladID, skladName in sklads %}
+            {% if incomeSklads[income.incomeID]|default(false) and incomeSklads[income.incomeID][skladID]|default(false) %}
+                <div>{{ incomeSklads[income.incomeID][skladID]['quantityIn'] }}</div>
+            {% endif %}
+        {% endfor %}
+    </td>
+    <td class="text-center text-nowrap text-warning" title="В пути">
+        <div>{{ income.quantityPath }}</div>
+        {% for skladID, skladName in sklads %}
+            {% if incomeSklads[income.incomeID]|default(false) and incomeSklads[income.incomeID][skladID]|default(false) %}
+                <div>{{ incomeSklads[income.incomeID][skladID]['quantityPath'] }}</div>
+            {% endif %}
+        {% endfor %}
+    </td>
+    <td class="text-center text-nowrap text-info" title="В резерве">
+        <div>{{ income.reserve }}</div>
+        {% for skladID, skladName in sklads %}
+            {% if incomeSklads[income.incomeID]|default(false) and incomeSklads[income.incomeID][skladID]|default(false) %}
+                <div>{{ incomeSklads[income.incomeID][skladID]['reserve'] }}</div>
+            {% endif %}
+        {% endfor %}
+    </td>
+    <td class="text-center text-nowrap text-danger" title="Возвращено/Списано">
+        <div>{{ income.quantityReturn }}</div>
+        {% for skladID, skladName in sklads %}
+            {% if incomeSklads[income.incomeID]|default(false) and incomeSklads[income.incomeID][skladID]|default(false) %}
+                <div>{{ incomeSklads[income.incomeID][skladID]['quantityReturn'] }}</div>
+            {% endif %}
+        {% endfor %}
+    </td>
+    <td class="text-center text-nowrap text-success" title="Заказано">
+        <div>{{ zakazano[income.zapCardID]|default(false) ? zakazano[income.zapCardID] : 0 }}</div>
+    </td>
+{% endif %}

@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Номенклатура склада {{ zapSklad.nameShort }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('sklads') }}">Склады</a></li>
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter, {'attr' : {'onsubmit' : 'onSubmitFilter()'}}) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}{% endblock %}
+
+        {% set reset_path = path('sklads.prices', {'id': zapSklad.id, 'reset' : 1}) %}
+        {% block header_form %}
+            <li class="nav-item mr-1">{{ form_widget(filter.auto_modelID) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.year) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.quantity) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.searchWholeNumber) }}</li>
+            <li class="nav-item mr-1">{{ form_widget(filter.showDeleted) }}</li>
+            <li class="nav-item">{{ form_widget(filter.inPage) }}</li>
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>ABC</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Тип', 'shop_type_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'group_name') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Производитель', 'creater') }}</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Номер', 'zc.number') }}</th>
+            <th>Закупка</th>
+            {% for opt in opts %}
+                <th>{{ opt.name }}</th>
+            {% endfor %}
+            <th>Группа</th>
+            <th></th>
+            {% for sklad in sklads %}
+                <th>{{ sklad }}</th>
+            {% endfor %}
+            <th>Мин</th>
+            <th>Макс</th>
+            {% if is_granted('show', 'ZapCard') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th>{{ form_widget(filter.abc) }}</th>
+            <th>{{ form_widget(filter.shop_typeID) }}</th>
+            <th>{{ form_widget(filter.zapGroupID) }}</th>
+            <th>{{ form_widget(filter.createrID) }}</th>
+            <th>{{ form_widget(filter.number) }}</th>
+            <th></th>
+            {% for opt in opts %}
+                <th></th>
+            {% endfor %}
+            <th></th>
+            <th></th>
+            {% for skladID, sklad in sklads %}
+                <th>
+                    {% if skladID == 1 %}
+                        <div class="row">
+                            <div class="col-6 pr-0">{{ form_widget(filter.quantity1_from) }}</div>
+                            <div class="col-6 pl-0">{{ form_widget(filter.quantity1_till) }}</div>
+                        </div>
+                    {% elseif skladID == 5 %}
+                        <div class="row">
+                            <div class="col-6 pr-0">{{ form_widget(filter.quantity5_from) }}</div>
+                            <div class="col-6 pl-0">{{ form_widget(filter.quantity5_till) }}</div>
+                        </div>
+                    {% elseif skladID == 6 %}
+                        <div class="row">
+                            <div class="col-6 pr-0">{{ form_widget(filter.quantity6_from) }}</div>
+                            <div class="col-6 pl-0">{{ form_widget(filter.quantity6_till) }}</div>
+                        </div>
+                    {% endif %}
+                </th>
+            {% endfor %}
+            <th></th>
+            <th></th>
+            {% if is_granted('show', 'ZapCard') %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for zapCard in pagination %}
+                <tr class="{{ zapCard.isDeleted ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': zapCard.zapCardID} only %}
+                    {% endif %}
+                    <td>{{ abc[zapCard.zapCardID]|default('') }}</td>
+                    <td>{{ zapCard.shop_type_name }}</td>
+                    <td>{{ zapCard.group_name }}</td>
+                    <td>{{ zapCard.creater }}</td>
+                    <td>{{ zapCard.number }}</td>
+                    <td class="text-right">{{ zapCard.price|number_format(2, ',', ' ') }}</td>
+                    {% for opt in opts %}
+                        <td>
+                            <input
+                                    type="text"
+                                    class="js-convert-float form-control form-control-sm form-control-alt form-not-submit"
+                                    style="min-width: 70px; max-width: 70px;"
+                                    data-old="{{ zapCard['optPrice' ~ opt.id] }}"
+                                    id="optPrice{{ opt.id }}_{{ zapCard.zapCardID }}"
+                                    name="opt[]"
+                                    value="{{ zapCard['optPrice' ~ opt.id] }}"
+                            >
+                        </td>
+                    {% endfor %}
+                    <td>
+                        <div id="isClearPriceGroup_{{ zapCard.zapCardID }}_block">
+                            {% if zapCard.priceGroup %}
+                                {{ zapCard.priceGroup }}
+                                <div class="custom-control custom-checkbox d-inline-block">
+                                    <input
+                                            type="checkbox"
+                                            class="custom-control-input form-not-submit"
+                                            id="isClearPriceGroup_{{ zapCard.zapCardID }}"
+                                            name="isClearPriceGroup"
+                                            value="1"
+                                            checked
+                                    ><label class="custom-control-label" for="isClearPriceGroup_{{ zapCard.zapCardID }}"> сбросить</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" type="button" name="submit"
+                                data-url-submit="{{ path('sklads.prices.price', {'id': zapCard.zapCardID}) }}"
+                                onclick="price(this, {{ zapCard.zapCardID }})">&gt;&gt;
+                        </button>
+                    </td>
+                    {# <td class="text-right">{{ zapCard.optPrice|number_format(0, ',', ' ') }}</td> #}
+                    {% for skladID, sklad in sklads %}
+                        <td id="quantity_{{ zapCard.zapCardID }}_{{ skladID }}">
+                            {{ quantityInWarehouse[zapCard.zapCardID]|default(null) ? quantityInWarehouse[zapCard.zapCardID][skladID]|default(0) : 0 }}
+
+                            {% if (quantityTo[zapCard.zapCardID]|default(null) ? quantityTo[zapCard.zapCardID][skladID]|default(null) : null) %}
+                                (+{{ quantityTo[zapCard.zapCardID][skladID] }})
+                            {% endif %}
+
+                            {% if (quantityFrom[zapCard.zapCardID]|default(null) ? quantityFrom[zapCard.zapCardID][skladID]|default(null) : null) %}
+                                (-{{ quantityFrom[zapCard.zapCardID][skladID] }})
+                            {% endif %}
+
+                            {% if (quantityIncome[zapCard.zapCardID]|default(null) ? quantityIncome[zapCard.zapCardID][skladID]|default(null) : null) %}
+                                [+{{ quantityIncome[zapCard.zapCardID][skladID] }}]
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td>{{ zapCard.quantityMin }}</td>
+                    <td>{{ zapCard.quantityMax }}</td>
+
+                    {% if is_granted('show', 'ZapCard') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('show', 'ZapCard') %}
+                                    <a href="{{ path('card.parts.show', {'id': zapCard.zapCardID}) }}"
+                                       title="В карточку детали">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                    <a href="{{ path('card.parts.prices', {'id': zapCard.zapCardID}) }}"
+                                       title="Цены">
+                                        <i class="fas fa-ruble-sign"></i>
+                                    </a>
+                                    <a href="{{ path('card.parts.sklad', {'id': zapCard.zapCardID}) }}"
+                                       title="Склады">
+                                        <i class="fas fa-warehouse"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+
+    {% endembed %}
+    {{ form_end(filter) }}
+
+    <script>
+        function price(el, zapCardID) {
+            var params = {};
+
+            {% for opt in opts %}
+            params['optPrice{{ opt.id }}'] = document.getElementById('optPrice{{ opt.id }}_' + zapCardID).value;
+            {% endfor %}
+
+            if (document.getElementById('isClearPriceGroup_' + zapCardID) && document.getElementById('isClearPriceGroup_' + zapCardID).checked) {
+                params['isClearPriceGroup'] = 1;
+                document.getElementById('isClearPriceGroup_' + zapCardID + '_block').style.display = 'none';
+            }
+
+            el.classList.remove('btn-primary');
+            el.classList.add('btn-success');
+
+            tableColInputSubmit(el, params);
+        }
+
+        function onSubmitFilter() {
+            document.querySelectorAll('.form-not-submit').forEach(function (el) {
+                el.disabled = true;
+            });
+        }
+    </script>
+{% endblock %}

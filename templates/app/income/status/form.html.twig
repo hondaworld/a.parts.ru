@@ -1,0 +1,30 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)'}, 'action': path('income.change.status.update') }) }}
+
+{{ form_row(form.status, {'attr': {'onchange': 'onChangeIncomeChangeStatus(this)'}}) }}
+
+<div id="incomeChangeStatusDateOfPlan" style="display: none;">
+    {{ form_row(form.dateofinplan) }}
+</div>
+
+<div id="incomeChangeStatusDeleteReason" style="display: none;">
+    {{ form_row(form.deleteReasonID) }}
+</div>
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Изменить</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+<script>
+    function onChangeIncomeChangeStatus(el) {
+        document.getElementById('incomeChangeStatusDateOfPlan').style.display = 'none';
+        document.getElementById('incomeChangeStatusDeleteReason').style.display = 'none';
+        if (+el.value === 6) {
+            document.getElementById('incomeChangeStatusDateOfPlan').style.display = 'block';
+        } else if (+el.value === 4) {
+            document.getElementById('incomeChangeStatusDeleteReason').style.display = 'block';
+        }
+    }
+</script>
+

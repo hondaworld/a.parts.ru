@@ -1,0 +1,43 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'action': path('income.quantityAll', {'id': income.id}) }) }}
+<table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr class="table-primary">
+        <th>Склад</th>
+        <th>Всего</th>
+        <th>Наличие</th>
+        <th>Путь</th>
+        <th>Резерв</th>
+        <th>Возврат</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td></td>
+        <td>{{ form_widget(form.quantity) }}</td>
+        <td>{{ form_widget(form.quantityIn) }}</td>
+        <td>{{ form_widget(form.quantityPath) }}</td>
+        <td>{{ form_widget(form.reserve) }}</td>
+        <td>{{ form_widget(form.quantityReturn) }}</td>
+    </tr>
+    {% for zapSkladID in skladIDs %}
+        <tr>
+            <td>{{ sklads[zapSkladID]|default('') }}</td>
+            <td>{{ form_widget(form.children['quantity_' ~ zapSkladID]) }}</td>
+            <td>{{ form_widget(form.children['quantityIn_' ~ zapSkladID]) }}</td>
+            <td>{{ form_widget(form.children['quantityPath_' ~ zapSkladID]) }}</td>
+            <td>{{ form_widget(form.children['reserve_' ~ zapSkladID]) }}</td>
+            <td>{{ form_widget(form.children['quantityReturn_' ~ zapSkladID]) }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="text-right">
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+</div>
+{{ form_end(form) }}
+
+
+
+

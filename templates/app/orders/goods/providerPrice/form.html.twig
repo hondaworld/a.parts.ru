@@ -1,0 +1,77 @@
+{% if prices is not empty %}
+    <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr class="table-primary">
+            <th>Бренд</th>
+            <th>Поставщик</th>
+            <th>Цена, руб.</th>
+            <th>Наценка, %</th>
+            <th>Срок</th>
+            <th>Кол.</th>
+            <th>% поставки</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for price in prices %}
+            {% if price.zapSkladID|default(null) %}
+                <tr>
+                    <td>{{ price.createrName }}</td>
+                    <td>{{ price.postavka }}</td>
+                    <td class="text-right">{{ price.price1|number_format(0, '', ' ') }}</td>
+                    <td class="text-center">{{ price.profit }}</td>
+                    <td>{{ price.srok }}</td>
+                    <td class="text-center">{{ price.quantity }}</td>
+                    <td class="text-center"></td>
+                    <td class="text-center">
+                        {% if orderGood.zapSklad|default(null) %}
+                            <a class="btn btn-primary" title="Поменять поставщика"
+                               href="{{ path('order.goods.providerPrice.update', {'id': orderGood.id, 'zapSkladID': price.zapSkladID}) }}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-primary" title="Поменять поставщика и цену"
+                               href="{{ path('order.goods.providerPrice.update', {'id': orderGood.id, 'zapSkladID': price.zapSkladID, 'isPrice': 1}) }}">
+                                <i class="fas fa-angle-right"> + <i class="fas fa-ruble-sign"></i></i>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ price.createrName }}</td>
+                    <td>{{ price.postavka }}</td>
+                    <td class="text-right">{{ price.price1|number_format(0, '', ' ') }}</td>
+                    <td class="text-center">{{ price.profit }}</td>
+                    <td>{{ price.srok }}</td>
+                    <td class="text-center">{{ price.quantity == 0 ? 'заказ' : price.quantity }}</td>
+                    <td class="text-center">{{ price.percentIncome }}</td>
+                    <td class="text-center">
+                        {% if not orderGood.zapSklad|default(null) %}
+                            <a class="btn btn-primary" title="Поменять поставщика"
+                               href="{{ path('order.goods.providerPrice.update', {'id': orderGood.id, 'providerPriceID': price.providerPriceID}) }}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        {% endif %}
+                        <a class="btn btn-primary" title="Поменять поставщика и цену"
+                           href="{{ path('order.goods.providerPrice.update', {'id': orderGood.id, 'providerPriceID': price.providerPriceID, 'isPrice': 1}) }}">
+                            <i class="fas fa-angle-right"> + <i class="fas fa-ruble-sign"></i></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'action': path('order.goods.providerPrice.update', {'id': orderGood.id}) }) }}
+<div class="row">
+    <div class="col">
+        {{ form_widget(form.providerPriceID) }}
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-angle-right"></i></button>
+    </div>
+</div>
+{{ form_end(form) }}

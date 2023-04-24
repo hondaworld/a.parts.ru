@@ -1,0 +1,165 @@
+{% extends 'print.html.twig' %}
+
+{% block title %}Возвратная накладная №{{ document_num }} от {{ document_date|date('d.m.Y') }}{% endblock %}
+
+{% block body %}
+    <style>
+        * {
+            font-family: Arial, serif;
+        }
+
+        body {
+            line-height: 1.0;
+        }
+
+        .border2 {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .border2-top {
+            border-left: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-top: 1px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border2-bottom {
+            border-left: 2px solid #000000;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .border, .border-bottom {
+            border-color: #000000 !important;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .font-size-9 {
+            font-size: 9px;
+        }
+
+        .font-size-13, .font-size-13 strong {
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.table-goods {
+            border: 2px solid #000000;
+        }
+
+        table.table-goods th,
+        table.table-goods td {
+            vertical-align: top;
+            border: 1px solid #000000;
+            padding: 3px;
+            font-size : 13px;
+        }
+
+        table.table-goods th {
+            text-align: center;
+        }
+        h2 {
+            margin: 0;
+            font-weight : bold;
+            font-size : 18px;
+        }
+    </style>
+    <table>
+        <tr>
+            <td><h2>Накладная №{{ document_num }} от {{ document_date|date('d.m.Y') }}</h2></td>
+        </tr>
+        <tr>
+            <td><hr class="border"></td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <table>
+                    <tr>
+                        <td style="padding-bottom: 5px;">Поставщик:&nbsp;</td>
+                        <td width="100%"><strong>{{ incomeDocument.firm.nameWithInnAndKpp }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-bottom: 5px;">Покупатель:&nbsp;</td>
+                        <td><strong>{{ incomeDocument.user.passportNameOrOrganizationWithInnKppAndPhonemob }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table-goods">
+                    <tr>
+                        <th width="5%">№</th>
+                        <th>Товар</th>
+                        <th width="5%">Кол-во</th>
+                        <th width="5%">Ед.</th>
+                        <th width="10%">Цена</th>
+                        <th width="10%">Сумма</th>
+                    </tr>
+                    {% set sum = 0 %}
+                    {% for index, incomeGood in incomeDocument.incomeGoods %}
+                    <tr>
+                        <td class="text-center">{{ index + 1 }}</td>
+                        <td>{{ incomeGood.zapCard.detailName }} ({{ incomeGood.zapCard.number.value }})</td>
+                        <td class="text-center">{{ incomeGood.quantity }}</td>
+                        <td class="text-center">{{ incomeGood.zapCard.edIzm ? incomeGood.zapCard.edIzm.nameShort : 'шт.' }}</td>
+                        <td class="text-right" nowrap>{{ incomeGood.income.price|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right" nowrap>{{ (incomeGood.income.price * incomeGood.quantity)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                        {% set sum = sum + incomeGood.income.price * incomeGood.quantity %}
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="3" cellspacing="1" width="100%">
+                    <tr>
+                        <td width="90%" align="right"><strong>Итого:</strong></td>
+                        <td width="10%" align="right"><strong>{{ sum|number_format(2, ',', ' ') }}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>Всего наименований {{ incomeDocument.incomes|length }}, на сумму {{ sum|number_format(2, ',', ' ') }}руб.</td>
+        </tr>
+        <tr>
+            <td><strong>{{ mb_ucfirst(numberInWords(sum, true)) }}</strong></td>
+        </tr>
+        <tr>
+            <td><hr class="border"></td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="3" cellspacing="1" width="100%">
+                    <tr>
+                        <td width="15%"><strong>Отпустил</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td>______________</td>
+                        <td width="35%"></td>
+                        <td width="15%"><strong>Принял</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td>______________</td>
+                        <td width="35%"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td align="center"><sup>подпись</sup></td>
+                        <td></td>
+                        <td></td>
+                        <td align="center"><sup>подпись</sup></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

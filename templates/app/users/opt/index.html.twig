@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Колонки прайс-листа{% endblock %}
+{% block header %}Колонки прайс-листа{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Колонки прайс-листа</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('create', 'Opt') %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.opt.create') }}" class="nav-link" title="Добавить колонку прайс-листа"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('hide', 'Opt') %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.opt.hide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Скрыть выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные колонки?')"><i
+                                class="far fa-eye-slash"></i></a>
+                </li>
+            {% endif %}
+            {% if is_granted('unhide', 'Opt') %}
+                <li class="nav-item">
+                    <a href="{{ path('price.list.opt.unHide') }}" class="nav-link" data-class="text-muted"
+                       data-toggle="modal"
+                       data-target="#modalConfirm" title="Восстановить выделенные"
+                       onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные колонки?')"><i
+                                class="far fa-eye"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Клиентов</th>
+            <th>Сортировка</th>
+            {% if is_granted('edit', 'Opt') or is_granted('delete', 'Opt') %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if opts is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for opt in opts %}
+                <tr{{ (table_sortable|default(false) ? ' id=sortable_' ~ opt.optID : '') }}
+                        class="{{ opt.isHide ? 'text-muted' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': opt.optID} only %}
+                    {% endif %}
+                    <td>{{ opt.name }}</td>
+                    <td class="text-right">{{ opt.users|number_format(0, '.', ' ') }}</td>
+                    <td class="text-center{{ (table_sortable|default(false) ? ' sortable' : '') }}"
+                        data-url="{{ path('price.list.opt.sort', {'id': opt.optID}) }}"
+                        data-direction="asc">{{ opt.number }}</td>
+                    {% if is_granted('edit', 'Opt') or is_granted('delete', 'Opt') %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('edit', 'Opt') %}
+                                    <a href="{{ path('price.list.opt.edit', {'id': opt.optID}) }}"
+                                       title="Изменить метод оплаты">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                                {% if (is_granted('delete', 'Opt') and opt.users == 0 and not opt.noneDelete) %}
+                                    <a href="{{ path('price.list.opt.delete', {'id': opt.optID}) }}"
+                                       onclick="deleteItem(this, 'Вы уверены, что хотите удалить метод оплаты?')"
+                                       data-toggle="modal"
+                                       data-target="#modalConfirm"
+                                       class="text-danger"
+                                       title="Удалить метод оплаты">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

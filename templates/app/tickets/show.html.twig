@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Тикет #{{ ticket.ticketNum }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a
+                href="{{ path('client-tickets.tickets', {'page' : app.session.get('page/clientTicket')|default(1)}) }}">Тикеты</a>
+    </li>
+    <li class="breadcrumb-item">Тикет #{{ ticket.ticketNum }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ include('app/tickets/ticket/answers.html.twig') }}
+
+    {# {% if (edit == 'phoneModile') %} #}
+    {# {{ include('app/users/user/auth/phone-mobile.html.twig') }} #}
+    {# {% elseif (edit == 'password') %} #}
+    {# {{ include('app/users/user/auth/password.html.twig') }} #}
+    {# {% elseif (edit == 'name') %} #}
+    {# {{ include('app/users/user/name/name.html.twig') }} #}
+    {# {% elseif (edit == 'email') %} #}
+    {# {{ include('app/users/user/name/email.html.twig') }} #}
+    {# {% elseif (edit == 'dop') %} #}
+    {# {{ include('app/users/user/name/dop_form.html.twig') }} #}
+    {# {% elseif (edit == 'opt') %} #}
+    {# {{ include('app/users/user/opt/opt.html.twig') }} #}
+    {# {% elseif (edit == 'ur') %} #}
+    {# {{ include('app/users/user/ur/ur.html.twig') }} #}
+    {# {% endif %} #}
+
+    {# <div class="row"> #}
+    {# <div class="col-xl-6"> #}
+    {# {{ include('app/users/user/auth/index.html.twig') }} #}
+    {# {{ include('app/users/user/name/index.html.twig') }} #}
+    {# {{ include('app/users/user/name/dop_index.html.twig') }} #}
+    {# </div> #}
+    {# <div class="col-xl-6"> #}
+    {# {{ include('app/users/user/opt/index.html.twig') }} #}
+    {# {{ include('app/users/user/ur/index.html.twig') }} #}
+    {# </div> #}
+    {# </div> #}
+
+{% endblock %}

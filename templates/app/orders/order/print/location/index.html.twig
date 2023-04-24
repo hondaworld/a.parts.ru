@@ -1,0 +1,45 @@
+{% extends 'base_simple.html.twig' %}
+
+{% block title %}Адреса хранения{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block body %}
+
+    <div class="pb-2 d-print-none">
+        <form method="get">
+            Номер заказа: <input type="Text" size="5" maxlength="11" name="orderID" value="{{ orderID|default('') }}"> <input type="Submit" value=">>">
+        </form>
+    </div>
+    <div class="pb-2"><strong>Отгрузка для
+            пользователя: {{ user.fullNameWithPhoneMobileAndOrganization }}{{ user.mainContact ? ', ' ~ user.mainContact.town.name : '' }}</strong>
+    </div>
+    <table class="table table-sm table-bordered">
+        <tr>
+            <th width="5%">№ заказа</th>
+            <th>Товар</th>
+            <th width="15%">Номер</th>
+            <th width="15%">Производитель</th>
+            <th width="10%">Склад</th>
+            <th width="15%">Местоположение</th>
+            <th width="5%">Кол-во</th>
+        </tr>
+        {% for expense in expenses %}
+            <tr class="{{ expense.quantity - expense.quantityPicking == 0 ? 'text-muted' : '' }}">
+                <td valign=top align="center">{{ expense.orderID }}</td>
+                <td valign=top>
+                    {% if expense.zapCard and expense.zapCard.detailName %}
+                        {{ expense.zapCard.detailName }}
+                    {% endif %}
+                </td>
+                <td valign=top nowrap>{{ expense.number }}</td>
+                <td valign=top nowrap>{{ expense.creater_name }}</td>
+                <td valign="top">{{ expense.skladName }}</td>
+                <td valign="top" nowrap>{{ expense.skladLocation }}</td>
+                <td valign=top align="center">{{ expense.quantity }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div>Всего <strong>{{ expenses|length }}</strong> записей</div>
+
+
+{% endblock %}

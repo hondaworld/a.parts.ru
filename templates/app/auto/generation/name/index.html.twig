@@ -1,0 +1,41 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Основные данные</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('auto.generation.edit', {'auto_modelID': autoModel.id, 'id': autoGeneration.id}) }}"
+               title="Изменить"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-primary"
+               href="{{ path('auto.generation.photo', {'auto_modelID': autoModel.id, 'id': autoGeneration.id}) }}"
+               title="Изменить картинку"><i class="fas fa-image"></i></a>
+            {% if (autoGeneration.photo != '') %}
+                <span>
+                    <a href="#" class="btn btn-sm btn-alt-danger"
+                       onclick="deleteFile(this, 'Вы уверены, что хотите удалить картинку?')"
+                       data-image_block_id="autoGenerationPhoto"
+                       title="Удалить картинку"
+                       data-delete_url="{{ path('auto.generation.photo.delete', {'auto_modelID': autoModel.id, 'id': autoGeneration.id}) }}"
+                       data-toggle="modal"
+                       data-target="#modalConfirm"><i class="fas fa-eraser"></i></a>
+                </span>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <div class="row">
+        <div class="col">
+            <p><strong>Наименование: </strong> {{ autoGeneration.name }}</p>
+            <p><strong>Наименование русское: </strong> {{ autoGeneration.nameRus }}</p>
+            <p><strong>Год с: </strong> {{ autoGeneration.yearfrom }}</p>
+            <p><strong>Год по: </strong> {{ check_empty(autoGeneration.yearto) }}</p>
+        </div>
+        <div id="autoGenerationPhoto" class="col-auto">
+            {% if (autoGeneration.photo != '') %}
+                <img src="{{ auto_photo_folder ~ autoGeneration.photo }}">
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

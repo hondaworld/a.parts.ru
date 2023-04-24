@@ -1,0 +1,16 @@
+<script>
+    const labels = [
+        {% for date in dates %}
+        '{{ date|date(period == 'year' ? 'Y' : (period == 'month' ? 'm.Y' : 'd.m')) }}',
+        {% endfor %}
+    ];
+    const profits = {
+        {% for finance_typeID, financeTypeName in financeTypes %}
+        '{{ finance_typeID }}': [
+            {% for date in dates %}
+            {{ profits[finance_typeID].date[date|date(period == 'year' ? 'Y' : (period == 'month' ? 'Y-m' : 'Y-m-d'))]|default(0) }},
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+</script>

@@ -1,0 +1,23 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Оплата'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <p><strong>Сумма товаров: </strong>
+        {{ schet.sumSchetGoods|number_format(2, ',', ' ') }} руб.
+    </p>
+
+    {{ form_row(form.summ) }}
+    {{ form_row(form.dateofpaid) }}
+    {{ form_row(form.isEmail) }}
+
+    <button type="submit" class="btn btn-primary">Оплатить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('schets.show', {'id': schet.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+{% endblock %}

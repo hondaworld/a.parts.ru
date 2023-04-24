@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ZZap - Сравнение цен{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">Выбор файла</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'blocks/block_container.html.twig' %}
+
+        {% block header %}{% endblock %}
+
+        {% block content %}
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}, 'action': path('resellers.zzap.comparePrice.list')}) }}
+
+            {{ form_row(form.file) }}
+
+            <button type="submit" class="btn btn-primary">{{ buttonName|default('Загрузить') }}</button>
+
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

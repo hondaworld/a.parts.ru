@@ -1,0 +1,78 @@
+{% extends 'blocks/block_container.html.twig' %}
+
+{% block header %}
+    {{ include ('blocks/block_header_default.html.twig', {'header': 'Изменение Коэффициентов колонок прайсов'}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <table class="table table-striped">
+        <tr>
+            <th>Прайс</th>
+            {% for optID, opt in opts %}
+                <th>
+                    {{ opt }}
+                    <div class="d-flex">
+                        <div class="col">
+                            {{ form_widget(form.children['profit_0_' ~ optID]) }}
+                        </div>
+                        <button type="button" class="col-auto btn btn-sm btn-alt-primary"
+                                onclick="fillOpt({{ optID }})"><i
+                                    class="fas fa-chevron-down"></i></button>
+                    </div>
+                </th>
+            {% endfor %}
+            {% for providerPriceID, providerPrice in providerPrices %}
+        <tr>
+            <th>
+                <div class="d-flex">
+                    <div class="col">
+                        {{ form_widget(form.children['profit_' ~ providerPriceID ~ '_0']) }}
+                    </div>
+                    <button type="button" class="col-auto btn btn-sm btn-alt-primary"
+                            onclick="fillProviderPrice({{ providerPriceID }})"><i
+                                class="fas fa-chevron-right"></i></button>
+                </div>
+                {{ providerPrice }}
+            </th>
+            {% for optID, opt in opts %}
+                <td>{{ form_widget(form.children['profit_' ~ providerPriceID ~ '_' ~ optID]) }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tr>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="ml-3 btn btn-secondary" href="{{ path('providers.show', {'id': provider.id}) }}">Отменить</a>
+    {{ form_end(form) }}
+
+
+    <script>
+        function fillOpt(optID) {
+            var form = document.forms['form'];
+            form.elements.forEach(function (el) {
+                if (el.id && el.id.match('form_profit_(\\d+)_' + optID)) {
+                    var matches = el.id.match('form_profit_(\\d+)_' + optID);
+                    if (+matches[1] !== 0) {
+                        document.getElementById('form_profit_' + matches[1] + '_' + optID).value = document.getElementById('form_profit_0_' + optID).value;
+                    }
+                }
+            });
+        }
+
+        function fillProviderPrice(providerPriceID) {
+            var form = document.forms['form'];
+            form.elements.forEach(function (el) {
+                if (el.id && el.id.match('form_profit_' + providerPriceID + '_(\\d+)')) {
+                    var matches = el.id.match('form_profit_' + providerPriceID + '_(\\d+)');
+                    if (+matches[1] !== 0) {
+                        document.getElementById('form_profit_' + providerPriceID + '_' +  + matches[1]).value = document.getElementById('form_profit_' + providerPriceID + '_0').value;
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

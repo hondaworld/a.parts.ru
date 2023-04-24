@@ -1,0 +1,81 @@
+{% extends 'print.html.twig' %}
+{% block title %}Статистика продаж{% endblock %}
+
+{% block body %}
+
+    {{ form_start(printForm, {'attr': {'novalidate': 'novalidate', 'id': 'printForm', 'target': '_blank'} }) }}
+    {{ form_widget(printForm.data) }}
+    {{ form_end(printForm) }}
+
+    <div class="d-print-none">
+        <a href="#" onclick="excel()"><i class="far fa-file-excel" title="Excel"></i> Excel</a>
+    </div>
+    <script>
+        function excel() {
+            event.preventDefault();
+            document.getElementById('printForm').action = '{{ path('analytics.statSale.excel') }}';
+            document.getElementById('printForm').submit();
+        }
+    </script>
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>ABC</th>
+            <th>Менеджер</th>
+            <th>Производитель</th>
+            <th>Номер</th>
+            <th>Наименование</th>
+            <th>Регион поставки</th>
+            <th>Дата первого прихода</th>
+            <th>Склад</th>
+            <th>Наличие</th>
+            <th>Количество</th>
+            <th>Закупка</th>
+            <th>Мин. МСК</th>
+            <th>Мин. СПБ</th>
+            {% for date in dates %}
+                <th>{{ date|date('m.Y') }} - кол.</th>
+            {% endfor %}
+            <th>Итого кол.</th>
+            {% for date in dates %}
+                <th>{{ date|date('m.Y') }} - прибыль</th>
+            {% endfor %}
+            <th>Итого прибыль</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% for zapCardID, zapCard in zapCards %}
+                <tr>
+                    <td class="text-nowrap">
+                        {% if abc[zapCardID]|default(null) %}
+                            {% for abcSklad, abcName in abc[zapCardID] %}
+                                <div>{{ abcSklad }}-{{ abcName }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td>{{ zapCard.manager.nick|default('') }}</td>
+                    <td>{{ zapCard.creater.name }}</td>
+                    <td>{{ zapCard.number.value }}</td>
+                    <td>{{ zapCard.detailName }}</td>
+                    <td>{{ incomeData[zapCardID]|default(null) ? (incomeData[zapCardID]['providerPriceID'] ? providerPrices[incomeData[zapCardID]['providerPriceID']]['description'] : '') : '' }}</td>
+                    <td>{{ incomeData[zapCardID]|default(null) ? (incomeData[zapCardID]['date_first_income'] ? incomeData[zapCardID]['date_first_income']|date('d.m.Y') : '') : '' }}</td>
+                    <td class="text-center">{{ incomeData[zapCardID]|default(null) ? boolean_status(incomeData[zapCardID]['is_sklad']) : '' }}</td>
+                    <td class="text-center">{{ incomeData[zapCardID]|default(null) ? boolean_status(incomeData[zapCardID]['is_nal']) : '' }}</td>
+                    <td class="text-center">{{ incomeData[zapCardID]|default(null) ? incomeData[zapCardID]['quantity'] : '' }}</td>
+                    <td class="text-right">{{ zapCard.price|number_format(2, ',', ' ') }}</td>
+                    <td class="text-center">{{ quantityMin[zapCardID]|default(null) ? quantityMin[zapCardID][1]|default('') : '' }}</td>
+                    <td class="text-center">{{ quantityMin[zapCardID]|default(null) ? quantityMin[zapCardID][5]|default('') : '' }}</td>
+                    {% for date in dates %}
+                        <td class="text-right">{{ all[zapCardID]['date'][date|date('Y-m')]['quantity']|default('') }}</td>
+                    {% endfor %}
+                    <td class="text-right">{{ all[zapCardID]['quantity'] }}</td>
+                    {% for date in dates %}
+                        <td class="text-right">{{ all[zapCardID]['date'][date|date('Y-m')]['sum']|default(null) ? all[zapCardID]['date'][date|date('Y-m')]['sum']|number_format(2, ',', '') : '' }}</td>
+                    {% endfor %}
+                    <td class="text-right">{{ all[zapCardID]['sum']|number_format(2, ',', '') }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

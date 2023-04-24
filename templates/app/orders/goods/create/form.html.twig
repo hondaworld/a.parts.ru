@@ -1,0 +1,67 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'fromSelectedItemsSubmit(event, this)', 'data-no-check-selected-item' : '1'}, 'name': 'formAddNumber', 'action': path('order.goods.create.update', {'id': user.id}) }) }}
+
+{{ form_widget(form.orderID, {'id': 'form_add_number_orderID'}) }}
+{{ form_widget(form.createrID, {'id': 'form_add_number_createrID'}) }}
+{{ form_widget(form.zapSkladID, {'id': 'form_add_number_zapSkladID'}) }}
+{{ form_widget(form.providerPriceID, {'id': 'form_add_number_providerPriceID'}) }}
+
+{% if order is null %}
+    <div class="form-group">{{ form_widget(form.order_add_reasonID, {'id': 'form_add_number_order_add_reasonID'}) }}</div>
+{% endif %}
+
+<div class="row form-group">
+    <div class="col">{{ form_widget(form.number, {'id': 'form_add_number_number'}) }}</div>
+    <div class="col">
+        <button type="button" class="btn btn-primary"
+                onclick="searchNumber(this.form.elements['form[number]'])">
+            Найти
+        </button>
+    </div>
+    <div class="col-auto ml-auto row form-group">
+        <div class="col text-right"><label class="col-form-label">Количество: </label></div>
+        <div class="col">{{ form_widget(form.quantity, {'id': 'form_add_number_quantity'}) }}</div>
+
+    </div>
+</div>
+<div id="search_results"></div>
+{{ form_end(form) }}
+
+<div id="search_results_form" style="display: none">
+    {{ form_start(formCustom, {'attr': {'novalidate': 'novalidate', 'onsubmit': 'createCustom(event, this)'}}) }}
+    <div class="row">
+        <div class="col">
+            {{ form_widget(formCustom.createrID) }}
+        </div>
+        <div class="col">
+            {{ form_widget(formCustom.providerPriceID) }}
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-angle-right"></i></button>
+        </div>
+    </div>
+    {{ form_end(formCustom) }}
+</div>
+
+<script>
+    document.getElementById('form_add_number_number').focus();
+
+    function searchNumber(el) {
+        let url = '{{ path('order.goods.create.search', {'id': user.id, 'number': '#number#'}) }}';
+        url = url.replace(encodeURIComponent('#number#'), encodeURIComponent(el.value));
+        One.modalSpinnerOn('#modalCreate');
+        getHtmlFromAjax(url, document.getElementById('search_results'));
+        document.getElementById('search_results_form').style.display = 'block';
+    }
+
+    function addNumber(createrID, zapSkladID, providerPriceID) {
+        document.getElementById('form_add_number_createrID').value = createrID;
+        document.getElementById('form_add_number_zapSkladID').value = zapSkladID;
+        document.getElementById('form_add_number_providerPriceID').value = providerPriceID;
+    }
+
+    function createCustom(event, form) {
+        event.preventDefault();
+        addNumber(form.elements['form[createrID]'].value, null, form.elements['form[providerPriceID]'].value);
+        fromSelectedItemsSubmit(event, document.forms['formAddNumber']);
+    }
+</script>

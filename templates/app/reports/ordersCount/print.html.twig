@@ -1,0 +1,72 @@
+{% extends 'print.html.twig' %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block table_header %}
+            <th>Дата</th>
+            {% for managerID, managerName in managers %}
+                <th>{{ managerName|slice(0, 3) }} офис</th>
+                <th>{{ managerName|slice(0, 3) }} тел</th>
+                <th>{{ managerName|slice(0, 3) }} сумма</th>
+            {% endfor %}
+            <th>Роз</th>
+            <th>Опт</th>
+            <th>Отказ</th>
+            <th>Детали отказ</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if profits is null %}
+                <tr>
+                    <td colspan="50" class="text-center">Выберите период</td>
+                </tr>
+            {% endif %}
+            {% for dateofadded, profit in profits %}
+                <tr>
+                    <td>{{ profit.date.date|date('d.m.Y') }}</td>
+                    {% for managerID, managerName in managers %}
+                        <td class="text-center">
+                            {% if profit.managers[managerID]|default(null) %}
+                                {% if profit.managers[managerID].reasons[1]|default(null) %}
+                                    {{ profit.managers[managerID].reasons[1]|length }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if profit.managers[managerID]|default(null) %}
+                                {% if profit.managers[managerID].reasons[2]|default(null) %}
+                                    {{ profit.managers[managerID].reasons[2]|length }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td class="text-right">{{ profit.managers[managerID]|default(null) ? profit.managers[managerID].sum|number_format(2, ',', ' ') : 0 }}</td>
+                    {% endfor %}
+                    <td class="text-center">{{ profit.countNotOpt|length }}</td>
+                    <td class="text-center">{{ profit.countOpt|length }}</td>
+                    <td class="text-center">{{ profit.countDeleted|length }}</td>
+                    <td class="text-center">
+                        {% if profit.countDeleted|length > 0 %}
+                            {% set count = 0 %}
+                            {% for orders in profit.countDeleted %}
+                                {% set count = count + orders|length %}
+                            {% endfor %}
+                            {{ count }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

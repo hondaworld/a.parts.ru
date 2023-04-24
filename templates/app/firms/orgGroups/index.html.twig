@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Подразделения{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {% embed 'tables/table_simple.html.twig' %}
+
+        {% block header_buttons %}
+            <li class="nav-item">
+                <a href="{{ path('org.groups.create') }}" class="nav-link"
+                   title="Добавить подразделение"><i class="fas fa-plus"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('org.groups.hide') }}" class="nav-link"
+                   data-class="text-muted" data-toggle="modal"
+                   data-target="#modalConfirm" title="Скрыть выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите скрыть выделенные подразделения?')"><i
+                            class="far fa-eye-slash"></i></a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('org.groups.unHide') }}" class="nav-link"
+                   data-class="text-muted"
+                   data-toggle="modal"
+                   data-target="#modalConfirm" title="Восстановить выделенные"
+                   onclick="confirmFromCheckbox(this, 'Вы уверены, что хотите восстановить выделенные подразделения?')"><i
+                            class="far fa-eye"></i></a>
+            </li>
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% block table_header %}
+            <th>Наименование</th>
+            <th>Операции</th>
+        {% endblock %}
+
+        {% block table_body %}
+            {% if orgGroups is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for orgGroup in orgGroups %}
+                <tr class="{{ orgGroup.isHide ? ' text-muted' : '' }}{{ orgGroup.isMain ? ' font-weight-bold' : '' }}">
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': orgGroup.org_groupID} only %}
+                    {% endif %}
+                    <td>{{ orgGroup.name }}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <a href="{{ path('org.groups.edit', {'id': orgGroup.org_groupID}) }}"
+                               title="Изменить подразделение">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ path('org.groups.delete', {'id': orgGroup.org_groupID}) }}"
+                               onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу подразделение?')"
+                               data-toggle="modal"
+                               data-target="#modalConfirm"
+                               class="text-danger"
+                               title="Удалить подразделение">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

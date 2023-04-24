@@ -1,0 +1,102 @@
+<div class="block block-rounded table-responsive">
+
+    <div class="block-content block-content-full d-inline-block w-auto">
+
+        <div class="dataTables_wrapper dt-bootstrap4">
+            {% block header %}
+                <div class="row">
+                    <div class="col-sm-12 col-md-auto">
+                        <div class="dataTables_length">
+                            <div class="d-flex">
+                                <ul class="nav">
+                                    {% block header_buttons %}{% endblock %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md">
+                        <div class="dataTables_filter">
+                            <div class="d-inline-flex mb-1">
+                                <ul class="nav">
+                                    {% block header_form %}
+                                        <li class="nav-item pl-2">
+                                            <button type="submit" class="btn-block-option" title="Найти">
+                                                <i class="si si-magnifier"></i>
+                                            </button>
+                                        </li>
+                                        {% if reset_path|default(null) %}
+                                            <li class="nav-item">
+                                                <a href="{{ reset_path|default('#') }}" class="btn-block-option"
+                                                   title="Очистить форму">
+                                                    <i class="si si-reload"></i>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        {% block settings %}
+                                            <li class="nav-item">
+                                                <button type="button" class="btn-block-option"
+                                                        data-toggle="block-option"
+                                                        data-action="fullscreen_toggle"
+                                                        title="Развернуть на полный экран"><i
+                                                            class="si si-size-fullscreen"></i></button>
+                                            </li>
+                                        {% endblock %}
+                                    {% endblock %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-sm table-bordered table-striped table-hover{{ (table_checkable|default(false) ? ' js-table-checkable' : '') }}{{ (table_sortable|default(false) ? ' js-table-sortable' : '') }}{{ (table_sections|default(false) ? ' js-table-sections' : '') }}">
+                        <thead>
+                        <tr class="table-primary">
+                            {% if (table_checkable|default(false)) %}
+                                {% include'tables/th_checkbox.html.twig' %}
+                            {% endif %}
+                            {% block table_header %}{% endblock %}
+                        </tr>
+                        {% block table_filter %}
+                            <tr>
+                                {% if (table_checkable|default(false)) %}
+                                    <th></th>
+                                {% endif %}
+                                {% block filters %}{% endblock %}
+                            </tr>
+                        {% endblock %}
+                        </thead>
+                        {% if not table_sections|default(false) %}
+                        <tbody>
+                        {% endif %}
+                        {% block table_body %}{% endblock %}
+                        {% if not table_sections|default(false) %}
+                        </tbody>
+                        {% endif %}
+                        <tfoot>
+                        {% block table_footer %}{% endblock %}
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            {% block pagination %}
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_info">
+                            Страница <strong>{{ pagination.currentPageNumber }}</strong> из
+                            <strong>{{ pagination.pageCount }}</strong>
+                            (<strong>{{ pagination.totalItemCount }}</strong> записей)
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7">
+                        <div class="dataTables_paginate paging_simple_numbers">
+                            {{ knp_pagination_render(pagination) }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+
+    </div>
+</div>

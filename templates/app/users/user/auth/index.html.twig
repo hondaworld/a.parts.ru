@@ -1,0 +1,42 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Авторизация</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('users.phoneMobile', {'id': user.id}) }}"
+               title="Изменить мобильный телефон"><i class="fas fa-edit"></i></a>
+            <a type="button" class="btn btn-sm btn-alt-danger" href="{{ path('users.password', {'id': user.id}) }}"
+               title="Изменить пароль"><i class="fas fa-key"></i>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    {% if (not user.active) %}
+        <p>
+            <span class="font-weight-bold text-danger">Клиент не активирован (не ввел код, отправленный по SMS)</span>
+        </p>
+    {% endif %}
+    <p>
+        {% if (not user.active) %}
+            <a href="{{ path('users.activate', {'id': user.id}) }}" class="btn btn-success mb-2">Активировать</a>
+        {% endif %}
+        {% if (user.isHide) %}
+            <a href="{{ path('users.unHide', {'id': user.id}) }}" class="btn btn-success mb-2"><i
+                        class="far fa-eye"></i> Открыть доступ</a>
+        {% else %}
+            <a href="{{ path('users.hide', {'id': user.id}) }}" class="btn btn-danger mb-2"><i
+                        class="far fa-eye-slash"></i> Закрыть доступ</a>
+        {% endif %}
+        <a class="btn btn-alt-primary mb-2" href="tel:{{ user.phonemob }}"><i class="fas fa-mobile-alt"></i>
+            позвонить</a>
+    </p>
+    <p><strong>Мобильный телефон: </strong> {{ phone_mobile(user.phonemob) }}
+        {% if user.isSms %}
+            <span class="pl-3 text-success"><i class="fas fa-check"></i> Отправка уведомлений по SMS разрешена</span>
+        {% else %}
+            <span class="pl-3 text-danger"><i class="fas fa-times"></i> Отправка уведомлений по SMS не разрешена</span>
+        {% endif %}
+    </p>
+{% endblock %}

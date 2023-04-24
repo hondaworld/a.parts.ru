@@ -1,0 +1,34 @@
+{% extends 'blocks/block_container_half.html.twig' %}
+{% block header %}
+    <div class="block-header block-header-default">
+        <h3 class="block-title">Предприятие</h3>
+        <div class="block-options">
+            <a type="button" class="btn btn-sm btn-alt-primary" href="{{ path('order.document.expFirm', {'id': user.id}) }}"
+               title="Изменить предприятие"><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <p>Предприятие, от которого будет осуществлена отгрузка</p>
+    <p><strong>Предприятие: </strong>
+        {% if (expenseDocument.expFirm|default(false)) %}
+            {{ expenseDocument.expFirm.nameShort }}
+        {% else %}
+            <span class="text-danger font-italic">не задано (необходимо заполнить)</span>
+        {% endif %}
+    </p>
+    {% if (expenseDocument.expFirm|default(false)) %}
+        <p><strong>Адрес: </strong>
+        {% if (expenseDocument.expFirmContact|default(false)) %}
+            {{ expenseDocument.expFirmContact.fullAddress }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+        <p><strong>Реквизит: </strong>
+        {% if (expenseDocument.expFirmBeznal|default(false)) %}
+            {{ expenseDocument.expFirmBeznal.fullRequisite }}
+        {% else %}
+            <span class="text-muted font-italic">не задан</span>
+        {% endif %}
+    {% endif %}
+{% endblock %}

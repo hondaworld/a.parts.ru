@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Группы работ категории {{ workCategory.name }}{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('work.categories') }}">Категории работ</a></li>
+    <li class="breadcrumb-item">{{ workCategory.name }}</li>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(filter) }}
+
+    {% embed 'tables/table_full.html.twig' %}
+
+        {% block header_buttons %}
+            {% if is_granted('work_group_change', workCategory) %}
+                <li class="nav-item">
+                    <a href="{{ path('work.groups.create', {'workCategoryID': workCategory.id}) }}"
+                       class="nav-link" title="Добавить группу работ"><i
+                                class="fas fa-plus"></i></a>
+                </li>
+            {% endif %}
+        {% endblock %}
+        {% block settings %}{% endblock %}
+
+        {% set reset_path = path('work.groups', {'workCategoryID': workCategory.id, 'reset' : 1}) %}
+        {% block header_form %}
+            {{ parent() }}
+            {% include 'tables/table_settings_dropdown_menu.html.twig' %}
+        {% endblock %}
+
+        {% block table_header %}
+            <th>{{ knp_pagination_sortable(pagination, 'Наименование', 'name') }}</th>
+            <th>Нормо-час</th>
+            <th>ТО</th>
+            <th>{{ knp_pagination_sortable(pagination, 'Сортировка', 'sort') }}</th>
+            {% if is_granted('work_group_change', workCategory) %}
+                <th>Операции</th>
+            {% endif %}
+        {% endblock %}
+
+        {% block filters %}
+            <th></th>
+            <th></th>
+            <th>{{ form_widget(filter.isTO) }}</th>
+            <th></th>
+            {% if is_granted('work_group_change', workCategory) %}
+                <th></th>
+            {% endif %}
+        {% endblock %}
+
+        {% block table_body %}
+            {% if pagination is empty %}
+                <tr>
+                    <td colspan="50" class="text-center">Записей нет</td>
+                </tr>
+            {% endif %}
+            {% for group in pagination %}
+                <tr>
+                    {% if (table_checkable|default(false)) %}
+                        {% include 'tables/td_checkbox.html.twig' with {'id': group.workGroupID} only %}
+                    {% endif %}
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.norma|number_format(2, '.', ' ') }}</td>
+                    <td>{{ to_array[group.isTO] }}</td>
+                    <td>{{ group.sort }}</td>
+                    {% if is_granted('work_group_change', workCategory) %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                                {% if is_granted('work_auto_change', 'WorkGroup') %}
+                                    <a href="{{ path('work.auto', {'workGroupID': group.workGroupID}) }}"
+                                       title="Марки">
+                                        <i class="fas fa-car"></i>
+                                    </a>
+                                {% endif %}
+                                <a href="{{ path('work.groups.edit', {'workCategoryID': workCategory.id, 'id': group.workGroupID}) }}"
+                                   title="Изменить группу работ">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('work.groups.delete', {'workCategoryID': workCategory.id, 'id': group.workGroupID}) }}"
+                                   onclick="deleteItem(this, 'Вы уверены, что хотите удалить группу работ?')"
+                                   data-toggle="modal"
+                                   data-target="#modalConfirm"
+                                   class="text-danger"
+                                   title="Удалить группу работ">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+    {{ form_end(filter) }}
+
+{% endblock %}

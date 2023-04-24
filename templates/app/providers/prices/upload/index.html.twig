@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Загрузка прайс-листов{% endblock %}
+{% block header %}{{ block('title') }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item">{{ block('header') }}</li>
+{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-xl-12">
+            {{ include('app/providers/prices/upload/prices.html.twig') }}
+        </div>
+        <div class="col-xl-12">{{ include('app/providers/prices/upload/logCont.html.twig') }}</div>
+    </div>
+    <div>{{ include('app/providers/prices/upload/logAllCont.html.twig') }}</div>
+    <div class="row">
+        <div class="col-xl-6">{{ include('app/providers/prices/upload/filesBad.html.twig') }}</div>
+        <div class="col-xl-6">{{ include('app/providers/prices/upload/filesArchive.html.twig') }}</div>
+    </div>
+
+{% endblock %}

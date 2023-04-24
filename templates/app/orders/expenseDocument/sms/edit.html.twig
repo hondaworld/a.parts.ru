@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Проверка SMS кода клиента {{ user.name }}{% endblock %}
+{% block header %}
+    Проверка SMS кода клиента {{ user.name }}
+    {{ include('app/orders/goods/_user.html.twig') }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('orders') }}">Заказы</a>
+    </li>
+    <li class="breadcrumb-item"><a href="{{ path('order.expenseDocument', {'id': user.id}) }}">Оформление накладной</a>
+    </li>
+    <li class="breadcrumb-item">SMS код</li>
+{% endblock %}
+
+{% block body %}
+    {{ include('app/orders/expenseDocument/sms/_form.html.twig') }}
+{% endblock %}
